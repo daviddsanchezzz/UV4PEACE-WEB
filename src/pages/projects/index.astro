@@ -1,0 +1,29 @@
+---
+export const prerender = true;
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import ProjectGrid from '../../components/ProjectGrid.astro';
+import NewsletterForm from '../../components/NewsletterForm.astro';
+import Button from '../../components/Button.astro';
+import { projects } from '../../data/projects';
+import { site } from '../../data/site';
+---
+<Base title="Projects" current="projects" description="Concerts, cultural exchanges and projects with women composers, under-represented artists, refugees and human rights.">
+  <PageHeader eyebrow="Projects" title={['Where music meets', 'diplomacy']} lede="Concerts, cultural exchanges and long-term projects with women composers, under-represented artists, refugees and human-rights advocates." />
+  <section class="wrap pb-[clamp(72px,10vw,140px)]">
+    <ProjectGrid projects={projects}>
+      <Fragment slot="heading"><h2 class="t-h2">All projects</h2></Fragment>
+    </ProjectGrid>
+  </section>
+  <section class="bg-navy text-white">
+    <div class="wrap section-y-sm flex flex-wrap items-center justify-between gap-8">
+      <div class="max-w-[640px]">
+        <div class="eyebrow text-sky">Have an idea?</div>
+        <h2 class="t-h1 mt-4">Propose a project</h2>
+        <p class="body mt-4">Bring us an idea that uses music or the arts to build bridges.</p>
+      </div>
+      <Button href={site.proposalMailto}>Send a proposal</Button>
+    </div>
+  </section>
+  <NewsletterForm />
+</Base>

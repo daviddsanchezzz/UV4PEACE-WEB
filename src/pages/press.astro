@@ -1,0 +1,46 @@
+---
+export const prerender = true;
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Photo from '../components/Photo.astro';
+import Button from '../components/Button.astro';
+import PressStrip from '../components/PressStrip.astro';
+import { site } from '../data/site';
+
+const kit = [
+  { label: 'Logo · vertical (SVG)', href: '/logos/uv4peace-vertical-color.svg' },
+  { label: 'Logo · horizontal (SVG)', href: '/logos/uv4peace-horizontal-color.svg' },
+  { label: 'Logo · on dark (SVG)', href: '/logos/uv4peace-vertical-reversed.svg' },
+  { label: 'Logo · PNG', href: '/logos/uv4peace-vertical-color.png' },
+];
+---
+<Base title="Press" current="press" description="Recognition, media coverage and press resources for United Voices 4 Peace.">
+  <PageHeader eyebrow="Press room" title={['Recognised for', 'uniting communities']} />
+
+  <section class="wrap grid grid-cols-[repeat(auto-fit,minmax(min(100%,380px),1fr))] gap-[clamp(40px,6vw,96px)] pb-[clamp(72px,10vw,128px)]">
+    <div>
+      <h2 class="eyebrow text-ink-muted">Recognition</h2>
+      <div class="mt-5"><PressStrip /></div>
+    </div>
+    <aside class="flex flex-col gap-6">
+      <figure class="relative m-0 aspect-[3/2] overflow-hidden rounded-card bg-placeholder">
+        <Photo src="06-prensa-entrevista_IMG_5230.jpg" alt="Interview with the press at Global Women in Music 2026" sizes="(min-width:1024px) 600px, 100vw" loading="eager" />
+      </figure>
+      <div class="rounded-card bg-navy p-[clamp(28px,3vw,40px)] text-white">
+        <div class="eyebrow text-sky">Press contact</div>
+        <a href={`mailto:${site.email}?subject=Press`} class="mt-3 block text-2xl text-white hover:text-sky">{site.email}</a>
+      </div>
+      <div class="rounded-card border border-line p-[clamp(28px,3vw,40px)]">
+        <div class="eyebrow text-sky-text">Press kit</div>
+        <ul class="mt-4 flex flex-col">
+          {kit.map((k) => <li class="border-b border-line py-3"><a href={k.href} download>{k.label}</a></li>)}
+        </ul>
+      </div>
+      <div class="rounded-card bg-surface-soft p-[clamp(28px,3vw,40px)]">
+        <div class="eyebrow text-sky-text">Documentary</div>
+        <div class="t-h3 mt-3">Composers Rewriting the Score</div>
+        <Button href={site.trailerUrl} external variant="tertiary" size="sm" class="mt-5">Watch the trailer</Button>
+      </div>
+    </aside>
+  </section>
+</Base>

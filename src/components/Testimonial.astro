@@ -1,0 +1,21 @@
+---
+// Quote block: surface-soft with an orange bar, portrait alongside.
+import Photo from './Photo.astro';
+import Placeholder from './Placeholder.astro';
+import type { ImageRef } from '../data/types';
+interface Props { text: string; who: string; caption?: string; photo?: ImageRef }
+const { text, who, caption, photo } = Astro.props;
+---
+<figure data-reveal class="m-0 grid grid-cols-[repeat(auto-fit,minmax(min(100%,320px),1fr))] overflow-hidden rounded-card bg-surface-soft">
+  <div class="relative min-h-[300px] bg-placeholder">
+    {photo ? <Photo {...photo} sizes="(min-width:1024px) 640px, 100vw" /> : <Placeholder />}
+  </div>
+  <div class="flex gap-6 p-[clamp(28px,4vw,56px)]">
+    <span aria-hidden="true" class="w-1 flex-none rounded-sm bg-orange"></span>
+    <div>
+      <blockquote class="m-0 text-[clamp(20px,1.9vw,26px)] font-light leading-[1.45] text-ink [text-wrap:pretty]">"{text}"</blockquote>
+      <figcaption class="mt-5 text-sm font-medium uppercase tracking-[0.08em] text-sky-text">{who}</figcaption>
+      {caption && <div class="mt-1.5 text-sm text-ink-muted">{caption}</div>}
+    </div>
+  </div>
+</figure>

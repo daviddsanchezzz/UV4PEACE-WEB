@@ -1,0 +1,20 @@
+---
+// Slow-scrolling partner strip. Logo files are not yet authorised, so every entry shows as
+// text (the design's own fallback) until a logo is uploaded and approved in the admin panel.
+import { partners } from '../data/partners';
+import { site } from '../data/site';
+const active = partners.filter((p) => p.active).sort((a, b) => a.order - b.order);
+---
+<section aria-labelledby="partners-h" class="overflow-hidden border-y border-line py-14">
+  <div class="wrap flex flex-wrap items-baseline justify-between gap-4">
+    <h2 id="partners-h" class="eyebrow text-ink-muted">Partners &amp; supporters</h2>
+  </div>
+  <div class="marquee mt-8" aria-label={active.map((p) => p.name).join(', ')}>
+    {[...active, ...active].map((p, i) => (
+      <span aria-hidden={i >= active.length ? 'true' : undefined} class="whitespace-nowrap border-r border-line px-7 text-[22px] font-medium uppercase tracking-[0.04em] text-ink-muted">
+        {p.logo ? <img src={p.logo} alt={p.name} class="h-8 w-auto" /> : p.name}
+      </span>
+    ))}
+  </div>
+  {site.unLine && <div class="wrap mt-8 text-base text-ink-muted">{site.unLine}</div>}
+</section>

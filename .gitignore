@@ -1,0 +1,15 @@
+# build
+dist/
+.astro/
+.vercel/
+
+# dependencies
+node_modules/
+
+# environment
+.env
+.env.*
+!.env.example
+
+# editors
+.DS_Store

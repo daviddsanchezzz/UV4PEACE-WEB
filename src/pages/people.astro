@@ -1,0 +1,84 @@
+---
+export const prerender = true;
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Photo from '../components/Photo.astro';
+import PersonCard from '../components/PersonCard.astro';
+import Button from '../components/Button.astro';
+import { founder, site } from '../data/site';
+import { people } from '../data/people';
+
+const board = people.filter((p) => p.group === 'team' || p.group === 'board').sort((a, b) => a.order - b.order);
+const ambassadors = people.filter((p) => p.group === 'ambassador').sort((a, b) => a.order - b.order);
+const gwimArtists = people.filter((p) => p.group === 'artist' && p.project === 'global-women-in-music' && p.edition === '2026').sort((a, b) => a.order - b.order);
+---
+<Base title="People" current="people" description="The founder, team and artists behind United Voices 4 Peace.">
+  <PageHeader eyebrow="People" title={['The voices behind', 'the music']} lede="Artists, diplomats and organisers working together for a universal culture of peace." />
+
+  <!-- Founder -->
+  <section aria-labelledby="founder-h" class="bg-navy text-white">
+    <div class="mx-auto grid max-w-[1320px] grid-cols-[repeat(auto-fit,minmax(min(100%,440px),1fr))]">
+      <figure class="relative m-0 min-h-[clamp(420px,46vw,680px)] overflow-hidden">
+        <Photo {...founder.photo} sizes="(min-width:1024px) 660px, 100vw" loading="eager" />
+      </figure>
+      <div data-reveal class="flex flex-col justify-center px-[clamp(24px,5vw,88px)] py-[clamp(48px,7vw,104px)]">
+        <div class="eyebrow text-sky">Founder</div>
+        <h2 id="founder-h" class="t-h1 mt-4">{founder.name}</h2>
+        <div class="mt-2 text-base text-line">{founder.role}</div>
+        {founder.quote && <blockquote class="mt-8 text-[clamp(24px,2.4vw,32px)] font-light leading-[1.35]">"{founder.quote}"</blockquote>}
+        {founder.bio && <p class="body mt-6 text-line">{founder.bio}</p>}
+      </div>
+    </div>
+  </section>
+
+  <!-- Team & board -->
+  {board.length > 0 && (
+    <section aria-labelledby="team-h" class="wrap section-y">
+      <div data-reveal>
+        <div class="eyebrow text-sky-text">Team</div>
+        <h2 id="team-h" class="t-h1 mt-4">Team &amp; board</h2>
+      </div>
+      <ul class="mt-12 grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-x-6 gap-y-10">
+        {board.map((m) => <PersonCard name={m.name} role={m.role} photo={m.photo} size="lg" />)}
+      </ul>
+    </section>
+  )}
+
+  <!-- Ambassadors -->
+  {ambassadors.length > 0 && (
+    <section aria-labelledby="ambassadors-h" class="wrap section-y-sm">
+      <div data-reveal>
+        <div class="eyebrow text-sky-text">Peace ambassadors</div>
+        <h2 id="ambassadors-h" class="t-h1 mt-4">Ambassadors</h2>
+      </div>
+      <ul class="mt-12 grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-x-6 gap-y-10">
+        {ambassadors.map((m) => <PersonCard name={m.name} role={m.role} photo={m.photo} size="lg" />)}
+      </ul>
+    </section>
+  )}
+
+  <!-- Artists -->
+  {gwimArtists.length > 0 && (
+    <section aria-labelledby="artists-h" class="bg-surface-soft">
+      <div class="wrap section-y-sm">
+        <div data-reveal class="max-w-[720px]">
+          <div class="eyebrow text-sky-text">Artists · Global Women in Music 2026</div>
+          <h2 id="artists-h" class="t-h1 mt-4">On stage with us</h2>
+          <p class="body mt-4 text-ink-muted">Led by Serbian conductor Vesna Šouc, the evening featured eight women composers from eight countries.</p>
+        </div>
+        <ul class="mt-12 grid grid-cols-[repeat(auto-fill,minmax(130px,1fr))] gap-x-5 gap-y-7">
+          {gwimArtists.map((m) => <PersonCard name={m.name} role={m.role} photo={m.photo} />)}
+        </ul>
+        <Button href="/projects/global-women-in-music/" variant="tertiary" class="mt-12">Discover Global Women in Music</Button>
+      </div>
+    </section>
+  )}
+
+  <section class="wrap section-y-sm flex flex-wrap items-center justify-between gap-8">
+    <div class="max-w-[640px]">
+      <h2 class="t-h2">Want to work with us?</h2>
+      <p class="body mt-3 text-ink-muted">Write to us at <a href={`mailto:${site.email}`}>{site.email}</a>.</p>
+    </div>
+    <Button href={site.partnerMailto}>Partner with us</Button>
+  </section>
+</Base>

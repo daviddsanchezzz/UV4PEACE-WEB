@@ -1,0 +1,52 @@
+---
+export const prerender = true;
+import Base from '../layouts/Base.astro';
+import Photo from '../components/Photo.astro';
+import Button from '../components/Button.astro';
+import { site } from '../data/site';
+import { stats } from '../data/stats';
+---
+<Base title="Donate" description="Every gift brings more women composers to the stage.">
+  <section class="mx-auto grid max-w-[1320px] grid-cols-[repeat(auto-fit,minmax(min(100%,440px),1fr))]">
+    <div data-reveal class="flex flex-col justify-center px-[clamp(20px,5vw,88px)] py-[clamp(56px,8vw,120px)]">
+      <div class="eyebrow text-sky-text">Donate</div>
+      <h1 class="t-display mt-5">Bring more voices <span class="text-orange">to the stage.</span></h1>
+      <p class="lede mt-6 max-w-[520px] text-ink-muted">Every gift brings more women composers to the stage.</p>
+      <div class="mt-9 flex flex-wrap items-center gap-4">
+        <Button href={site.paypalUrl || site.partnerMailto} external={!!site.paypalUrl}>Donate via PayPal</Button>
+      </div>
+      <div class="mt-6 inline-flex items-center gap-2.5 self-start rounded-full border border-line px-4 py-2.5 text-sm font-medium text-sky-text">{site.seal}</div>
+    </div>
+    <figure class="relative m-0 min-h-[clamp(380px,50vw,760px)] overflow-hidden bg-placeholder">
+      <Photo src="09-donate-abrazo_IMG_5435.jpg" alt="Two artists embracing on stage after the concert" pos="50% 30%" sizes="(min-width:1024px) 660px, 100vw" loading="eager" />
+    </figure>
+  </section>
+
+  <section class="bg-navy text-white">
+    <div class="wrap section-y-sm">
+      <h2 class="t-h2">What your support has made possible</h2>
+      <div class="mt-10 grid grid-cols-[repeat(auto-fit,minmax(min(100%,180px),1fr))] gap-px overflow-hidden rounded-card border border-white/15 bg-white/15">
+        {stats.slice(0, 4).map((s) => (
+          <div class="bg-navy px-7 py-8"><div class="text-[clamp(44px,4vw,60px)] font-medium leading-none text-sky">{s.n}</div><div class="mt-3 text-base">{s.label}</div></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section-y-sm grid grid-cols-[repeat(auto-fit,minmax(min(100%,380px),1fr))] gap-[clamp(32px,5vw,80px)]">
+    <div>
+      <h2 class="t-h2">Who you are giving to</h2>
+      <ul class="mt-6 border-t border-line">
+        {site.legalEntities.map((l) => <li class="border-b border-line py-4 text-lg">{l}</li>)}
+      </ul>
+    </div>
+    <div>
+      <h2 class="t-h2">Giving as an institution?</h2>
+      <p class="body mt-4 text-ink-muted">Foundations, embassies and companies can support a full edition and receive visibility at the concert.</p>
+      <div class="mt-7 flex flex-wrap gap-3.5">
+        <Button href="/get-involved/#partner" variant="tertiary">Partner with us</Button>
+        <Button href={`mailto:${site.email}?subject=Donation`} variant="tertiary">Ask a question</Button>
+      </div>
+    </div>
+  </section>
+</Base>

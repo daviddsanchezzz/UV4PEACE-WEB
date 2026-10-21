@@ -1,0 +1,16 @@
+---
+export const prerender = true;
+import Base from '../layouts/Base.astro';
+import Button from '../components/Button.astro';
+---
+<Base title="Page not found">
+  <section class="wrap section-y max-w-[880px]">
+    <div class="eyebrow text-sky-text">404</div>
+    <h1 class="t-display mt-5">This page is <span class="text-orange">off the score.</span></h1>
+    <p class="lede mt-6 text-ink-muted">The page you are looking for has moved or no longer exists.</p>
+    <div class="mt-9 flex flex-wrap gap-3.5">
+      <Button href="/">Back to home</Button>
+      <Button href="/projects/" variant="tertiary">See our projects</Button>
+    </div>
+  </section>
+</Base>

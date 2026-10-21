@@ -1,0 +1,29 @@
+---
+import { nav, site, legalPages } from '../data/site';
+---
+<footer class="bg-navy text-white">
+  <div class="wrap pb-8 pt-[clamp(56px,7vw,88px)]">
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,220px),1fr))] gap-10">
+      <img src="/logos/uv4peace-vertical-reversed.svg" alt="United Voices 4 Peace" class="h-auto w-[170px]" loading="lazy" />
+      <nav aria-label="Footer" class="flex flex-col gap-2.5 text-base">
+        {nav.map((n) => <a href={n.href} class="text-white hover:text-sky">{n.label}</a>)}
+        <a href="/donate/" class="text-white hover:text-sky">Donate</a>
+      </nav>
+      <div class="flex flex-col gap-2.5 text-base">
+        <a href={`mailto:${site.email}`} class="text-xl text-sky hover:text-white">{site.email}</a>
+        <div class="flex gap-4">{site.social.filter((s) => s.href).map((s) => <a href={s.href} class="text-white hover:text-sky">{s.label}</a>)}</div>
+      </div>
+      <div class="flex flex-col items-start gap-3">
+        <a href="/donate/" class="btn btn-primary">Donate via PayPal</a>
+        <div class="text-[13px] text-line">{site.seal}</div>
+      </div>
+    </div>
+    <div class="mt-14 flex flex-wrap justify-between gap-4 border-t border-white/15 pt-6 text-[13px] leading-relaxed text-line">
+      <div>{site.legalEntities.map((l) => <div>{l}</div>)}</div>
+      <div class="flex flex-wrap items-start gap-5">
+        {legalPages.map((l) => <a href={`/${l.slug}/`} class="text-line hover:text-white">{l.label}</a>)}
+        <span>© {new Date().getFullYear()} United Voices 4 Peace</span>
+      </div>
+    </div>
+  </div>
+</footer>

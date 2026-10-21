@@ -1,0 +1,31 @@
+---
+// Fixed bottom bar, mobile only. Hidden until the visitor scrolls past the hero
+// (~one viewport height), per the design. Donate is filled navy; Partner with us stays orange.
+import { site } from '../data/site';
+---
+<div data-sticky-bar class="fixed inset-x-0 bottom-0 z-40 flex translate-y-full gap-2 border-t border-line bg-white/95 px-3 py-2.5 opacity-0 transition-[opacity,transform] duration-300 lg:hidden">
+  <a href={site.partnerMailto} class="btn btn-primary btn-sm flex-1">Partner with us</a>
+  <a href="/donate/" class="btn btn-navy btn-sm flex-1">Donate</a>
+</div>
+
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-sticky-bar]');
+  if (bar) {
+    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const show = () => bar.classList.remove('translate-y-full', 'opacity-0');
+    const hide = () => bar.classList.add('translate-y-full', 'opacity-0');
+    if (reduceMotion) bar.classList.remove('transition-[opacity,transform]');
+
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        (window.scrollY > window.innerHeight * 0.75 ? show : hide)();
+        ticking = false;
+      });
+    };
+    addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+</script>

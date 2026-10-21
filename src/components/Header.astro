@@ -1,0 +1,45 @@
+---
+import { nav, site } from '../data/site';
+interface Props { current?: string }
+const { current } = Astro.props;
+---
+<header class="sticky top-0 z-50 border-b border-line bg-white/95 backdrop-blur-sm">
+  <div class="wrap flex items-center justify-between gap-6 py-3.5">
+    <a href="/" aria-label="United Voices 4 Peace, home" class="flex-none">
+      <img src="/logos/uv4peace-horizontal-color.svg" alt="United Voices 4 Peace" class="h-[52px] w-auto" width="144" height="52" />
+    </a>
+    <nav aria-label="Main" class="hidden items-center gap-8 text-sm font-medium uppercase tracking-[0.14em] lg:flex">
+      {nav.map((n) => (
+        <a href={n.href} aria-current={current === n.key ? 'page' : undefined}
+           class:list={['hover:no-underline', current === n.key ? 'border-b-2 border-orange pb-0.5 text-sky-text' : 'text-navy hover:text-sky-text']}>{n.label}</a>
+      ))}
+    </nav>
+    <div class="hidden items-center gap-3 lg:flex">
+      <a href="/donate/" class="btn btn-tertiary btn-sm">Donate</a>
+      <a href={site.partnerMailto} class="btn btn-primary btn-sm">Partner with us</a>
+    </div>
+    <button type="button" data-menu-open aria-controls="menu" class="btn btn-tertiary btn-sm bg-white lg:hidden">Menu</button>
+  </div>
+</header>
+
+<dialog id="menu" class="menu-dialog" aria-label="Menu">
+  <div class="flex items-center justify-between">
+    <img src="/logos/uv4peace-horizontal-reversed.svg" alt="United Voices 4 Peace" class="h-12 w-auto" />
+    <button type="button" data-menu-close class="btn btn-light btn-sm">Close</button>
+  </div>
+  <nav aria-label="Mobile" class="mt-14 flex flex-col gap-2 text-[34px] font-medium uppercase tracking-[0.02em]">
+    {nav.map((n) => (
+      <a href={n.href} class:list={['border-b border-white/15 py-2 hover:no-underline', current === n.key ? 'text-sky' : 'text-white hover:text-sky']}>{n.label}</a>
+    ))}
+  </nav>
+  <div class="mt-auto flex flex-col gap-3">
+    <a href={site.partnerMailto} class="btn btn-primary">Partner with us</a>
+    <a href="/donate/" class="btn btn-light">Donate</a>
+  </div>
+</dialog>
+
+<script>
+  const menu = document.getElementById('menu') as HTMLDialogElement | null;
+  document.querySelectorAll('[data-menu-open]').forEach((b) => b.addEventListener('click', () => menu?.showModal()));
+  menu?.querySelectorAll('[data-menu-close], a').forEach((el) => el.addEventListener('click', () => menu.close()));
+</script>

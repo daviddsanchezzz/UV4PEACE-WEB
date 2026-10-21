@@ -1,0 +1,26 @@
+---
+// Editorial list of recognitions, most recent first, plus the "As featured in" media line.
+import { press, featuredIn } from '../data/press';
+interface Props { limit?: number }
+const { limit } = Astro.props;
+const items = limit ? press.slice(0, limit) : press;
+---
+<div>
+  <ol class="border-t border-line">
+    {items.map((a) => (
+      <li data-reveal class="grid grid-cols-[minmax(84px,110px)_minmax(0,1fr)] gap-5 border-b border-line py-[22px]">
+        <div class="pt-0.5 text-sm font-medium uppercase tracking-[0.1em] text-sky-text">{a.dateLabel}</div>
+        <div class="text-lg leading-normal [text-wrap:pretty]">
+          {a.url ? <a href={a.url}>{a.title}</a> : a.title}
+          <span class="block text-base text-ink-muted">{a.by}</span>
+        </div>
+      </li>
+    ))}
+  </ol>
+  {featuredIn.length > 0 && (
+    <div class="mt-10">
+      <div class="eyebrow text-ink-muted">As featured in</div>
+      <div class="mt-4 flex flex-wrap gap-x-9 gap-y-3 text-[22px] font-medium uppercase tracking-[0.04em] text-ink-muted">{featuredIn.map((m) => <span>{m}</span>)}</div>
+    </div>
+  )}
+</div>

@@ -1,0 +1,7 @@
+---
+// Empty slot for a photo that has not been sourced yet. Intentionally renders no visible
+// text — missing content must degrade gracefully, never show a "[PENDIENTE]" / "[IMG-xx]" label.
+interface Props { dark?: boolean }
+const { dark = false } = Astro.props;
+---
+<div class:list={['absolute inset-0', dark ? 'bg-navy-deep' : 'bg-placeholder']} aria-hidden="true"></div>

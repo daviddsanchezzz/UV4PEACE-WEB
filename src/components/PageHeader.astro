@@ -1,0 +1,12 @@
+---
+// Inner-page header. title: [normal part, accented part in sky-text]
+interface Props { eyebrow: string; title: [string, string?]; lede?: string }
+const { eyebrow, title, lede } = Astro.props;
+---
+<section class="wrap pb-[clamp(40px,5vw,72px)] pt-[clamp(56px,8vw,120px)]">
+  <div data-reveal class="max-w-[880px]">
+    <div class="eyebrow text-sky-text">{eyebrow}</div>
+    <h1 class="t-display mt-5 text-ink">{title[0]}{title[1] && <> <span class="text-sky-text">{title[1]}</span></>}</h1>
+    {lede && <p class="lede mt-6 max-w-[640px] text-ink-muted">{lede}</p>}
+  </div>
+</section>

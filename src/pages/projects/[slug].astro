@@ -1,0 +1,196 @@
+---
+export const prerender = true;
+// Project template. Every block below renders only if the project has that data
+// (see src/data/projects.ts) — a minimal project still produces a full card + hero.
+import Base from '../../layouts/Base.astro';
+import Photo from '../../components/Photo.astro';
+import Placeholder from '../../components/Placeholder.astro';
+import Button from '../../components/Button.astro';
+import StatBlock from '../../components/StatBlock.astro';
+import Testimonial from '../../components/Testimonial.astro';
+import PersonCard from '../../components/PersonCard.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { projects, statusLabel, type Project } from '../../data/projects';
+import { testimonials } from '../../data/testimonials';
+import { site } from '../../data/site';
+
+export function getStaticPaths() {
+  return projects.map((p) => ({ params: { slug: p.slug }, props: { project: p } }));
+}
+interface Props { project: Project }
+const { project: p } = Astro.props;
+
+const spanClass = { wide: 'lg:col-span-2', tall: 'lg:row-span-2', big: 'lg:col-span-2 lg:row-span-2' } as const;
+const others = projects.filter((x) => x.slug !== p.slug).slice(0, 3);
+const projectQuotes = testimonials.filter((t) => t.published && t.project === p.slug).sort((a, b) => a.order - b.order);
+// The most recent non-upcoming edition becomes the highlighted edition on the page.
+const heldEditions = (p.editions ?? []).filter((e) => !e.upcoming);
+const highlight = heldEditions[heldEditions.length - 1];
+---
+<Base title={p.title} description={p.summary} current="projects">
+  <!-- Hero -->
+  <section aria-labelledby="hero-h" class="relative flex min-h-[clamp(560px,86svh,900px)] items-end overflow-hidden bg-navy-deep">
+    {p.hero ? <Photo {...p.hero} loading="eager" /> : <Placeholder dark />}
+    <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,22,38,.3)_0%,rgba(10,22,38,.2)_40%,rgba(10,22,38,.8)_100%)]"></div>
+    <div class="wrap relative w-full py-[clamp(48px,7vw,96px)] text-white">
+      <nav aria-label="Breadcrumb" class="mb-7 text-[13px] text-line"><a href="/projects/" class="text-line">Projects</a> / {p.title}</nav>
+      <div class="flex flex-wrap items-center gap-2.5">
+        <span class:list={['chip', p.status === 'ongoing' ? 'bg-orange' : 'bg-white']}>{statusLabel[p.status]}</span>
+        <span class="eyebrow">{p.dateLabel} · {p.city}</span>
+      </div>
+      <h1 id="hero-h" class="t-display mt-5 max-w-[900px]">{p.title}</h1>
+      <p class="lede mt-5 max-w-[620px]">{p.summary}</p>
+    </div>
+  </section>
+
+  <!-- Intro + vision + stats -->
+  {p.intro ? (
+    <section aria-label="About the project" class="wrap grid grid-cols-[repeat(auto-fit,minmax(min(100%,440px),1fr))] gap-[clamp(40px,6vw,96px)] py-[clamp(72px,9vw,128px)]">
+      <div data-reveal>
+        <div class="eyebrow text-sky-text">About the project</div>
+        <p class="mt-5 text-[clamp(22px,2vw,26px)] font-light leading-normal [text-wrap:pretty]">{p.intro}</p>
+        {p.body && <p class="body mt-5 text-ink-muted">{p.body}</p>}
+      </div>
+      <div data-reveal class="self-end">
+        {p.vision && (
+          <div class="rounded-card bg-surface-soft p-[clamp(28px,3vw,44px)]">
+            <div class="eyebrow text-sky-text">Our vision</div>
+            <p class="mt-4 text-[clamp(20px,1.8vw,24px)] leading-[1.45]">{p.vision}</p>
+          </div>
+        )}
+        {p.stats && <div class="mt-5"><StatBlock variant="compact" /></div>}
+      </div>
+    </section>
+  ) : (
+    <section class="wrap py-[clamp(72px,9vw,128px)]">
+      <div class="rounded-card border-[1.5px] border-dashed border-placeholder-line bg-surface-soft p-10 text-lg text-ink-muted">
+        Project page in preparation.
+      </div>
+    </section>
+  )}
+
+  <!-- Editions timeline -->
+  {p.editions && (
+    <section aria-labelledby="tl-h" class="bg-surface-soft">
+      <div class="wrap section-y-sm">
+        <h2 id="tl-h" class="t-h2">Editions</h2>
+        <ol class="mt-10 grid grid-cols-[repeat(auto-fit,minmax(min(100%,200px),1fr))] border-t-2 border-navy">
+          {p.editions.map((e, i) => {
+            const last = i === p.editions!.length - 1;
+            const current = e === highlight;
+            return (
+              <li data-reveal class="relative pb-3 pr-6 pt-7">
+                <span class:list={['absolute -top-2 left-0 h-3.5 w-3.5 rounded-full border-2 border-navy', last ? 'bg-orange' : current ? 'bg-navy' : 'bg-white']}></span>
+                <div class="text-[clamp(30px,3vw,40px)] font-medium leading-none">{e.year}</div>
+                <div class="mt-2.5 text-base leading-normal">{e.date}{e.venue && ` · ${e.venue}`}</div>
+                {e.event && <div class="mt-1 text-[13px] text-ink-muted">{e.event}</div>}
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+    </section>
+  )}
+
+  <!-- Highlighted edition -->
+  {highlight && (
+    <section aria-labelledby="ed-h" class="wrap py-[clamp(72px,9vw,128px)]">
+      <div class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,440px),1fr))] items-start gap-[clamp(40px,5vw,80px)]">
+        <div data-reveal>
+          <div class="eyebrow text-sky-text">{[highlight.date, highlight.venue, highlight.event].filter(Boolean).join(' · ')}</div>
+          <h2 id="ed-h" class="t-h1 mt-4">Edition {highlight.year}</h2>
+          <p class="body mt-5 text-ink-muted">{highlight.description}</p>
+          {highlight.credits && <p class="mt-5 text-base">{highlight.credits}</p>}
+          {highlight.watchUrl && <Button href={highlight.watchUrl} variant="secondary" external class="mt-7">Watch the {highlight.year} performance</Button>}
+        </div>
+        {highlight.lineup.length > 0 && (
+          <ul class="grid grid-cols-[repeat(auto-fill,minmax(130px,1fr))] gap-x-5 gap-y-7">
+            {highlight.lineup.map((m) => <PersonCard name={m.name} role={m.role} />)}
+          </ul>
+        )}
+      </div>
+    </section>
+  )}
+
+  <!-- Documentary + trailer -->
+  {p.documentary && (
+    <section aria-labelledby="doc-h" class="bg-navy text-white">
+      <div class="wrap grid grid-cols-[repeat(auto-fit,minmax(min(100%,440px),1fr))] gap-[clamp(40px,5vw,80px)] py-[clamp(64px,8vw,112px)]">
+        <div data-reveal>
+          <div class="eyebrow text-sky">Documentary</div>
+          <h2 id="doc-h" class="t-h1 mt-4">{p.documentary.title}</h2>
+          <p class="body mt-5">{p.documentary.text}</p>
+          <Button href={p.documentary.trailerUrl} external class="mt-7">Watch the trailer</Button>
+        </div>
+        <ol class="border-t border-white/20">
+          {p.documentary.festivals.map((f) => (
+            <li data-reveal class="grid grid-cols-[96px_minmax(0,1fr)] gap-4 border-b border-white/20 py-[18px]">
+              <div class="pt-0.5 text-sm font-medium uppercase tracking-[0.1em] text-sky">{f.date}</div>
+              <div><div class="text-lg">{f.name}</div><div class="mt-0.5 text-sm text-line">{f.result}</div></div>
+            </li>
+          ))}
+        </ol>
+      </div>
+      <a href={p.documentary.trailerUrl} target="_blank" rel="noopener" aria-label={`Play the trailer of ${p.documentary.title}`} class="group relative block h-[clamp(300px,42vw,620px)] overflow-hidden bg-navy-deep">
+        <Photo {...p.documentary.poster} />
+        <div class="absolute inset-0 bg-[rgba(10,22,38,.35)]"></div>
+        <span class="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-3.5 rounded-full bg-white py-5 pl-[26px] pr-8 text-sm font-medium uppercase tracking-[0.14em] text-navy shadow-[0_10px_30px_rgba(0,0,0,.25)] transition-transform group-hover:scale-105">
+          <span class="h-0 w-0 border-y-[9px] border-l-[14px] border-y-transparent border-l-orange"></span>Play trailer
+        </span>
+      </a>
+    </section>
+  )}
+
+  <!-- Gallery -->
+  {p.gallery && (
+    <section aria-labelledby="gal-h" class="wrap py-[clamp(72px,9vw,128px)]">
+      <h2 id="gal-h" class="t-h2">Gallery</h2>
+      <div class="mt-9 grid grid-flow-dense auto-rows-[clamp(200px,20vw,280px)] grid-cols-[repeat(auto-fit,minmax(min(100%,260px),1fr))] gap-3">
+        {p.gallery.map((g) => (
+          <figure data-reveal class:list={['group relative m-0 overflow-hidden rounded-card bg-placeholder', g.span && spanClass[g.span]]}>
+            <Photo src={g.src} alt={g.alt} pos={g.pos} sizes="(min-width:1024px) 640px, 100vw" class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
+          </figure>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <!-- Testimonials -->
+  {projectQuotes.length > 0 && (
+    <section aria-label="Testimonials" class="wrap flex flex-col gap-7 pb-[clamp(72px,9vw,128px)]">
+      {projectQuotes.map((q) => <Testimonial text={q.text} who={q.who} caption={q.caption} photo={q.photo} />)}
+    </section>
+  )}
+
+  <!-- Partner -->
+  {p.partner && (
+    <section id="partner" aria-labelledby="p-h" class="bg-navy text-white">
+      <div class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,480px),1fr))]">
+        <div data-reveal class="max-w-[680px] justify-self-end px-[clamp(24px,5vw,88px)] py-[clamp(56px,7vw,112px)]">
+          <div class="eyebrow text-sky">{p.partner.eyebrow}</div>
+          <h2 id="p-h" class="mt-4 text-[clamp(34px,4vw,56px)] font-medium uppercase leading-[1.05] tracking-[0.015em]">{p.partner.title} <span class="text-orange">{p.partner.titleAccent}</span></h2>
+          <p class="mt-5 text-xl font-light leading-normal">{p.partner.text}</p>
+          <ul class="mt-8 border-t border-white/20">
+            {p.partner.benefits.map((b) => <li class="flex gap-3.5 border-b border-white/20 py-3.5 text-[17px] leading-normal"><span aria-hidden="true" class="mt-[9px] h-2 w-2 flex-none rounded-full bg-sky"></span>{b}</li>)}
+          </ul>
+          <div class="mt-8 flex flex-wrap gap-3.5">
+            <Button href={`mailto:${site.email}?subject=${encodeURIComponent(p.title + ' partnership')}`}>Partner with us</Button>
+            <Button href="/donate/" variant="light">Make a donation</Button>
+          </div>
+        </div>
+        <div class="relative min-h-[clamp(420px,50vw,780px)]"><Photo {...p.partner.photo} sizes="(min-width:1024px) 50vw, 100vw" /></div>
+      </div>
+    </section>
+  )}
+
+  <!-- More projects -->
+  <section class="wrap section-y-sm">
+    <div class="flex flex-wrap items-end justify-between gap-6">
+      <h2 class="t-h2">More projects</h2>
+      <a href="/projects/" class="text-sm font-medium uppercase tracking-[0.14em]">All projects</a>
+    </div>
+    <div class="mt-10 grid grid-cols-[repeat(auto-fill,minmax(min(100%,340px),1fr))] gap-[clamp(20px,2.4vw,32px)]">
+      {others.map((o) => <ProjectCard project={o} />)}
+    </div>
+  </section>
+</Base>

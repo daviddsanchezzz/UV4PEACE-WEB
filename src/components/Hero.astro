@@ -1,0 +1,37 @@
+---
+// Full-bleed hero: looping muted video when available, otherwise a still photo. Dark veil
+// for text contrast. Respects prefers-reduced-motion (handled by the <video> autoplay itself
+// being decorative only; no motion-triggered animation beyond the native loop).
+import Photo from './Photo.astro';
+import Button from './Button.astro';
+import { site } from '../data/site';
+import type { ImageRef } from '../data/types';
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  titleAccent?: string;
+  subtitle: string;
+  primaryCta: { label: string; href: string };
+  secondaryCta?: { label: string; href: string };
+  poster: ImageRef;
+}
+const { eyebrow, title, titleAccent, subtitle, primaryCta, secondaryCta, poster } = Astro.props;
+---
+<section aria-label="Hero" class="relative flex min-h-[clamp(560px,calc(100svh-81px),980px)] items-end overflow-hidden bg-navy-deep">
+  {site.heroVideo
+    ? <video class="absolute inset-0 h-full w-full object-cover" autoplay muted loop playsinline poster={poster.src}><source src={site.heroVideo.src} type="video/mp4" /></video>
+    : <Photo {...poster} loading="eager" />}
+  <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,22,38,.25)_0%,rgba(10,22,38,.15)_35%,rgba(10,22,38,.78)_100%)]"></div>
+  <div class="wrap relative w-full py-[clamp(48px,8vw,112px)]">
+    <div data-reveal class="max-w-[920px]">
+      <div class="eyebrow mb-5 text-white">{eyebrow}</div>
+      <h1 class="t-display text-white">{title}{titleAccent && <> <span class="text-orange">{titleAccent}</span></>}</h1>
+      <p class="lede mt-6 max-w-[560px] text-white">{subtitle}</p>
+      <div class="mt-9 flex flex-wrap gap-3.5">
+        <Button href={primaryCta.href}>{primaryCta.label}</Button>
+        {secondaryCta && <Button href={secondaryCta.href} variant="secondary">{secondaryCta.label}</Button>}
+      </div>
+    </div>
+  </div>
+</section>

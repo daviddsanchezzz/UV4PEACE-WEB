@@ -1,0 +1,39 @@
+---
+import { site } from '../data/site';
+---
+<section aria-labelledby="news-h" class="bg-surface-soft">
+  <div class="wrap section-y-sm grid grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] items-center gap-10">
+    <div>
+      <div class="eyebrow text-sky-text">Newsletter</div>
+      <h2 id="news-h" class="t-h2 mt-4">Hear the next note first</h2>
+      <p class="body mt-3 text-ink-muted">Concerts, calls for composers and news from our projects. A few emails a year.</p>
+    </div>
+    <div>
+      <form data-newsletter method="post" action={site.newsletterAction || undefined} class="flex flex-col gap-3.5">
+        <label for="nl-email" class="text-sm font-medium">Email address</label>
+        <div class="flex flex-wrap gap-2.5">
+          <input id="nl-email" name="email" type="email" required placeholder="you@organisation.org" class="min-w-[220px] flex-1 rounded-full border-[1.5px] border-placeholder-line bg-white px-[22px] py-4 text-base text-ink" />
+          <button type="submit" class="btn btn-primary">Subscribe</button>
+        </div>
+        <label class="flex cursor-pointer items-start gap-2.5 text-sm leading-normal text-ink-muted">
+          <input type="checkbox" name="consent" required class="mt-0.5 h-[18px] w-[18px] accent-navy" />
+          <span>I agree to receive emails from United Voices 4 Peace and accept the <a href="/privacy/">Privacy Policy</a>. I can unsubscribe at any time.</span>
+        </label>
+      </form>
+      <div data-newsletter-ok hidden class="rounded-card border border-line bg-white p-7 text-lg">Thank you. Please check your inbox to confirm your subscription.</div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // No provider wired up yet (Phase 4): shows the thank-you message without submitting.
+  document.querySelectorAll<HTMLFormElement>('[data-newsletter]').forEach((form) => {
+    if (form.getAttribute('action')) return;
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      form.hidden = true;
+      const ok = form.parentElement?.querySelector<HTMLElement>('[data-newsletter-ok]');
+      if (ok) ok.hidden = false;
+    });
+  });
+</script>
