@@ -60,7 +60,7 @@ lo omite en vez de mostrar el corchete. Lo más visible:
 
 - Vídeo del hero (`site.heroVideo`), enlace de PayPal (`site.paypalUrl`), proveedor de newsletter
   (`site.newsletterAction`) y URLs de redes sociales (`site.social`).
-- Cita y bio de la fundadora (`founder.quote`, `founder.bio`).
+- Bio corta de la fundadora (`founder.bio`).
 - Foto de portada de 19 de los 20 proyectos del archivo (todos menos Global Women in Music).
 - Sede de la edición 2025 y fecha/sede de la edición 2027 de GWIM.
 - Logos de los partners (se muestran como texto, que es como lo pidió el propio diseño mientras

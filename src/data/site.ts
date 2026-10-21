@@ -51,8 +51,7 @@ export const sdgs = [
 export const founder = {
   name: 'Verónica Sabbag',
   role: 'Founder, United Voices 4 Peace',
-  /** Empty until Veronica provides a quote — the blockquote is skipped when empty. */
-  quote: '',
+  quote: 'By uniting our voices, we spread respect for diversity, mutual understanding and dialogue through the universal language of music and the arts.',
   bio: '',
   photo: {
     src: '07-founder-candidata_IMG_5336.jpg',
