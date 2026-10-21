@@ -4,8 +4,9 @@ import { nav, site, legalPages } from '../data/site';
 <footer class="bg-navy text-white">
   <div class="wrap pb-8 pt-[clamp(56px,7vw,88px)]">
     <div class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,220px),1fr))] gap-10">
-      <img src="/logos/uv4peace-vertical-reversed.svg" alt="United Voices 4 Peace" class="h-auto w-[130px] sm:w-[170px]" loading="lazy" />
-      <nav aria-label="Footer" class="flex flex-col gap-2.5 text-base">
+      <img src="/logos/uv4peace-horizontal-reversed.svg" alt="United Voices 4 Peace" class="h-auto w-[150px] sm:hidden" loading="lazy" />
+      <img src="/logos/uv4peace-vertical-reversed.svg" alt="United Voices 4 Peace" class="hidden h-auto w-[170px] sm:block" loading="lazy" />
+      <nav aria-label="Footer" class="grid grid-cols-2 gap-x-4 gap-y-2.5 text-base sm:flex sm:flex-col sm:gap-2.5">
         {nav.map((n) => <a href={n.href} class="text-white hover:text-sky">{n.label}</a>)}
         <a href="/donate/" class="text-white hover:text-sky">Donate</a>
       </nav>

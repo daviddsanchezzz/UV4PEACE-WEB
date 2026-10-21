@@ -10,4 +10,4 @@ const { n, label } = Astro.props;
 const mod = icons[`../assets/sdg/sdg-${String(n).padStart(2, '0')}.png`];
 if (!mod) throw new Error(`SDG icon not found for goal ${n}`);
 ---
-<Image src={mod.default} alt={`UN Sustainable Development Goal ${n}: ${label}`} width={128} height={128} class="h-20 w-20 rounded-md sm:h-24 sm:w-24" />
+<Image src={mod.default} alt={`UN Sustainable Development Goal ${n}: ${label}`} width={128} height={128} class="h-[72px] w-[72px] rounded-md sm:h-24 sm:w-24" />

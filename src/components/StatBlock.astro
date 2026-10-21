@@ -5,11 +5,11 @@ interface Props { variant?: 'navy' | 'compact' }
 const { variant = 'navy' } = Astro.props;
 ---
 {variant === 'navy' ? (
-  <div class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,180px),1fr))] gap-px overflow-hidden rounded-card border border-white/15 bg-white/15">
+  <div class="grid grid-cols-2 gap-px overflow-hidden rounded-card border border-white/15 bg-white/15 sm:grid-cols-3 lg:grid-cols-6">
     {stats.map((s) => (
       <div data-reveal class="min-w-0 bg-navy px-5 py-8">
-        <div class="text-[clamp(32px,3.6vw,52px)] font-medium leading-none tracking-[-0.01em] text-sky">{s.n}</div>
-        <div class="mt-3.5 text-base leading-snug text-white">{s.label}</div>
+        <div class="text-[clamp(40px,3.6vw,52px)] font-medium leading-none tracking-[-0.01em] text-sky">{s.n}</div>
+        <div class="mt-3.5 text-sm leading-snug text-white lg:text-base">{s.label}</div>
       </div>
     ))}
   </div>

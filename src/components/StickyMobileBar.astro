@@ -1,9 +1,11 @@
 ---
-// Fixed bottom bar, mobile only. Hidden until the visitor scrolls past the hero
-// (~one viewport height), per the design. Donate is filled navy; Partner with us stays orange.
+// Fixed bottom bar, mobile only. Hidden until the visitor scrolls past the hero, then hides on
+// scroll-down and reappears on scroll-up (and stays hidden while Get Involved or the footer are
+// on screen, since both already show Donate/Partner with us). Donate is filled navy;
+// Partner with us stays orange.
 import { site } from '../data/site';
 ---
-<div data-sticky-bar class="fixed inset-x-0 bottom-0 z-40 flex translate-y-full gap-2 border-t border-line bg-white/95 px-3 py-2.5 opacity-0 transition-[opacity,transform] duration-300 lg:hidden">
+<div data-sticky-bar class="fixed inset-x-0 bottom-0 z-40 flex translate-y-full gap-2 border-t border-line bg-white/95 px-3 pt-2.5 pb-[calc(0.625rem+env(safe-area-inset-bottom))] opacity-0 transition-[opacity,transform] duration-300 lg:hidden">
   <a href={site.partnerMailto} class="btn btn-primary btn-sm flex-1 whitespace-nowrap px-2 text-[11px] tracking-[0.05em]">Partner with us</a>
   <a href="/donate/" class="btn btn-navy btn-sm flex-1 whitespace-nowrap px-2 text-[11px] tracking-[0.05em]">Donate</a>
 </div>
@@ -16,16 +18,33 @@ import { site } from '../data/site';
     const hide = () => bar.classList.add('translate-y-full', 'opacity-0');
     if (reduceMotion) bar.classList.remove('transition-[opacity,transform]');
 
+    const suppressing = new Set<Element>();
+    const suppressTargets = document.querySelectorAll('#get-involved, footer');
+    if (suppressTargets.length && 'IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => (e.isIntersecting ? suppressing.add(e.target) : suppressing.delete(e.target)));
+        update();
+      });
+      suppressTargets.forEach((t) => io.observe(t));
+    }
+
+    let lastY = window.scrollY;
+    const update = () => {
+      const y = window.scrollY;
+      const pastHero = y > window.innerHeight * 0.75;
+      const delta = y - lastY;
+      lastY = y;
+      if (!pastHero || suppressing.size > 0) { hide(); return; }
+      if (delta > 4) hide();
+      else if (delta < -4) show();
+    };
+
     let ticking = false;
-    const onScroll = () => {
+    addEventListener('scroll', () => {
       if (ticking) return;
       ticking = true;
-      requestAnimationFrame(() => {
-        (window.scrollY > window.innerHeight * 0.75 ? show : hide)();
-        ticking = false;
-      });
-    };
-    addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+      requestAnimationFrame(() => { update(); ticking = false; });
+    }, { passive: true });
+    update();
   }
 </script>

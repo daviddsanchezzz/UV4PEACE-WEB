@@ -72,9 +72,32 @@ const highlight = heldEditions[heldEditions.length - 1];
   <!-- Editions timeline -->
   {p.editions && (
     <section aria-labelledby="tl-h" class="bg-surface-soft">
-      <div class="wrap section-y-sm">
+      <div class="wrap section-y-sm pb-28 lg:pb-[clamp(64px,8vw,104px)]">
         <h2 id="tl-h" class="t-h2">Editions</h2>
-        <ol data-editions class="mt-10 grid grid-cols-[repeat(auto-fit,minmax(min(100%,200px),1fr))] border-t-2 border-navy">
+
+        <!-- Mobile: a continuous vertical line with a dot per edition, text to the right. -->
+        <div class="relative mt-10 lg:hidden">
+          <div class="absolute bottom-1 left-[7px] top-1 w-0.5 bg-navy" aria-hidden="true"></div>
+          <ol data-editions class="flex flex-col gap-8">
+            {p.editions.map((e, i) => {
+              const last = i === p.editions!.length - 1;
+              const current = e.year === highlight?.year;
+              return (
+                <li data-reveal class="relative pl-8">
+                  <button type="button" data-edition-year={e.year} aria-current={current ? 'true' : undefined} class="edition-trigger-m block w-full cursor-pointer text-left">
+                    <span class:list={['absolute left-0 top-1.5 h-3.5 w-3.5 rounded-full border-2', last ? 'border-orange bg-orange' : 'border-navy bg-white']} data-dot data-last={last ? 'true' : undefined}></span>
+                    <span class:list={['block text-[32px] font-medium leading-none', last && 'text-sky-text']}>{e.year}</span>
+                    <span class="mt-2 block text-sm leading-normal">{e.date}{e.venue && ` · ${e.venue}`}</span>
+                    {e.event && <span class="mt-0.5 block text-xs text-ink-muted">{e.event}</span>}
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+
+        <!-- Desktop: the original horizontal timeline, unchanged. -->
+        <ol data-editions class="mt-10 hidden grid-cols-[repeat(auto-fit,minmax(min(100%,200px),1fr))] border-t-2 border-navy lg:grid">
           {p.editions.map((e, i) => {
             const last = i === p.editions!.length - 1;
             const current = e.year === highlight?.year;

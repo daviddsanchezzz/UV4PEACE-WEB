@@ -75,11 +75,15 @@ const involve = [
           </div>
         </div>
         <div class="mt-8 flex flex-wrap items-center gap-3.5">
-          <span class="inline-flex items-center gap-2.5 rounded-full border border-orange px-4 py-2.5 text-[13px] font-medium uppercase tracking-[0.08em]"><span class="h-2 w-2 rounded-full bg-orange"></span>Coming soon · Global Women in Music 2027</span>
+          <span class="inline-flex items-center gap-2.5 rounded-full border border-orange px-4 py-2.5 text-[13px] font-medium uppercase tracking-[0.08em]">
+            <span class="h-2 w-2 flex-none rounded-full bg-orange"></span>
+            <span class="lg:hidden">GWIM 2027 · Coming soon</span>
+            <span class="hidden lg:inline">Coming soon · Global Women in Music 2027</span>
+          </span>
         </div>
-        <div class="mt-7 flex flex-wrap gap-3.5">
-          <Button href="#news-h">Get notified</Button>
-          <Button href={`/projects/${gwim.slug}/`} variant="light">Discover the project</Button>
+        <div class="mt-7 flex flex-col gap-3.5 sm:flex-row sm:flex-wrap">
+          <Button href="#news-h" class="w-full sm:w-auto">Get notified</Button>
+          <Button href={`/projects/${gwim.slug}/`} variant="light" class="w-full sm:w-auto">Discover the project</Button>
         </div>
       </div>
     </div>
@@ -142,9 +146,9 @@ const involve = [
       <PressStrip showFeaturedIn={false} />
     </div>
     {featuredIn.length > 0 && (
-      <div class="wrap flex flex-wrap items-baseline gap-x-10 gap-y-3 border-t border-line pb-[clamp(72px,10vw,140px)] pt-8">
-        <div class="eyebrow text-ink-muted">As featured in</div>
-        <div class="flex flex-wrap gap-x-9 gap-y-3 text-xl font-semibold uppercase tracking-[0.04em] text-ink">{featuredIn.map((m) => <span>{m}</span>)}</div>
+      <div class="wrap flex flex-col items-start gap-3 border-t border-line pb-[clamp(72px,10vw,140px)] pt-8 sm:flex-row sm:flex-wrap sm:items-baseline sm:gap-x-10">
+        <div class="eyebrow shrink-0 text-ink-muted">As featured in</div>
+        <div class="flex w-full gap-x-7 gap-y-3 overflow-x-auto text-[18px] font-semibold uppercase tracking-[0.04em] text-ink sm:w-auto sm:flex-wrap sm:gap-x-9 sm:overflow-visible sm:text-xl">{featuredIn.map((m) => <span class="shrink-0">{m}</span>)}</div>
       </div>
     )}
   </section>
@@ -157,7 +161,7 @@ const involve = [
       </figure>
       <div data-reveal class="flex flex-col justify-center px-[clamp(24px,5vw,88px)] py-[clamp(48px,7vw,104px)]">
         <div id="founder-h" class="eyebrow text-sky">Our founder</div>
-        {founder.quote && <blockquote class="mt-6 text-[clamp(26px,2.6vw,36px)] font-light leading-[1.35]">"{founder.quote}"</blockquote>}
+        {founder.quote && <blockquote class="mt-6 text-[clamp(26px,2.6vw,36px)] font-light leading-[1.35]">“{founder.quote}”</blockquote>}
         <div class="mt-8"><div class="text-[22px] font-semibold">{founder.name}</div><div class="mt-1 text-base text-line">{founder.role}</div></div>
         <Button href="/people/" variant="light" class="mt-9 self-start">Meet our people</Button>
       </div>
