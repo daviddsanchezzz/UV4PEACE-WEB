@@ -15,14 +15,14 @@ const { variant = 'navy' } = Astro.props;
   </div>
 ) : (
   <div>
-    <div class="grid grid-cols-3 gap-px overflow-hidden rounded-card border border-line bg-line">
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(140px,1fr))] gap-px overflow-hidden rounded-card border border-line bg-line">
       {stats.map((s) => (
-        <div class="bg-white px-4 py-[18px]">
-          <div class="text-[30px] font-medium leading-none text-sky-text">{s.n}</div>
-          <div class="mt-1.5 text-[13px] leading-snug text-ink-muted">{s.label}</div>
+        <div class="bg-white px-5 py-6">
+          <div class="text-[clamp(28px,2.6vw,40px)] font-medium leading-none text-sky-text">{s.n}</div>
+          <div class="mt-2 text-sm leading-snug text-ink-muted">{s.label}</div>
         </div>
       ))}
     </div>
-    <div class="mt-2 text-xs text-ink-muted">{statsNote}</div>
+    <div class="mt-3 text-xs text-ink-muted">{statsNote}</div>
   </div>
 )}
