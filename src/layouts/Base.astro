@@ -28,7 +28,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:url" content={canonical} />
     <meta name="theme-color" content="#14365A" />
   </head>
-  <body class="bg-surface pb-[calc(76px+env(safe-area-inset-bottom))] font-sans text-ink antialiased lg:pb-0">
+  <body class="bg-surface font-sans text-ink antialiased">
     <a href="#main" class="skip-link">Skip to content</a>
     <Header current={current} />
     <main id="main"><slot /></main>
