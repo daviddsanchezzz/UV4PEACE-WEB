@@ -4,6 +4,8 @@
 // rule for `press_items.featured` (max 3, most recent goes big).
 import { press, featuredIn } from '../data/press';
 
+interface Props { showFeaturedIn?: boolean }
+const { showFeaturedIn = true } = Astro.props;
 const byDateDesc = (a: { date: string }, b: { date: string }) => b.date.localeCompare(a.date);
 const featured = press.filter((p) => p.featured).sort(byDateDesc);
 const big = featured[0];
@@ -50,7 +52,7 @@ const rest = press.filter((p) => !p.featured).sort(byDateDesc);
     </ol>
   )}
 
-  {featuredIn.length > 0 && (
+  {showFeaturedIn && featuredIn.length > 0 && (
     <div class="mt-6">
       <div class="eyebrow text-ink-muted">As featured in</div>
       <div class="mt-4 flex flex-wrap gap-x-9 gap-y-3 text-xl font-semibold uppercase tracking-[0.04em] text-ink">{featuredIn.map((m) => <span>{m}</span>)}</div>

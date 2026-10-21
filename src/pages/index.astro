@@ -16,6 +16,7 @@ import { site, sdgs, founder } from '../data/site';
 import { projects } from '../data/projects';
 import { statsNote } from '../data/stats';
 import { testimonials } from '../data/testimonials';
+import { featuredIn } from '../data/press';
 
 const gwim = projects.find((p) => p.slug === 'global-women-in-music')!;
 const homeTestimonials = testimonials.filter((t) => t.published && t.home).sort((a, b) => a.order - b.order);
@@ -126,7 +127,7 @@ const involve = [
 
   <!-- Media & Recognition -->
   <section id="press" aria-labelledby="press-h" class="bg-surface-soft">
-    <div class="wrap section-y grid grid-cols-[repeat(auto-fit,minmax(min(100%,380px),1fr))] gap-[clamp(40px,6vw,96px)]">
+    <div class="wrap grid grid-cols-[repeat(auto-fit,minmax(min(100%,380px),1fr))] gap-[clamp(40px,6vw,96px)] pt-[clamp(72px,10vw,140px)]">
       <div data-reveal>
         <div class="eyebrow text-sky-text">Media &amp; Recognition</div>
         <h2 id="press-h" class="t-h1 mt-4">Recognised for uniting communities</h2>
@@ -136,8 +137,14 @@ const involve = [
         </figure>
         <Button href="/press/" variant="tertiary" class="mt-7">Press room</Button>
       </div>
-      <PressStrip />
+      <PressStrip showFeaturedIn={false} />
     </div>
+    {featuredIn.length > 0 && (
+      <div class="wrap flex flex-wrap items-baseline gap-x-10 gap-y-3 border-t border-line pb-[clamp(72px,10vw,140px)] pt-8">
+        <div class="eyebrow text-ink-muted">As featured in</div>
+        <div class="flex flex-wrap gap-x-9 gap-y-3 text-xl font-semibold uppercase tracking-[0.04em] text-ink">{featuredIn.map((m) => <span>{m}</span>)}</div>
+      </div>
+    )}
   </section>
 
   <!-- Founder -->
