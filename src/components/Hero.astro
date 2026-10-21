@@ -17,16 +17,16 @@ interface Props {
 }
 const { title, titleAccent, subtitle, primaryCta, secondaryCta, poster } = Astro.props;
 ---
-<section aria-label="Hero" class="relative flex min-h-[clamp(480px,calc(100svh-60px),900px)] items-end overflow-hidden bg-navy-deep lg:min-h-[clamp(560px,calc(100svh-81px),980px)]">
+<section aria-label="Hero" class="relative flex min-h-[clamp(480px,calc(100svh-60px),900px)] items-end overflow-hidden bg-navy-deep max-lg:items-stretch lg:min-h-[clamp(560px,calc(100svh-81px),980px)]">
   {site.heroVideo
     ? <video class="absolute inset-0 h-full w-full object-cover max-lg:object-[50%_80%]!" autoplay muted loop playsinline poster={poster.src}><source src={site.heroVideo.src} type="video/mp4" /></video>
     : <Photo {...poster} loading="eager" class="absolute inset-0 h-full w-full object-cover max-lg:object-[50%_80%]!" />}
-  <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,22,38,.35)_0%,rgba(10,22,38,.25)_30%,rgba(10,22,38,.92)_100%)] lg:bg-[linear-gradient(180deg,rgba(10,22,38,.25)_0%,rgba(10,22,38,.15)_35%,rgba(10,22,38,.78)_100%)]"></div>
-  <div class="wrap relative w-full py-[clamp(48px,8vw,112px)]">
-    <div data-reveal class="max-w-[920px]">
+  <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,22,38,.7)_0%,rgba(10,22,38,.35)_35%,rgba(10,22,38,.2)_55%,rgba(10,22,38,.92)_100%)] lg:bg-[linear-gradient(180deg,rgba(10,22,38,.25)_0%,rgba(10,22,38,.15)_35%,rgba(10,22,38,.78)_100%)]"></div>
+  <div class="wrap relative flex w-full flex-col py-[clamp(48px,8vw,112px)] max-lg:py-8 lg:block">
+    <div data-reveal class="max-w-[920px] max-lg:flex max-lg:flex-1 max-lg:flex-col">
       <h1 class="t-display text-[38px] leading-[1.0] text-white lg:text-[clamp(40px,5.6vw,72px)] lg:leading-[1.04]">{title}{titleAccent && <> <span class="text-orange">{titleAccent}</span></>}</h1>
       <p class="lede mt-6 max-w-[560px] text-white">{subtitle}</p>
-      <div class="mt-9 flex flex-col gap-3.5 sm:flex-row sm:flex-wrap">
+      <div class="mt-9 flex flex-col max-lg:mt-auto max-lg:pt-8 gap-3.5 sm:flex-row sm:flex-wrap">
         <Button href={primaryCta.href} class="w-full sm:w-auto">{primaryCta.label}</Button>
         {secondaryCta && <Button href={secondaryCta.href} variant="light" class="w-full sm:w-auto">{secondaryCta.label}</Button>}
       </div>
