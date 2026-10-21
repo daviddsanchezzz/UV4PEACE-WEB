@@ -45,20 +45,20 @@ const highlight = heldEditions[heldEditions.length - 1];
 
   <!-- Intro + vision + stats -->
   {p.intro ? (
-    <section aria-label="About the project" class="wrap grid grid-cols-[repeat(auto-fit,minmax(min(100%,440px),1fr))] gap-[clamp(40px,6vw,96px)] py-[clamp(72px,9vw,128px)]">
+    <section aria-label="About the project" class="wrap grid grid-cols-[repeat(auto-fit,minmax(min(100%,440px),1fr))] items-start gap-[clamp(40px,6vw,96px)] py-[clamp(72px,9vw,128px)]">
       <div data-reveal>
         <div class="eyebrow text-sky-text">About the project</div>
         <p class="mt-5 text-[clamp(22px,2vw,26px)] font-light leading-normal [text-wrap:pretty]">{p.intro}</p>
         {p.body && <p class="body mt-5 text-ink-muted">{p.body}</p>}
       </div>
-      <div data-reveal class="self-end">
+      <div data-reveal class="flex flex-col gap-5">
         {p.vision && (
           <div class="rounded-card bg-surface-soft p-[clamp(28px,3vw,44px)]">
             <div class="eyebrow text-sky-text">Our vision</div>
             <p class="mt-4 text-[clamp(20px,1.8vw,24px)] leading-[1.45]">{p.vision}</p>
           </div>
         )}
-        {p.stats && <div class="mt-5"><StatBlock variant="compact" /></div>}
+        {p.stats && <StatBlock variant="compact" />}
       </div>
     </section>
   ) : (
