@@ -5,16 +5,17 @@ import { spokeAboutUs, mediaCoverage, pressArchive, languageLabel, type Language
 const languages: Language[] = ['en', 'es', 'fr', 'it', 'ar'];
 const groups = languages
   .map((lang) => ({ lang, items: mediaCoverage.filter((m) => m.language === lang) }))
-  .filter((g) => g.items.length > 0);
+  .filter((g) => g.items.length > 0)
+  .sort((a, b) => b.items.length - a.items.length);
 ---
 <div>
   <div class="eyebrow text-ink-muted">Spoke about us</div>
   <p class="mt-2 text-base"><a href={spokeAboutUs.url} target="_blank" rel="noopener">{spokeAboutUs.outlet}</a></p>
 
   <div class="eyebrow mt-10 text-ink-muted">Media coverage</div>
-  <div class="mt-5 grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-x-10 gap-y-8">
+  <div class="mt-5 columns-1 gap-x-10 sm:columns-2 lg:columns-4">
     {groups.map((g) => (
-      <div>
+      <div class="mb-8 break-inside-avoid">
         <div class="text-sm font-semibold uppercase tracking-[0.08em] text-sky-text">{languageLabel[g.lang]}</div>
         <ul class="mt-3 flex flex-col gap-2">
           {g.items.map((m) => (
@@ -35,7 +36,7 @@ const groups = languages
       <ol class="mt-3 border-t border-line">
         {pressArchive.map((item) => (
           <li class="grid grid-cols-[minmax(84px,110px)_minmax(0,1fr)] gap-5 border-b border-line py-3.5">
-            <div class="pt-0.5 text-sm font-medium uppercase tracking-[0.1em] text-sky-text">{item.date}</div>
+            <div class="pt-0.5 text-sm font-medium uppercase tracking-[0.1em] text-sky-text">{item.date || '—'}</div>
             <div class="text-base leading-normal">
               {item.title}
               {item.links.map((l, i) => (
