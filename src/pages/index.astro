@@ -164,21 +164,27 @@ const involve = [
 
   <!-- Get involved -->
   <section id="get-involved" aria-labelledby="involve-h" class="wrap section-y">
-    <div data-reveal class="max-w-[720px]">
-      <div class="eyebrow text-sky-text">Get involved</div>
-      <h2 id="involve-h" class="t-h1 mt-4">Add your <span class="text-sky-text">voice</span></h2>
+    <div class="flex flex-wrap items-start justify-between gap-6">
+      <div data-reveal>
+        <div class="eyebrow text-sky-text">Get involved</div>
+        <h2 id="involve-h" class="t-h1 mt-4">Add your <span class="text-sky-text">voice</span></h2>
+      </div>
+      <p data-reveal class="max-w-[320px] text-sm leading-relaxed text-ink-muted">Institutions, artists and friends of the music all have a part to play. Choose the one that fits you.</p>
     </div>
     <div class="mt-12 grid grid-cols-[repeat(auto-fit,minmax(min(100%,280px),1fr))] gap-[clamp(20px,2.4vw,28px)]">
       <article data-reveal class="col-span-full grid grid-cols-[repeat(auto-fit,minmax(min(100%,380px),1fr))] overflow-hidden rounded-card bg-navy text-white">
         <div class="relative min-h-[320px]"><Photo src="08-partners-photocall_IMG_5478.jpg" alt="Guests at the Global Women in Music photocall in front of the partners' backdrop" pos="50% 35%" sizes="(min-width:1024px) 660px, 100vw" /></div>
         <div class="flex flex-col justify-center p-[clamp(32px,4vw,56px)]">
           <div class="eyebrow text-sky">For foundations &amp; institutions</div>
-          <h3 class="t-h2 mt-3.5">Partner with us</h3>
+          <h3 class="t-h2 mt-3.5">Partner <span class="text-orange">with us</span></h3>
           <p class="body mt-3.5 max-w-[460px]">Put your institution's name behind live music that advances visibility, representation and dialogue on the global decision-makers' stage.</p>
-          <Button href={site.partnerMailto} class="mt-7 self-start">Start a partnership</Button>
+          <div class="mt-7 flex flex-wrap items-center gap-6">
+            <Button href={site.partnerMailto}>Start a partnership</Button>
+            <a href="/projects/global-women-in-music/#partner" class="text-sm font-medium uppercase tracking-[0.1em] text-white underline underline-offset-4 hover:text-sky">See partner benefits</a>
+          </div>
         </div>
       </article>
-      {involve.map((c) => <CtaCard {...c} />)}
+      {involve.map((c, i) => <CtaCard {...c} index={i + 1} />)}
     </div>
   </section>
 
