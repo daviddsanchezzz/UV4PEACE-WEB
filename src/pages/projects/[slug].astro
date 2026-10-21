@@ -7,7 +7,7 @@ import Photo from '../../components/Photo.astro';
 import Placeholder from '../../components/Placeholder.astro';
 import Button from '../../components/Button.astro';
 import StatBlock from '../../components/StatBlock.astro';
-import Testimonial from '../../components/Testimonial.astro';
+import TestimonialCard from '../../components/TestimonialCard.astro';
 import PersonCard from '../../components/PersonCard.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import { projects, statusLabel, type Project } from '../../data/projects';
@@ -183,8 +183,14 @@ const highlight = heldEditions[heldEditions.length - 1];
 
   <!-- Testimonials -->
   {projectQuotes.length > 0 && (
-    <section aria-label="Testimonials" class="wrap flex flex-col gap-7 pb-[clamp(72px,9vw,128px)]">
-      {projectQuotes.map((q) => <Testimonial text={q.text} who={q.who} caption={q.caption} photo={q.photo} />)}
+    <section aria-label="Testimonials" class="bg-surface-soft">
+      <div class="wrap section-y-sm">
+        <div class="eyebrow text-sky-text">Testimonials</div>
+        <h2 class="t-h1 mt-4">In their words</h2>
+        <div class="mt-10 grid grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] gap-7">
+          {projectQuotes.map((q) => <TestimonialCard text={q.text} who={q.who} caption={q.caption} photo={q.photo} project={p.title} />)}
+        </div>
+      </div>
     </section>
   )}
 
