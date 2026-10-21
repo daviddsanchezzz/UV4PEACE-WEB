@@ -1,0 +1,13 @@
+---
+// Official UN SDG icon tile. Source: WEB CLAUDE DESING/uploads/UV4PEACE-claude-design/sdg/.
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+const icons = import.meta.glob<{ default: ImageMetadata }>('../assets/sdg/*.png', { eager: true });
+
+interface Props { n: number; label: string }
+const { n, label } = Astro.props;
+const mod = icons[`../assets/sdg/sdg-${String(n).padStart(2, '0')}.png`];
+if (!mod) throw new Error(`SDG icon not found for goal ${n}`);
+---
+<Image src={mod.default} alt={`UN Sustainable Development Goal ${n}: ${label}`} width={96} height={96} class="h-16 w-16 rounded-md sm:h-20 sm:w-20" />

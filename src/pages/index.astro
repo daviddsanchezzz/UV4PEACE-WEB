@@ -6,6 +6,7 @@ import Photo from '../components/Photo.astro';
 import Button from '../components/Button.astro';
 import StatBlock from '../components/StatBlock.astro';
 import ProjectCard from '../components/ProjectCard.astro';
+import SdgBadge from '../components/SdgBadge.astro';
 import PressStrip from '../components/PressStrip.astro';
 import PartnerMarquee from '../components/PartnerMarquee.astro';
 import Testimonial from '../components/Testimonial.astro';
@@ -45,7 +46,7 @@ const involve = [
       <div class="mt-10 border-t border-line pt-6">
         <div class="eyebrow mb-3.5 text-ink-muted">Aligned with the UN Sustainable Development Goals</div>
         <ul class="flex flex-wrap gap-2.5">
-          {sdgs.map((g) => <li class="inline-flex items-center gap-2 rounded-full border border-line px-3.5 py-2 text-sm"><b class="font-semibold">{g.n}</b> {g.label}</li>)}
+          {sdgs.map((g) => <li><SdgBadge n={g.n} label={g.label} /></li>)}
         </ul>
       </div>
     </div>
