@@ -1,26 +1,59 @@
 ---
-// Editorial list of recognitions, most recent first, plus the "As featured in" media line.
+// Recognition list: the most recent featured item goes in a big card, the next two featured
+// items go side by side, and everything else follows as a plain dated list. Matches SCHEMA.md's
+// rule for `press_items.featured` (max 3, most recent goes big).
 import { press, featuredIn } from '../data/press';
-interface Props { limit?: number }
-const { limit } = Astro.props;
-const items = limit ? press.slice(0, limit) : press;
+
+const byDateDesc = (a: { date: string }, b: { date: string }) => b.date.localeCompare(a.date);
+const featured = press.filter((p) => p.featured).sort(byDateDesc);
+const big = featured[0];
+const pair = featured.slice(1, 3);
+const rest = press.filter((p) => !p.featured).sort(byDateDesc);
 ---
-<div>
-  <ol class="border-t border-line">
-    {items.map((a) => (
-      <li data-reveal class="grid grid-cols-[minmax(84px,110px)_minmax(0,1fr)] gap-5 border-b border-line py-[22px]">
-        <div class="pt-0.5 text-sm font-medium uppercase tracking-[0.1em] text-sky-text">{a.dateLabel}</div>
-        <div class="text-lg leading-normal [text-wrap:pretty]">
-          {a.url ? <a href={a.url}>{a.title}</a> : a.title}
-          <span class="block text-base text-ink-muted">{a.by}</span>
+<div class="flex flex-col gap-5">
+  {big && (
+    <div data-reveal class="rounded-card border border-line bg-white p-7">
+      <div class="flex items-center justify-between gap-4">
+        <span class="chip bg-orange">{big.kind}</span>
+        <span class="eyebrow text-ink-muted">{big.dateLabel}</span>
+      </div>
+      <h3 class="t-h3 mt-4">{big.url ? <a href={big.url}>{big.title}</a> : big.title}</h3>
+      <p class="mt-1.5 text-sm text-sky-text">{big.by}</p>
+    </div>
+  )}
+
+  {pair.length > 0 && (
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-5">
+      {pair.map((p) => (
+        <div data-reveal class="rounded-card border border-line bg-white p-6">
+          <div class="flex items-center justify-between gap-4">
+            <span class="chip border border-line bg-surface-soft text-ink-muted">{p.kind}</span>
+            <span class="eyebrow text-ink-muted">{p.dateLabel}</span>
+          </div>
+          <h3 class="mt-4 text-lg font-semibold leading-snug">{p.url ? <a href={p.url}>{p.title}</a> : p.title}</h3>
+          <p class="mt-1.5 text-sm text-ink-muted">{p.by}</p>
         </div>
-      </li>
-    ))}
-  </ol>
+      ))}
+    </div>
+  )}
+
+  {rest.length > 0 && (
+    <ol class="mt-2 border-t border-line">
+      {rest.map((p) => (
+        <li data-reveal class="grid grid-cols-[minmax(84px,110px)_minmax(0,1fr)] gap-5 border-b border-line py-[18px]">
+          <div class="pt-0.5 text-sm font-medium uppercase tracking-[0.1em] text-sky-text">{p.dateLabel}</div>
+          <div class="text-base leading-normal [text-wrap:pretty]">
+            {p.url ? <a href={p.url}>{p.title}</a> : p.title} <span class="text-ink-muted">· {p.by}</span>
+          </div>
+        </li>
+      ))}
+    </ol>
+  )}
+
   {featuredIn.length > 0 && (
-    <div class="mt-10">
+    <div class="mt-6">
       <div class="eyebrow text-ink-muted">As featured in</div>
-      <div class="mt-4 flex flex-wrap gap-x-9 gap-y-3 text-[22px] font-medium uppercase tracking-[0.04em] text-ink-muted">{featuredIn.map((m) => <span>{m}</span>)}</div>
+      <div class="mt-4 flex flex-wrap gap-x-9 gap-y-3 text-xl font-semibold uppercase tracking-[0.04em] text-ink">{featuredIn.map((m) => <span>{m}</span>)}</div>
     </div>
   )}
 </div>
