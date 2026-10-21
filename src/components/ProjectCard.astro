@@ -1,19 +1,28 @@
 ---
 import Photo from './Photo.astro';
-import Placeholder from './Placeholder.astro';
 import { statusLabel, type Project } from '../data/projects';
 
 interface Props { project: Project }
 const { project: p } = Astro.props;
-const yearLabel = p.dateLabel.split(/[–-]/)[0]?.trim() ?? p.dateLabel;
+const editionCount = p.editions?.filter((e) => !e.upcoming).length ?? 0;
 ---
 <a href={`/projects/${p.slug}/`} data-reveal data-status={p.status} class="card-lift flex flex-col rounded-card bg-white text-ink hover:text-ink hover:no-underline">
   <div class="relative aspect-[4/3] overflow-hidden rounded-card bg-placeholder">
-    {p.cover ? <Photo {...p.cover} sizes="(min-width:1024px) 420px, 100vw" /> : <Placeholder />}
-    <span class:list={['chip absolute left-3.5 top-3.5', p.status === 'ongoing' ? 'bg-orange' : 'bg-white']}>{statusLabel[p.status]}</span>
+    {p.cover
+      ? <Photo {...p.cover} sizes="(min-width:1024px) 420px, 100vw" />
+      : (
+        <div class="placeholder" role="img" aria-label={`Cover photo pending${p.coverHint ? `: ${p.coverHint}` : ''}`}>
+          <span class="text-xs font-semibold">[cover image]</span>
+          {p.coverHint && <span>{p.coverHint}</span>}
+        </div>
+      )}
+    <div class="absolute left-3.5 top-3.5 flex gap-1.5">
+      <span class:list={['chip', p.status === 'ongoing' ? 'bg-orange' : 'bg-white']}>{statusLabel[p.status]}</span>
+      {editionCount > 1 && <span class="chip bg-navy text-white">{editionCount} editions</span>}
+    </div>
   </div>
   <div class="px-1 pb-2 pt-5">
-    <div class="eyebrow text-sky-text">{yearLabel} · {p.city}</div>
+    <div class="eyebrow text-sky-text">{p.dateLabel} · {p.city}</div>
     <h3 class="t-h3 mt-2.5">{p.title}</h3>
     <p class="mt-2 text-base leading-relaxed text-ink-muted">{p.summary}</p>
   </div>

@@ -5,7 +5,7 @@ import Hero from '../components/Hero.astro';
 import Photo from '../components/Photo.astro';
 import Button from '../components/Button.astro';
 import StatBlock from '../components/StatBlock.astro';
-import ProjectGrid from '../components/ProjectGrid.astro';
+import ProjectCard from '../components/ProjectCard.astro';
 import PressStrip from '../components/PressStrip.astro';
 import PartnerMarquee from '../components/PartnerMarquee.astro';
 import Testimonial from '../components/Testimonial.astro';
@@ -95,12 +95,16 @@ const involve = [
 
   <!-- Projects -->
   <section id="projects" aria-labelledby="projects-h" class="wrap section-y">
-    <ProjectGrid projects={projects}>
-      <Fragment slot="heading">
-        <div class="eyebrow text-sky-text">Projects</div>
-        <h2 id="projects-h" class="t-h1 mt-4">Where music meets <span class="text-sky-text">diplomacy</span></h2>
-      </Fragment>
-    </ProjectGrid>
+    <div data-reveal>
+      <div class="eyebrow text-sky-text">Projects</div>
+      <h2 id="projects-h" class="t-h1 mt-4">Where music meets <span class="text-sky-text">diplomacy</span></h2>
+    </div>
+    <div class="mt-12 grid grid-cols-[repeat(auto-fit,minmax(min(100%,340px),1fr))] gap-[clamp(20px,2.4vw,32px)]">
+      {projects.slice(0, 3).map((p) => <ProjectCard project={p} />)}
+    </div>
+    <div class="mt-12 flex justify-center">
+      <Button href="/projects/" variant="navy">See all {projects.length} projects</Button>
+    </div>
   </section>
 
   <!-- Voices from the stage -->
