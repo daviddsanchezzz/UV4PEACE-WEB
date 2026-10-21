@@ -6,7 +6,7 @@ const { current } = Astro.props;
 <header class="sticky top-0 z-50 border-b border-line bg-white/95 backdrop-blur-sm">
   <div class="wrap flex items-center justify-between gap-6 py-3.5">
     <a href="/" aria-label="United Voices 4 Peace, home" class="flex-none">
-      <img src="/logos/uv4peace-horizontal-color.svg" alt="United Voices 4 Peace" class="h-[52px] w-auto" width="144" height="52" />
+      <img src="/logos/uv4peace-horizontal-compact-color.svg" alt="United Voices 4 Peace" class="h-11 w-auto" width="183" height="44" />
     </a>
     <nav aria-label="Main" class="hidden items-center gap-8 text-sm font-medium uppercase tracking-[0.14em] lg:flex">
       {nav.map((n) => (
@@ -15,8 +15,8 @@ const { current } = Astro.props;
       ))}
     </nav>
     <div class="hidden items-center gap-3 lg:flex">
-      <a href="/donate/" class="btn btn-tertiary btn-sm">Donate</a>
-      <a href={site.partnerMailto} class="btn btn-primary btn-sm">Partner with us</a>
+      <a href="/donate/" class="btn btn-navy btn-sm">Donate</a>
+      <a href={site.partnerMailto} class="btn btn-tertiary btn-sm">Partner with us</a>
     </div>
     <button type="button" data-menu-open aria-controls="menu" class="btn btn-tertiary btn-sm bg-white lg:hidden">Menu</button>
   </div>
