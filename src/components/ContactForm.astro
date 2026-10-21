@@ -1,0 +1,84 @@
+---
+// Contact form. No backend yet (Phase 4 wires this to a Supabase-backed Astro endpoint with
+// validation, a honeypot and Turnstile); for now it shows a thank-you message on submit.
+import { site } from '../data/site';
+
+const topics = ['General', 'Partnership', 'Press', 'Artists', 'Project proposal'];
+const social = site.social.filter((s) => s.href);
+---
+<section id="contact" aria-labelledby="contact-h" class="bg-surface-soft">
+  <div class="wrap section-y-sm grid grid-cols-[repeat(auto-fit,minmax(min(100%,380px),1fr))] gap-[clamp(40px,6vw,96px)]">
+    <div data-reveal>
+      <div class="eyebrow text-sky-text">Contact</div>
+      <h2 id="contact-h" class="t-h1 mt-4">Let's <span class="text-sky-text">talk</span></h2>
+      <p class="body mt-4 max-w-[420px] text-ink-muted">Partnerships, press, artists or a project idea: write to us and we will get back to you.</p>
+      <div class="mt-10 flex flex-col gap-6">
+        <div>
+          <div class="eyebrow text-ink-muted">Email</div>
+          <a href={`mailto:${site.email}`} class="mt-1.5 block text-lg text-sky-text">{site.email}</a>
+        </div>
+        <div>
+          <div class="eyebrow text-ink-muted">Offices</div>
+          <div class="mt-1.5 text-base">New York · Brussels</div>
+        </div>
+        {social.length > 0 && (
+          <div>
+            <div class="eyebrow text-ink-muted">Follow</div>
+            <div class="mt-1.5 flex flex-wrap gap-4">{social.map((s) => <a href={s.href} class="text-base">{s.label}</a>)}</div>
+          </div>
+        )}
+      </div>
+    </div>
+
+    <div>
+    <form data-contact-form class="rounded-card bg-white p-[clamp(24px,3vw,40px)]">
+      <div class="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4">
+        <div>
+          <label for="contact-name" class="text-sm font-medium">Name</label>
+          <input id="contact-name" name="name" type="text" required class="mt-1.5 w-full rounded-md border border-placeholder-line bg-white px-3.5 py-2.5 text-base text-ink" />
+        </div>
+        <div>
+          <label for="contact-email" class="text-sm font-medium">Email</label>
+          <input id="contact-email" name="email" type="email" required class="mt-1.5 w-full rounded-md border border-placeholder-line bg-white px-3.5 py-2.5 text-base text-ink" />
+        </div>
+      </div>
+
+      <fieldset class="mt-5">
+        <legend class="text-sm font-medium">I'm writing about</legend>
+        <div class="mt-2.5 flex flex-wrap gap-2">
+          {topics.map((t, i) => (
+            <label class="cursor-pointer">
+              <input type="radio" name="topic" value={t} class="peer sr-only" checked={i === 0} />
+              <span class="inline-flex rounded-full border border-line px-4 py-2 text-sm text-ink transition-colors peer-checked:border-navy peer-checked:bg-navy peer-checked:text-white">{t}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      <div class="mt-5">
+        <label for="contact-message" class="text-sm font-medium">Message</label>
+        <textarea id="contact-message" name="message" rows="5" required class="mt-1.5 w-full rounded-md border border-placeholder-line bg-white px-3.5 py-2.5 text-base text-ink"></textarea>
+      </div>
+
+      <label class="mt-4 flex cursor-pointer items-start gap-2.5 text-sm leading-normal text-ink-muted">
+        <input type="checkbox" name="consent" required class="mt-0.5 h-[18px] w-[18px] accent-navy" />
+        <span>I agree that United Voices 4 Peace may use my details to reply, as described in the <a href="/privacy/">privacy policy</a>.</span>
+      </label>
+
+      <button type="submit" class="btn btn-primary mt-6">Send message</button>
+    </form>
+    <div data-contact-ok hidden class="rounded-card bg-white p-[clamp(24px,3vw,40px)] text-lg">Thank you. We'll get back to you shortly.</div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('[data-contact-form]').forEach((form) => {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      form.hidden = true;
+      const ok = form.parentElement?.querySelector<HTMLElement>('[data-contact-ok]');
+      if (ok) ok.hidden = false;
+    });
+  });
+</script>

@@ -36,10 +36,10 @@ const gwimArtists = people.filter((p) => p.group === 'artist' && p.project === '
     <section aria-labelledby="team-h" class="wrap section-y">
       <div data-reveal>
         <div class="eyebrow text-sky-text">Team</div>
-        <h2 id="team-h" class="t-h1 mt-4">Team &amp; board</h2>
+        <h2 id="team-h" class="t-h1 mt-4">Board</h2>
       </div>
-      <ul class="mt-12 grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-x-6 gap-y-10">
-        {board.map((m) => <PersonCard name={m.name} role={m.role} photo={m.photo} size="lg" />)}
+      <ul class="mt-12 grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-6">
+        {board.map((m) => <PersonCard variant="card" name={m.name} role={m.role} city={m.city} bio={m.bio} photo={m.photo} />)}
       </ul>
     </section>
   )}
