@@ -1,34 +1,18 @@
 ---
-// Cookie banner + Google Analytics loader. Nothing from Google is requested and no analytics cookie is set
-// until the visitor accepts. Choices live in a first-party cookie for 6 months, then the banner asks again.
+// Cookie bar + Google Analytics loader. Nothing from Google is requested and no analytics cookie is set
+// until the visitor accepts. The choice lives in a first-party cookie for 6 months, then the bar asks again.
 interface Props { measurementId: string }
 const { measurementId } = Astro.props;
 ---
 <div data-cookie-root data-ga-id={measurementId}>
-  <div id="cookie-banner" role="dialog" aria-modal="false" aria-labelledby="cookie-title" aria-describedby="cookie-text" hidden
-       class="fixed inset-x-3 bottom-3 z-50 rounded-card border border-line bg-white p-5 text-ink shadow-[0_12px_40px_-8px_rgba(14,34,56,.35)] sm:inset-x-auto sm:bottom-6 sm:left-6 sm:max-w-[560px] sm:p-6">
-    <h2 id="cookie-title" class="text-lg font-medium">Cookies on this website</h2>
-    <p id="cookie-text" class="mt-2 text-[15px] leading-relaxed text-ink-muted">We use a few cookies to remember your choices, and, only if you agree, Google Analytics to understand how the site is used. Nothing is collected for advertising. Read our <a href="/cookies/">Cookies Policy</a>.</p>
-
-    <div id="cookie-panel" hidden class="mt-4 border-t border-line pt-4">
-      <div class="flex items-start justify-between gap-4">
-        <div><p class="font-medium">Strictly necessary</p><p class="text-sm text-ink-muted">Remember your cookie choice. Always on.</p></div>
-        <span class="mt-1 rounded-full bg-surface-soft px-3 py-1 text-xs font-medium text-ink-muted">Always on</span>
+  <div id="cookie-banner" role="dialog" aria-modal="false" aria-label="Cookies" hidden
+       class="fixed inset-x-0 bottom-0 z-50 bg-navy-deep text-white shadow-[0_-8px_30px_-10px_rgba(0,0,0,.5)]">
+    <div class="wrap flex flex-col gap-4 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:flex-row sm:items-center sm:justify-between sm:gap-8">
+      <p id="cookie-text" class="max-w-[760px] text-[15px] leading-snug text-line">We use cookies to analyse how the website is used. <a href="/cookies/" class="whitespace-nowrap text-white underline underline-offset-4 hover:text-sky">More information</a></p>
+      <div class="flex flex-none gap-3">
+        <button type="button" id="cookie-reject" class="inline-flex min-h-[44px] min-w-[112px] items-center justify-center rounded-full border-[1.5px] border-white/70 px-6 text-[13px] font-medium uppercase tracking-[0.12em] text-white transition-colors hover:bg-white hover:text-navy-deep">Reject</button>
+        <button type="button" id="cookie-accept" class="inline-flex min-h-[44px] min-w-[112px] items-center justify-center rounded-full border-[1.5px] border-orange bg-orange px-6 text-[13px] font-medium uppercase tracking-[0.12em] text-navy transition-colors hover:border-orange-hover hover:bg-orange-hover">Accept</button>
       </div>
-      <div class="mt-4 flex items-start justify-between gap-4">
-        <div><p class="font-medium" id="cookie-analytics-label">Analytics</p><p class="text-sm text-ink-muted">Google Analytics counts visits and shows which pages are read. Data is not used for advertising.</p></div>
-        <button type="button" role="switch" aria-checked="false" aria-labelledby="cookie-analytics-label" id="cookie-analytics"
-                class="relative mt-1 h-7 w-12 flex-none rounded-full bg-placeholder-line transition-colors aria-checked:bg-navy">
-          <span class="absolute left-0.5 top-0.5 h-6 w-6 rounded-full bg-white shadow transition-transform [[aria-checked=true]_&]:translate-x-5"></span>
-        </button>
-      </div>
-    </div>
-
-    <div class="mt-5 flex flex-wrap gap-3">
-      <button type="button" id="cookie-accept" class="btn btn-primary btn-sm">Accept all</button>
-      <button type="button" id="cookie-reject" class="btn btn-tertiary btn-sm">Reject all</button>
-      <button type="button" id="cookie-customize" class="inline-flex min-h-[44px] items-center px-2 text-sm font-medium text-sky-text underline underline-offset-4" aria-expanded="false" aria-controls="cookie-panel">Customize</button>
-      <button type="button" id="cookie-save" class="btn btn-navy btn-sm" hidden>Save choices</button>
     </div>
   </div>
 </div>
@@ -38,8 +22,7 @@ const { measurementId } = Astro.props;
   if (root) {
     const id = root.dataset.gaId!;
     const NAME = 'uv4p_consent';
-    const $ = <T extends HTMLElement>(s: string) => document.getElementById(s) as T;
-    const banner = $('cookie-banner'), panel = $('cookie-panel'), sw = $('cookie-analytics'), customize = $('cookie-customize'), save = $('cookie-save');
+    const banner = document.getElementById('cookie-banner')!;
     type W = Window & { dataLayer?: unknown[]; gtag?: (...a: unknown[]) => void; [k: string]: unknown };
     const w = window as unknown as W;
 
@@ -77,21 +60,16 @@ const { measurementId } = Astro.props;
       });
     };
 
-    const setSwitch = (on: boolean) => sw.setAttribute('aria-checked', String(on));
-    const openPanel = (open: boolean) => { panel.hidden = !open; save.hidden = !open; customize.setAttribute('aria-expanded', String(open)); customize.textContent = open ? 'Hide options' : 'Customize'; };
-    const show = (focus: boolean) => { banner.hidden = false; setSwitch(read()?.analytics ?? false); if (focus) { openPanel(true); sw.focus(); } };
-    const decide = (analytics: boolean) => { write(analytics); analytics ? load() : unload(); banner.hidden = true; openPanel(false); };
-
-    $('cookie-accept').addEventListener('click', () => decide(true));
-    $('cookie-reject').addEventListener('click', () => decide(false));
-    save.addEventListener('click', () => decide(sw.getAttribute('aria-checked') === 'true'));
-    customize.addEventListener('click', () => openPanel(panel.hidden));
-    sw.addEventListener('click', () => setSwitch(sw.getAttribute('aria-checked') !== 'true'));
-    banner.addEventListener('keydown', (e) => { if (e.key === 'Escape' && read()) { banner.hidden = true; } });
-    // Any link or button marked data-cookie-settings reopens the choices (footer, Cookies page).
-    document.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('[data-cookie-settings]')) { e.preventDefault(); show(true); } });
+    const decide = (analytics: boolean) => { write(analytics); analytics ? load() : unload(); banner.hidden = true; };
+    document.getElementById('cookie-accept')!.addEventListener('click', () => decide(true));
+    document.getElementById('cookie-reject')!.addEventListener('click', () => decide(false));
+    banner.addEventListener('keydown', (e) => { if (e.key === 'Escape' && read()) banner.hidden = true; });
+    // Any link or button marked data-cookie-settings shows the bar again so the choice can be changed.
+    document.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('[data-cookie-settings]')) { e.preventDefault(); banner.hidden = false; document.getElementById(read()?.analytics ? 'cookie-reject' : 'cookie-accept')!.focus(); }
+    });
 
     const saved = read();
-    if (!saved) show(false); else if (saved.analytics) load();
+    if (!saved) banner.hidden = false; else if (saved.analytics) load();
   }
 </script>
