@@ -1,0 +1,33 @@
+---
+// Login screen (prototype: the form does not authenticate yet).
+import '../../styles/global.css';
+---
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Entrar · Panel UV4PEACE</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body class="grid min-h-svh place-items-center bg-navy px-4 py-10 font-sans text-ink antialiased">
+    <main class="w-full max-w-[420px] rounded-2xl bg-white p-8 shadow-xl sm:p-10">
+      <img src="/logos/uv4peace-horizontal-color.svg" alt="United Voices 4 Peace" class="h-10 w-auto" />
+      <h1 class="mt-8 text-[28px] font-medium leading-tight">Panel de contenidos</h1>
+      <p class="mt-2 text-ink-muted">Entra para editar proyectos, personas y el resto de la web.</p>
+      <form class="mt-8 flex flex-col gap-5" action="/admin/inicio/">
+        <div>
+          <label for="email" class="mb-1.5 block text-sm font-medium">Correo electrónico</label>
+          <input id="email" type="email" value="veronica@uv4peace.org" class="min-h-[48px] w-full rounded-lg border-[1.5px] border-line px-3.5 text-base" />
+        </div>
+        <div>
+          <label for="pass" class="mb-1.5 block text-sm font-medium">Contraseña</label>
+          <input id="pass" type="password" value="contraseña" class="min-h-[48px] w-full rounded-lg border-[1.5px] border-line px-3.5 text-base" />
+        </div>
+        <button class="btn btn-primary mt-2 w-full" type="submit">Entrar</button>
+        <a href="/admin/inicio/" class="text-center text-sm">Prefiero recibir un enlace por correo</a>
+      </form>
+    </main>
+  </body>
+</html>

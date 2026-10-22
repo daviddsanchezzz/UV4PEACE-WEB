@@ -1,0 +1,61 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { people } from '../../data/people';
+import { projects } from '../../data/projects';
+import { press } from '../../data/press';
+import { partners } from '../../data/partners';
+import { testimonials } from '../../data/testimonials';
+import { stats } from '../../data/stats';
+
+const sections = [
+  { id: 'proyectos', label: 'Proyectos', n: projects.length, hint: 'Con sus ediciones y line-ups', href: '/admin/proyectos/' },
+  { id: 'personas', label: 'Personas', n: people.length, hint: 'Equipo, junta, embajadoras y artistas', href: '/admin/personas/' },
+  { id: 'prensa', label: 'Prensa y premios', n: press.length, hint: 'Reconocimientos y menciones', href: '#' },
+  { id: 'socios', label: 'Socios', n: partners.length, hint: 'Organizaciones y logos', href: '#' },
+  { id: 'testimonios', label: 'Testimonios', n: testimonials.length, hint: 'Citas de artistas y público', href: '#' },
+  { id: 'cifras', label: 'Cifras', n: stats.length, hint: 'Números de impacto de la home', href: '#' },
+];
+const recent = [
+  { what: 'Persona editada', name: 'Vesna Šouc', when: 'Hoy, 10:42' },
+  { what: 'Edición añadida', name: 'Global Women in Music · 2027', when: 'Ayer' },
+  { what: 'Foto cambiada', name: 'Tim Ries', when: 'Hace 3 días' },
+];
+---
+<AdminLayout title="Inicio" current="inicio">
+  <p class="eyebrow text-ink-muted">Hola, Verónica</p>
+  <h1 class="adm-h1 mt-2">¿Qué quieres cambiar hoy?</h1>
+
+  <section class="adm-card mt-8 flex flex-wrap items-center justify-between gap-4 border-l-4 border-l-orange p-5" aria-label="Cambios sin publicar">
+    <div>
+      <p class="font-medium">Tienes 3 cambios sin publicar</p>
+      <p class="adm-hint !mt-1">La web pública sigue mostrando la versión anterior hasta que publiques.</p>
+    </div>
+    <a href="/admin/publicar/" class="adm-btn adm-btn-primary">Revisar y publicar</a>
+  </section>
+
+  <h2 class="mt-10 text-sm font-medium uppercase tracking-[0.14em] text-ink-muted">Secciones</h2>
+  <div class="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+    {sections.map((s) => (
+      <a id={s.id} href={s.href} class="adm-card card-lift block p-5 hover:no-underline">
+        <div class="flex items-baseline justify-between gap-3">
+          <span class="text-xl font-medium">{s.label}</span>
+          <span class="text-3xl font-light tabular-nums text-sky-text">{s.n}</span>
+        </div>
+        <p class="adm-hint">{s.hint}</p>
+      </a>
+    ))}
+  </div>
+
+  <h2 class="mt-10 text-sm font-medium uppercase tracking-[0.14em] text-ink-muted">Últimos cambios</h2>
+  <div class="adm-card mt-4">
+    {recent.map((r) => (
+      <div class="adm-row">
+        <div class="min-w-0 flex-1">
+          <p class="font-medium">{r.name}</p>
+          <p class="adm-hint !mt-0.5">{r.what}</p>
+        </div>
+        <span class="text-sm text-ink-muted">{r.when}</span>
+      </div>
+    ))}
+  </div>
+</AdminLayout>

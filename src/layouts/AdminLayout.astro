@@ -1,0 +1,84 @@
+---
+// Admin shell for the content panel. Prototype: no auth or writes yet (Phase 2 wires Supabase).
+import '../styles/global.css';
+
+interface Props { title: string; current?: string; pending?: number }
+const { title, current = '', pending = 3 } = Astro.props;
+
+const nav = [
+  { id: 'inicio', label: 'Inicio', href: '/admin/inicio/' },
+  { id: 'proyectos', label: 'Proyectos', href: '/admin/proyectos/' },
+  { id: 'personas', label: 'Personas', href: '/admin/personas/' },
+  { id: 'prensa', label: 'Prensa', href: '/admin/inicio/#prensa' },
+  { id: 'socios', label: 'Socios', href: '/admin/inicio/#socios' },
+  { id: 'testimonios', label: 'Testimonios', href: '/admin/inicio/#testimonios' },
+  { id: 'cifras', label: 'Cifras', href: '/admin/inicio/#cifras' },
+];
+---
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{title} · Panel UV4PEACE</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body class="bg-surface-soft font-sans text-ink antialiased">
+    <aside class="adm-side">
+      <a href="/admin/inicio/" class="adm-brand" aria-label="Panel UV4PEACE">
+        <img src="/logos/uv4peace-horizontal-white.svg" alt="" class="h-8 w-auto" />
+        <span>Panel</span>
+      </a>
+      <nav class="adm-nav" aria-label="Secciones">
+        {nav.map((n) => (
+          <a href={n.href} aria-current={current === n.id ? 'page' : undefined}>{n.label}</a>
+        ))}
+      </nav>
+      <a href="/admin/publicar/" class="adm-pub">
+        <span>Publicar cambios</span>
+        {pending > 0 && <b>{pending}</b>}
+      </a>
+    </aside>
+    <main class="adm-main"><slot /></main>
+    <style is:global>
+      .adm-side { position: sticky; top: 0; z-index: 20; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding: 10px 16px; background: var(--color-navy); color: #fff; }
+      .adm-brand { display: flex; align-items: center; gap: 10px; color: #fff; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; font-size: 13px; }
+      .adm-brand:hover { color: #fff; text-decoration: none; }
+      .adm-nav { order: 3; display: flex; width: 100%; gap: 4px; overflow-x: auto; }
+      .adm-nav a { flex: none; padding: 8px 14px; border-radius: 9999px; color: #cfe0f1; font-size: 15px; }
+      .adm-nav a:hover { background: rgba(255,255,255,.1); color: #fff; text-decoration: none; }
+      .adm-nav a[aria-current] { background: #fff; color: var(--color-navy); font-weight: 500; }
+      .adm-pub { margin-left: auto; display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 9999px; background: var(--color-orange); color: var(--color-navy); font-weight: 500; font-size: 14px; }
+      .adm-pub:hover { background: var(--color-orange-hover); color: var(--color-navy); text-decoration: none; }
+      .adm-pub b { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 9999px; background: var(--color-navy); color: #fff; font-size: 12px; }
+      .adm-main { padding: 24px 16px 96px; max-width: 1180px; margin-inline: auto; }
+      @media (min-width: 1024px) {
+        body { display: grid; grid-template-columns: 248px 1fr; align-items: start; }
+        .adm-side { position: sticky; top: 0; height: 100vh; flex-direction: column; align-items: stretch; flex-wrap: nowrap; padding: 24px 16px; gap: 24px; }
+        .adm-nav { order: 0; flex-direction: column; width: auto; overflow: visible; }
+        .adm-nav a { border-radius: 8px; }
+        .adm-pub { margin: auto 0 0; justify-content: space-between; border-radius: 10px; padding: 12px 16px; }
+        .adm-main { width: 100%; padding: 40px 48px 96px; }
+      }
+      .adm-card { background: #fff; border: 1px solid var(--color-line); border-radius: 12px; }
+      .adm-h1 { font-size: clamp(26px, 3vw, 34px); font-weight: 500; line-height: 1.1; }
+      .adm-label { display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500; }
+      .adm-hint { margin-top: 6px; font-size: 13px; color: var(--color-ink-muted); }
+      .adm-input { width: 100%; min-height: 46px; padding: 10px 14px; border: 1.5px solid var(--color-line); border-radius: 8px; background: #fff; font: inherit; font-size: 16px; color: var(--color-ink); }
+      textarea.adm-input { min-height: 120px; resize: vertical; line-height: 1.5; }
+      .adm-input:focus { outline: none; border-color: var(--color-sky-text); box-shadow: 0 0 0 3px rgba(85,173,239,.3); }
+      .adm-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 20px; border-radius: 9999px; border: 1.5px solid var(--color-navy); background: transparent; font: inherit; font-size: 15px; font-weight: 500; color: var(--color-navy); cursor: pointer; }
+      .adm-btn:hover { background: var(--color-navy); color: #fff; text-decoration: none; }
+      .adm-btn-primary { background: var(--color-orange); border-color: var(--color-orange); }
+      .adm-btn-primary:hover { background: var(--color-orange-hover); border-color: var(--color-orange-hover); color: var(--color-navy); }
+      .adm-pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 9999px; font-size: 12px; font-weight: 500; background: #e6f1fb; color: var(--color-sky-text); }
+      .adm-pill-warn { background: #fdf0d8; color: #8a5a00; }
+      .adm-pill-ok { background: #e1f3ea; color: #1b6b45; }
+      .adm-avatar { display: grid; place-items: center; flex: none; border-radius: 9999px; background: var(--color-navy); color: #fff; font-weight: 500; }
+      .adm-row { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-top: 1px solid var(--color-line); color: inherit; }
+      .adm-row:first-child { border-top: 0; }
+      a.adm-row:hover { background: var(--color-surface-soft); text-decoration: none; }
+    </style>
+  </body>
+</html>

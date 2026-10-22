@@ -1,0 +1,111 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { people, type Person } from '../../../data/people';
+import { projects } from '../../../data/projects';
+
+const { slug } = Astro.params;
+const isNew = slug === 'nueva';
+const found = people.find((p) => p.slug === slug);
+if (!isNew && !found) return Astro.redirect('/admin/personas/');
+const p: Person = found ?? { slug: '', name: '', role: '', city: '', group: 'team', photo: null, bio: '', website: '', order: people.length + 1 };
+const initials = (n: string) => n.split(' ').map((w) => w[0]).slice(0, 2).join('') || '?';
+const groups = [
+  { v: 'team', l: 'Equipo' }, { v: 'board', l: 'Junta' }, { v: 'ambassador', l: 'Embajadora' }, { v: 'artist', l: 'Artista de un proyecto' },
+];
+---
+<AdminLayout title={isNew ? 'Nueva persona' : p.name} current="personas">
+  <a href="/admin/personas/" class="text-sm">‹ Todas las personas</a>
+  <h1 class="adm-h1 mt-3">{isNew ? 'Añadir persona' : p.name}</h1>
+
+  <form class="mt-8 grid gap-8 lg:grid-cols-[1fr_340px]" onsubmit="return false">
+    <div class="adm-card flex flex-col gap-6 p-6">
+      <div>
+        <label class="adm-label" for="name">Nombre</label>
+        <input id="name" class="adm-input" value={p.name} />
+      </div>
+      <div>
+        <label class="adm-label" for="role">Cargo o descripción</label>
+        <input id="role" class="adm-input" value={p.role} />
+        <p class="adm-hint">Aparece debajo del nombre, por ejemplo «Compositora» o «Directora invitada».</p>
+      </div>
+      <div class="grid gap-6 sm:grid-cols-2">
+        <div>
+          <label class="adm-label" for="group">¿Dónde aparece?</label>
+          <select id="group" class="adm-input">
+            {groups.map((g) => <option value={g.v} selected={g.v === p.group}>{g.l}</option>)}
+          </select>
+        </div>
+        <div>
+          <label class="adm-label" for="city">Ciudad</label>
+          <input id="city" class="adm-input" value={p.city} />
+        </div>
+      </div>
+      {p.group === 'artist' && (
+        <div>
+          <label class="adm-label" for="proj">Proyecto y edición</label>
+          <select id="proj" class="adm-input">
+            {projects.filter((x) => x.editions?.length).map((x) => <option selected={x.slug === p.project}>{x.title} · {p.edition}</option>)}
+          </select>
+        </div>
+      )}
+      <div>
+        <label class="adm-label" for="bio">Biografía</label>
+        <textarea id="bio" class="adm-input">{p.bio}</textarea>
+        <p class="adm-hint">{p.bio ? `${p.bio.length} caracteres. Entre 200 y 300 queda bien en la tarjeta.` : 'Opcional. Si la dejas vacía, la tarjeta solo muestra nombre y cargo.'}</p>
+      </div>
+      <div>
+        <label class="adm-label" for="web">Sitio web</label>
+        <input id="web" class="adm-input" value={p.website} placeholder="https://" />
+      </div>
+      <div class="flex flex-wrap items-center gap-3 border-t border-line pt-6">
+        <button class="adm-btn adm-btn-primary" type="button">Guardar cambios</button>
+        <a class="adm-btn" href="/admin/personas/">Cancelar</a>
+        {!isNew && <button class="adm-btn ml-auto !border-transparent !text-[#a33]" type="button">Quitar de la web</button>}
+      </div>
+    </div>
+
+    <aside class="flex flex-col gap-6">
+      <div class="adm-card p-5">
+        <p class="adm-label">Foto</p>
+        <div class="relative mx-auto aspect-[4/5] w-full max-w-[260px] overflow-hidden rounded-lg bg-placeholder" id="frame">
+          <span class="absolute inset-0 grid place-items-center text-6xl font-light text-placeholder-line">{initials(p.name)}</span>
+          <span id="focus" class="absolute h-7 w-7 -translate-x-1/2 -translate-y-1/2 cursor-grab rounded-full border-[3px] border-orange bg-white/40 shadow" style="left:50%;top:25%" aria-label="Punto de encuadre"></span>
+        </div>
+        <p class="adm-hint">Arrastra el círculo naranja hacia la cara. La web recorta la foto alrededor de ese punto.</p>
+        <button class="adm-btn mt-4 w-full" type="button">{p.photo ? 'Cambiar foto' : 'Subir foto'}</button>
+      </div>
+      <div class="adm-card p-5">
+        <p class="adm-label">Así se verá en la web</p>
+        <div class="mt-3 flex items-start gap-3">
+          <span class="adm-avatar h-14 w-14 text-lg">{initials(p.name)}</span>
+          <div class="min-w-0">
+            <p class="font-medium" id="pv-name">{p.name || 'Nombre'}</p>
+            <p class="text-sm text-ink-muted" id="pv-role">{p.role || 'Cargo'}</p>
+            <p class="mt-1 text-sm text-ink-muted">{p.city}</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </form>
+
+  <script>
+    const bind = (src: string, dst: string, fb: string) => {
+      const a = document.getElementById(src) as HTMLInputElement | null;
+      const b = document.getElementById(dst);
+      a?.addEventListener('input', () => { if (b) b.textContent = a.value || fb; });
+    };
+    bind('name', 'pv-name', 'Nombre');
+    bind('role', 'pv-role', 'Cargo');
+    const frame = document.getElementById('frame');
+    const dot = document.getElementById('focus');
+    if (frame && dot) {
+      const move = (e: PointerEvent) => {
+        const r = frame.getBoundingClientRect();
+        dot.style.left = Math.min(100, Math.max(0, ((e.clientX - r.left) / r.width) * 100)) + '%';
+        dot.style.top = Math.min(100, Math.max(0, ((e.clientY - r.top) / r.height) * 100)) + '%';
+      };
+      dot.addEventListener('pointerdown', (e) => { dot.setPointerCapture(e.pointerId); dot.addEventListener('pointermove', move); });
+      dot.addEventListener('pointerup', () => dot.removeEventListener('pointermove', move));
+    }
+  </script>
+</AdminLayout>

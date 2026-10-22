@@ -1,0 +1,43 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { people, type PersonGroup } from '../../../data/people';
+
+const groupLabel: Record<PersonGroup, string> = { team: 'Equipo', board: 'Junta', ambassador: 'Embajadoras', artist: 'Artistas' };
+const initials = (n: string) => n.split(' ').map((w) => w[0]).slice(0, 2).join('');
+const counts = (Object.keys(groupLabel) as PersonGroup[]).map((g) => ({ g, n: people.filter((p) => p.group === g).length }));
+---
+<AdminLayout title="Personas" current="personas">
+  <div class="flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <p class="eyebrow text-ink-muted">Personas</p>
+      <h1 class="adm-h1 mt-2">{people.length} personas en la web</h1>
+    </div>
+    <a href="/admin/personas/nueva/" class="adm-btn adm-btn-primary">+ Añadir persona</a>
+  </div>
+
+  <div class="mt-8 flex flex-wrap items-center gap-3">
+    <label for="q" class="sr-only">Buscar</label>
+    <input id="q" class="adm-input max-w-[320px]" type="search" placeholder="Buscar por nombre o cargo" />
+    <div class="flex flex-wrap gap-2" role="group" aria-label="Filtrar por grupo">
+      <button class="adm-btn !min-h-[38px] !bg-navy !text-white" type="button">Todas {people.length}</button>
+      {counts.filter((c) => c.n > 0).map((c) => <button class="adm-btn !min-h-[38px]" type="button">{groupLabel[c.g]} {c.n}</button>)}
+    </div>
+  </div>
+
+  <p class="adm-hint mt-4">Arrastra el asa de cada fila para cambiar el orden en que aparecen en la web.</p>
+  <div class="adm-card mt-3">
+    {people.map((p) => (
+      <a href={`/admin/personas/${p.slug}/`} class="adm-row hover:no-underline">
+        <span class="cursor-grab select-none text-xl leading-none text-placeholder-line" aria-hidden="true">⠿</span>
+        <span class="adm-avatar h-11 w-11 text-sm">{initials(p.name)}</span>
+        <span class="min-w-0 flex-1">
+          <span class="block truncate font-medium">{p.name}</span>
+          <span class="block truncate text-sm text-ink-muted">{p.role}{p.city ? ` · ${p.city}` : ''}</span>
+        </span>
+        <span class="adm-pill hidden sm:inline-flex">{groupLabel[p.group]}</span>
+        {!p.photo && <span class="adm-pill adm-pill-warn hidden md:inline-flex">Sin foto</span>}
+        <span aria-hidden="true" class="text-ink-muted">›</span>
+      </a>
+    ))}
+  </div>
+</AdminLayout>
