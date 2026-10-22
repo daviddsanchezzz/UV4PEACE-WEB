@@ -1,0 +1,48 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { getSettings } from '../../lib/content';
+
+const s = await getSettings();
+const social = ['Instagram', 'LinkedIn', 'YouTube'].map((label) => ({ label, href: s.social.find((x) => x.label === label)?.href ?? '' }));
+---
+<AdminLayout title="Ajustes" current="ajustes">
+  <p class="eyebrow text-ink-muted">Ajustes</p>
+  <h1 class="adm-h1 mt-2">Correo, donaciones y redes</h1>
+  <p class="mt-3 max-w-[62ch] text-ink-muted">Estos datos aparecen en toda la web. Al guardar, se actualizan en cuanto publiques.</p>
+
+  <form class="mt-8 flex max-w-[760px] flex-col gap-6" onsubmit="return false">
+    <section class="adm-card flex flex-col gap-6 p-6">
+      <h2 class="text-xl font-medium">Correo de contacto</h2>
+      <div>
+        <label class="adm-label" for="email">Correo</label>
+        <input id="email" type="email" class="adm-input" value={s.email} />
+        <p class="adm-hint">Se muestra en el pie de página y en la página de contacto. <strong>Los mensajes del formulario de contacto llegan a este correo.</strong> Al darle a «Responder», se contesta directamente a quien escribió.</p>
+      </div>
+    </section>
+
+    <section class="adm-card flex flex-col gap-6 p-6">
+      <h2 class="text-xl font-medium">Donaciones</h2>
+      <div>
+        <label class="adm-label" for="paypal">Enlace de PayPal</label>
+        <input id="paypal" type="url" class="adm-input" value={s.paypalUrl} placeholder="https://www.paypal.com/donate/?hosted_button_id=…" />
+        <p class="adm-hint">Debe empezar por https://. Mientras esté vacío, el botón «Donate via PayPal» abre un correo en lugar de PayPal.</p>
+      </div>
+    </section>
+
+    <section class="adm-card flex flex-col gap-6 p-6">
+      <h2 class="text-xl font-medium">Redes sociales</h2>
+      {social.map((x) => (
+        <div>
+          <label class="adm-label" for={x.label}>{x.label}</label>
+          <input id={x.label} type="url" class="adm-input" value={x.href} placeholder="https://" />
+        </div>
+      ))}
+      <p class="adm-hint !mt-0">Solo se muestran las redes que tengan enlace. Déjalo vacío para ocultar una.</p>
+    </section>
+
+    <div class="adm-actions">
+      <button class="adm-btn adm-btn-primary" type="button">Guardar cambios</button>
+      <a class="adm-btn" href="/admin/inicio/">Cancelar</a>
+    </div>
+  </form>
+</AdminLayout>

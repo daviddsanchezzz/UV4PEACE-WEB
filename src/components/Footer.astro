@@ -1,5 +1,7 @@
 ---
 import { nav, site, legalPages } from '../data/site';
+import { getSettings } from '../lib/content';
+const settings = await getSettings();
 ---
 <footer class="bg-navy text-white">
   <div class="wrap pb-[calc(2rem+env(safe-area-inset-bottom))] pt-[clamp(56px,7vw,88px)]">
@@ -11,8 +13,8 @@ import { nav, site, legalPages } from '../data/site';
         <a href="/donate/" class="text-white hover:text-sky">Donate</a>
       </nav>
       <div class="flex flex-col gap-2.5 text-base">
-        <a href={`mailto:${site.email}`} class="text-xl text-sky hover:text-white">{site.email}</a>
-        <div class="flex gap-4">{site.social.filter((s) => s.href).map((s) => <a href={s.href} class="text-white hover:text-sky">{s.label}</a>)}</div>
+        <a href={`mailto:${settings.email}`} class="text-xl text-sky hover:text-white">{settings.email}</a>
+        <div class="flex gap-4">{settings.social.filter((s) => s.href).map((s) => <a href={s.href} class="text-white hover:text-sky">{s.label}</a>)}</div>
       </div>
       <div class="flex flex-col items-start gap-3">
         <a href="/donate/" class="btn btn-primary">Donate via PayPal</a>

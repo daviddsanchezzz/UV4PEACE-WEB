@@ -3,6 +3,8 @@ export const prerender = true;
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
 import { site } from '../data/site';
+import { getSettings } from '../lib/content';
+const settings = await getSettings();
 ---
 <Base title="Terms of use">
   <PageHeader eyebrow="Legal" title={['Terms of use']} />
@@ -10,7 +12,7 @@ import { site } from '../data/site';
     <div class="max-w-[720px]">
       <h2 class="t-h3">Data controller</h2>
       <ul class="body mt-3 text-ink-muted">{site.legalEntities.map((l) => <li>{l}</li>)}</ul>
-      <p class="body mt-3 text-ink-muted">Contact: <a href={`mailto:${site.email}`}>{site.email}</a></p>
+      <p class="body mt-3 text-ink-muted">Contact: <a href={`mailto:${settings.email}`}>{settings.email}</a></p>
     </div>
   </section>
 </Base>

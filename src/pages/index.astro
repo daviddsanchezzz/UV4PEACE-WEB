@@ -13,9 +13,10 @@ import TestimonialCard from '../components/TestimonialCard.astro';
 import CtaCard from '../components/CtaCard.astro';
 import NewsletterForm from '../components/NewsletterForm.astro';
 import { site, sdgs, founder } from '../data/site';
-import { getProjects, getTestimonials } from '../lib/content';
+import { getProjects, getTestimonials, getSettings } from '../lib/content';
 import { statsNote } from '../data/stats';
 import { featuredIn } from '../data/press';
+const settings = await getSettings();
 
 const projects = await getProjects();
 const testimonials = await getTestimonials();
@@ -24,7 +25,7 @@ const homeTestimonials = testimonials.filter((t) => t.published && t.home).sort(
 const projectTitle = (slug: string) => projects.find((p) => p.slug === slug)?.title;
 
 const involve = [
-  { title: 'Propose a project', line: 'Bring us an idea that uses music or the arts to build bridges.', cta: 'Send a proposal', href: site.proposalMailto, photo: { src: '10-propose-partitura_IMG_5272.jpg', alt: 'Scores on a music stand: "Going Home" by Aida Saco and "Tierra Pura" by Valerie Naranjo', pos: '45% 60%' } },
+  { title: 'Propose a project', line: 'Bring us an idea that uses music or the arts to build bridges.', cta: 'Send a proposal', href: settings.proposalMailto, photo: { src: '10-propose-partitura_IMG_5272.jpg', alt: 'Scores on a music stand: "Going Home" by Aida Saco and "Tierra Pura" by Valerie Naranjo', pos: '45% 60%' } },
   { title: 'Donate', line: 'Every gift brings more women composers to the stage.', cta: 'Donate via PayPal', href: '/donate/', note: site.seal, photo: { src: '09-donate-abrazo_IMG_5435.jpg', alt: 'Two artists embracing on stage after the concert', pos: '50% 30%' } },
   { title: 'Spread the word', line: 'Share our concerts and stories with your community.', cta: 'Share', href: '/get-involved/#spread', photo: { src: '11-spread-the-word_IMG_5553.jpg', alt: 'Audience and artists sharing the moment after the concert', pos: '50% 50%' } },
 ];
@@ -34,7 +35,7 @@ const involve = [
     title="Connecting cultures. Amplifying"
     titleAccent="voices."
     subtitle="Fostering a universal culture of peace."
-    primaryCta={{ label: 'Partner with us', href: site.partnerMailto }}
+    primaryCta={{ label: 'Partner with us', href: settings.partnerMailto }}
     secondaryCta={{ label: 'Donate', href: '/donate/' }}
     poster={{ src: '01-hero-saludo-final_IMG_5460.jpg', alt: 'Women composers and conductor Vesna Šouc take a bow with the orchestra at Symphony Space, Global Women in Music 2026', pos: '50% 62%' }}
   />
@@ -185,7 +186,7 @@ const involve = [
           <h3 class="t-h2 mt-3.5">Partner <span class="text-orange">with us</span></h3>
           <p class="body mt-3.5 max-w-[460px]">Put your institution's name behind live music that advances visibility, representation and dialogue on the global decision-makers' stage.</p>
           <div class="mt-7 flex flex-wrap items-center gap-6">
-            <Button href={site.partnerMailto}>Start a partnership</Button>
+            <Button href={settings.partnerMailto}>Start a partnership</Button>
             <a href="/projects/global-women-in-music/#partner" class="text-sm font-medium uppercase tracking-[0.1em] text-white underline underline-offset-4 hover:text-sky">See partner benefits</a>
           </div>
         </div>

@@ -7,6 +7,7 @@ import { press } from '../data/press';
 import { partners } from '../data/partners';
 import { testimonials } from '../data/testimonials';
 import { stats } from '../data/stats';
+import { site } from '../data/site';
 
 export type { Person, PersonGroup } from '../data/people';
 export type { Project, Edition, ProjectStatus } from '../data/projects';
@@ -22,3 +23,23 @@ export const getPress = async () => press;
 export const getPartners = async () => partners;
 export const getTestimonials = async () => testimonials;
 export const getStats = async () => stats;
+
+export interface SiteSettings {
+  /** Shown on the site and receives contact-form messages. */
+  email: string;
+  /** Donate button target. Empty until provided: the button then falls back to email. */
+  paypalUrl: string;
+  social: { label: string; href: string }[];
+  partnerMailto: string;
+  proposalMailto: string;
+}
+
+const mailto = (email: string, subject: string) => `mailto:${email}?subject=${encodeURIComponent(subject)}`;
+
+export const getSettings = async (): Promise<SiteSettings> => ({
+  email: site.email,
+  paypalUrl: site.paypalUrl,
+  social: site.social,
+  partnerMailto: mailto(site.email, 'Partnership'),
+  proposalMailto: mailto(site.email, 'Project proposal'),
+});

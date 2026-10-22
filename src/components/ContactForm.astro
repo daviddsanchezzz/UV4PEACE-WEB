@@ -1,10 +1,10 @@
 ---
-// Contact form. No backend yet (Phase 4 wires this to a Supabase-backed Astro endpoint with
-// validation, a honeypot and Turnstile); for now it shows a thank-you message on submit.
-import { site } from '../data/site';
+// Contact form. Posts to /api/contact, which emails the address configured in the admin.
+import { getSettings } from '../lib/content';
+const settings = await getSettings();
 
 const topics = ['General', 'Partnership', 'Press', 'Artists', 'Project proposal'];
-const social = site.social.filter((s) => s.href);
+const social = settings.social.filter((s) => s.href);
 ---
 <section id="contact" aria-labelledby="contact-h" class="bg-surface-soft">
   <div class="wrap section-y-sm grid grid-cols-[repeat(auto-fit,minmax(min(100%,380px),1fr))] gap-[clamp(40px,6vw,96px)]">
@@ -15,7 +15,7 @@ const social = site.social.filter((s) => s.href);
       <div class="mt-10 flex flex-col gap-6">
         <div>
           <div class="eyebrow text-ink-muted">Email</div>
-          <a href={`mailto:${site.email}`} class="mt-1.5 block text-lg text-sky-text">{site.email}</a>
+          <a href={`mailto:${settings.email}`} class="mt-1.5 block text-lg text-sky-text">{settings.email}</a>
         </div>
         <div>
           <div class="eyebrow text-ink-muted">Offices</div>
@@ -31,7 +31,8 @@ const social = site.social.filter((s) => s.href);
     </div>
 
     <div>
-    <form data-contact-form class="rounded-card bg-white p-[clamp(24px,3vw,40px)]">
+    <form data-contact-form class="rounded-card bg-white p-[clamp(24px,3vw,40px)]" novalidate>
+      <div class="absolute -left-[9999px]" aria-hidden="true"><label>Leave this empty <input type="text" name="website" tabindex="-1" autocomplete="off" /></label></div>
       <div class="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4">
         <div>
           <label for="contact-name" class="text-sm font-medium">Name</label>
@@ -65,6 +66,7 @@ const social = site.social.filter((s) => s.href);
         <span>I agree that United Voices 4 Peace may use my details to reply, as described in the <a href="/privacy/">privacy policy</a>.</span>
       </label>
 
+      <p data-contact-error hidden role="alert" class="mt-5 rounded-md bg-[#fdecec] px-4 py-3 text-sm text-[#8f2a2a]">We could not send your message. Please try again, or write to <a href={`mailto:${settings.email}`} class="underline">{settings.email}</a>.</p>
       <button type="submit" class="btn btn-primary mt-6">Send message</button>
     </form>
     <div data-contact-ok hidden class="rounded-card bg-white p-[clamp(24px,3vw,40px)] text-lg">Thank you. We'll get back to you shortly.</div>
@@ -74,11 +76,23 @@ const social = site.social.filter((s) => s.href);
 
 <script>
   document.querySelectorAll<HTMLFormElement>('[data-contact-form]').forEach((form) => {
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      form.hidden = true;
-      const ok = form.parentElement?.querySelector<HTMLElement>('[data-contact-ok]');
-      if (ok) ok.hidden = false;
+      if (!form.reportValidity()) return;
+      const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+      const error = form.querySelector<HTMLElement>('[data-contact-error]');
+      if (error) error.hidden = true;
+      if (button) button.disabled = true;
+      try {
+        const res = await fetch('/api/contact', { method: 'POST', body: new FormData(form) });
+        if (!res.ok) throw new Error(String(res.status));
+        form.hidden = true;
+        const ok = form.parentElement?.querySelector<HTMLElement>('[data-contact-ok]');
+        if (ok) ok.hidden = false;
+      } catch {
+        if (error) error.hidden = false;
+        if (button) button.disabled = false;
+      }
     });
   });
 </script>

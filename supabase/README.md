@@ -17,3 +17,10 @@
 - Create the two users in Authentication → Users (veronicasabbag@hotmail.com and davidsr1919@gmail.com), then run `editors.sql`, which adds both to `editors` as `owner`.
 - Vercel env vars (Production and Preview): `PUBLIC_SUPABASE_URL`, `PUBLIC_SUPABASE_ANON_KEY` (see `.env.example`).
 - Until those two variables exist, `/admin` answers 503 in production, so deploying early is safe.
+
+## Contact form email
+
+- `/api/contact` emails the address stored in `site_settings.contact_email` (editable in the panel, Ajustes) and keeps a copy in `contact_messages`.
+- It uses [Resend](https://resend.com): create an account, verify the sending domain (uv4peace.org), and set `RESEND_API_KEY` and `CONTACT_FROM` in Vercel (server-side, not `PUBLIC_`).
+- Without `RESEND_API_KEY` the form shows an error with the contact address instead of claiming success.
+- Not done yet: rate limiting beyond the honeypot, and Turnstile if spam appears.

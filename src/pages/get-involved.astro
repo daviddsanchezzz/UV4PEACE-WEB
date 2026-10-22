@@ -7,7 +7,8 @@ import Button from '../components/Button.astro';
 import NewsletterForm from '../components/NewsletterForm.astro';
 import ContactForm from '../components/ContactForm.astro';
 import { site } from '../data/site';
-import { getProject } from '../lib/content';
+import { getProject, getSettings } from '../lib/content';
+const settings = await getSettings();
 
 const gwimPartner = (await getProject('global-women-in-music'))!.partner!;
 ---
@@ -27,7 +28,7 @@ const gwimPartner = (await getProject('global-women-in-music'))!.partner!;
           {gwimPartner.benefits.map((b) => <li class="flex gap-3.5 border-b border-white/20 py-3.5 text-[17px] leading-normal"><span aria-hidden="true" class="mt-[9px] h-2 w-2 flex-none rounded-full bg-sky"></span>{b}</li>)}
         </ul>
         <div class="mt-8 flex flex-wrap gap-3.5">
-          <Button href={site.partnerMailto}>Start a partnership</Button>
+          <Button href={settings.partnerMailto}>Start a partnership</Button>
           <Button href="/projects/global-women-in-music/#partner" variant="light">See GWIM 2027</Button>
         </div>
       </div>
@@ -40,7 +41,7 @@ const gwimPartner = (await getProject('global-women-in-music'))!.partner!;
       <div class="eyebrow text-sky-text">For artists &amp; organisations</div>
       <h2 id="propose-h" class="t-h1 mt-4">Propose a project</h2>
       <p class="body mt-5 max-w-[540px] text-ink-muted">Bring us an idea that uses music or the arts to build bridges. Tell us who it brings together, where it happens and what you need from us.</p>
-      <Button href={site.proposalMailto} variant="tertiary" class="mt-8">Send a proposal</Button>
+      <Button href={settings.proposalMailto} variant="tertiary" class="mt-8">Send a proposal</Button>
     </div>
     <figure data-reveal class="relative m-0 aspect-[4/3] overflow-hidden rounded-card bg-placeholder">
       <Photo src="10-propose-partitura_IMG_5272.jpg" alt="Scores on a music stand: &quot;Going Home&quot; by Aida Saco and &quot;Tierra Pura&quot; by Valerie Naranjo" pos="45% 60%" sizes="(min-width:1024px) 600px, 100vw" />
@@ -67,7 +68,7 @@ const gwimPartner = (await getProject('global-women-in-music'))!.partner!;
         <p class="body mt-3 flex-1 text-ink-muted">Share our concerts and stories with your community.</p>
         <div class="mt-6 flex flex-wrap gap-3">
           <button type="button" data-share class="btn btn-tertiary btn-sm">Share this page</button>
-          {site.social.filter((s) => s.href).map((s) => <Button href={s.href} variant="tertiary" size="sm">{s.label}</Button>)}
+          {settings.social.filter((s) => s.href).map((s) => <Button href={s.href} variant="tertiary" size="sm">{s.label}</Button>)}
         </div>
         <span data-share-ok hidden class="mt-3 text-sm text-sky-text">Link copied.</span>
       </div>

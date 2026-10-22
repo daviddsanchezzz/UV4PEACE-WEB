@@ -11,8 +11,8 @@ import TestimonialCard from '../../components/TestimonialCard.astro';
 import PersonCard from '../../components/PersonCard.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import { statusLabel, type Project } from '../../data/projects';
-import { getProjects, getTestimonials } from '../../lib/content';
-import { site } from '../../data/site';
+import { getProjects, getTestimonials, getSettings } from '../../lib/content';
+const settings = await getSettings();
 
 export async function getStaticPaths() {
   const projects = await getProjects();
@@ -232,7 +232,7 @@ const highlight = heldEditions[heldEditions.length - 1];
             {p.partner.benefits.map((b) => <li class="flex gap-3.5 border-b border-white/20 py-3.5 text-[17px] leading-normal"><span aria-hidden="true" class="mt-[9px] h-2 w-2 flex-none rounded-full bg-sky"></span>{b}</li>)}
           </ul>
           <div class="mt-8 flex flex-wrap gap-3.5">
-            <Button href={`mailto:${site.email}?subject=${encodeURIComponent(p.title + ' partnership')}`}>Partner with us</Button>
+            <Button href={`mailto:${settings.email}?subject=${encodeURIComponent(p.title + ' partnership')}`}>Partner with us</Button>
             <Button href="/donate/" variant="light">Make a donation</Button>
           </div>
         </div>

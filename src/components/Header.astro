@@ -1,5 +1,7 @@
 ---
 import { nav, site } from '../data/site';
+import { getSettings } from '../lib/content';
+const settings = await getSettings();
 interface Props { current?: string }
 const { current } = Astro.props;
 ---
@@ -16,7 +18,7 @@ const { current } = Astro.props;
     </nav>
     <div class="hidden items-center gap-3 lg:flex">
       <a href="/donate/" class="btn btn-navy btn-sm">Donate</a>
-      <a href={site.partnerMailto} class="btn btn-tertiary btn-sm">Partner with us</a>
+      <a href={settings.partnerMailto} class="btn btn-tertiary btn-sm">Partner with us</a>
     </div>
     <button type="button" data-menu-open aria-controls="menu" class="btn btn-tertiary btn-sm min-h-10 bg-white px-4 lg:hidden">Menu</button>
   </div>
@@ -33,7 +35,7 @@ const { current } = Astro.props;
     ))}
   </nav>
   <div class="mt-auto flex flex-col gap-3">
-    <a href={site.partnerMailto} class="btn btn-primary">Partner with us</a>
+    <a href={settings.partnerMailto} class="btn btn-primary">Partner with us</a>
     <a href="/donate/" class="btn btn-light">Donate</a>
   </div>
 </dialog>

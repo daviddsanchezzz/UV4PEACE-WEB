@@ -6,7 +6,8 @@ import Photo from '../components/Photo.astro';
 import PersonCard from '../components/PersonCard.astro';
 import Button from '../components/Button.astro';
 import { founder, site } from '../data/site';
-import { getPeople } from '../lib/content';
+import { getPeople, getSettings } from '../lib/content';
+const settings = await getSettings();
 
 const people = await getPeople();
 const board = people.filter((p) => p.group === 'team' || p.group === 'board').sort((a, b) => a.order - b.order);
@@ -78,8 +79,8 @@ const gwimArtists = people.filter((p) => p.group === 'artist' && p.project === '
   <section class="wrap section-y-sm flex flex-wrap items-center justify-between gap-8">
     <div class="max-w-[640px]">
       <h2 class="t-h2">Want to work with us?</h2>
-      <p class="body mt-3 text-ink-muted">Write to us at <a href={`mailto:${site.email}`}>{site.email}</a>.</p>
+      <p class="body mt-3 text-ink-muted">Write to us at <a href={`mailto:${settings.email}`}>{settings.email}</a>.</p>
     </div>
-    <Button href={site.partnerMailto}>Partner with us</Button>
+    <Button href={settings.partnerMailto}>Partner with us</Button>
   </section>
 </Base>
