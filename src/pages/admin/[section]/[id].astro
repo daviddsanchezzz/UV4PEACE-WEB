@@ -1,0 +1,39 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { sections } from '../../../admin/sections';
+
+const s = sections[Astro.params.section ?? ''];
+if (!s) return Astro.redirect('/admin/inicio/');
+const isNew = Astro.params.id === 'nuevo';
+const row = s.rows.find((r) => r.id === Astro.params.id);
+if (!isNew && !row) return Astro.redirect(`/admin/${s.slug}/`);
+const v = row?.values ?? {};
+---
+<AdminLayout title={isNew ? `Nuevo ${s.singular}` : row!.title} current={s.slug}>
+  <a href={`/admin/${s.slug}/`} class="text-sm">‹ {s.label}</a>
+  <h1 class="adm-h1 mt-3">{isNew ? `Añadir ${s.singular}` : row!.title}</h1>
+  <form class="mt-8 max-w-[760px]" onsubmit="return false">
+    <div class="adm-card flex flex-col gap-6 p-6">
+      {s.fields.map((f) => (
+        <div>
+          {f.type === 'toggle' ? (
+            <label class="flex items-center gap-3 text-base"><input type="checkbox" class="h-5 w-5" checked={Boolean(v[f.key])} /> {f.label}</label>
+          ) : (
+            <>
+              <label class="adm-label" for={f.key}>{f.label}</label>
+              {f.type === 'textarea' && <textarea id={f.key} class="adm-input">{String(v[f.key] ?? '')}</textarea>}
+              {f.type === 'text' && <input id={f.key} class="adm-input" value={String(v[f.key] ?? '')} placeholder={f.placeholder} />}
+              {f.type === 'select' && <select id={f.key} class="adm-input">{f.options!.map((o) => <option value={o.v} selected={o.v === v[f.key]}>{o.l}</option>)}</select>}
+            </>
+          )}
+          {f.hint && <p class="adm-hint">{f.hint}</p>}
+        </div>
+      ))}
+      {!isNew && <button class="adm-btn self-start !border-transparent !px-0 !text-[#a33] hover:!bg-transparent hover:underline" type="button">Quitar de la web</button>}
+    </div>
+    <div class="adm-actions">
+      <button class="adm-btn adm-btn-primary" type="button">Guardar cambios</button>
+      <a class="adm-btn" href={`/admin/${s.slug}/`}>Cancelar</a>
+    </div>
+  </form>
+</AdminLayout>

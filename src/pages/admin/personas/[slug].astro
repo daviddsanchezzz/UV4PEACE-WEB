@@ -18,7 +18,7 @@ const groups = [
   <h1 class="adm-h1 mt-3">{isNew ? 'Añadir persona' : p.name}</h1>
 
   <form class="mt-8 grid gap-8 lg:grid-cols-[1fr_340px]" onsubmit="return false">
-    <div class="adm-card flex flex-col gap-6 p-6">
+    <div class="min-w-0"><div class="adm-card flex flex-col gap-6 p-6">
       <div>
         <label class="adm-label" for="name">Nombre</label>
         <input id="name" class="adm-input" value={p.name} />
@@ -57,11 +57,12 @@ const groups = [
         <label class="adm-label" for="web">Sitio web</label>
         <input id="web" class="adm-input" value={p.website} placeholder="https://" />
       </div>
-      <div class="flex flex-wrap items-center gap-3 border-t border-line pt-6">
-        <button class="adm-btn adm-btn-primary" type="button">Guardar cambios</button>
-        <a class="adm-btn" href="/admin/personas/">Cancelar</a>
-        {!isNew && <button class="adm-btn ml-auto !border-transparent !text-[#a33]" type="button">Quitar de la web</button>}
-      </div>
+      {!isNew && <button class="adm-btn self-start !border-transparent !px-0 !text-[#a33] hover:!bg-transparent hover:underline" type="button">Quitar de la web</button>}
+    </div>
+    <div class="adm-actions">
+      <button class="adm-btn adm-btn-primary" type="button">Guardar cambios</button>
+      <a class="adm-btn" href="/admin/personas/">Cancelar</a>
+    </div>
     </div>
 
     <aside class="flex flex-col gap-6">

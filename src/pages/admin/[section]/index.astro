@@ -1,0 +1,31 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { sections } from '../../../admin/sections';
+
+const s = sections[Astro.params.section ?? ''];
+if (!s) return Astro.redirect('/admin/inicio/');
+---
+<AdminLayout title={s.label} current={s.slug}>
+  <div class="flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <p class="eyebrow text-ink-muted">{s.label}</p>
+      <h1 class="adm-h1 mt-2">{s.rows.length} {s.rows.length === 1 ? s.singular : s.label.toLowerCase()}</h1>
+    </div>
+    <a href={`/admin/${s.slug}/nuevo/`} class="adm-btn adm-btn-primary">+ Añadir {s.singular}</a>
+  </div>
+  <p class="mt-3 max-w-[62ch] text-ink-muted">{s.intro}</p>
+  {s.reorder && <p class="adm-hint mt-3">Arrastra el asa de cada fila para cambiar el orden en la web.</p>}
+  <div class="adm-card mt-6">
+    {s.rows.map((r) => (
+      <a href={`/admin/${s.slug}/${r.id}/`} class="adm-row hover:no-underline">
+        {s.reorder && <span class="adm-handle" aria-hidden="true">⠿</span>}
+        <span class="min-w-0 flex-1">
+          <span class="block truncate font-medium">{r.title}</span>
+          <span class="block truncate text-sm text-ink-muted">{r.sub}</span>
+        </span>
+        {r.pills.map((p) => <span class={`adm-pill hidden sm:inline-flex ${p.tone === 'ok' ? 'adm-pill-ok' : p.tone === 'warn' ? 'adm-pill-warn' : ''}`}>{p.t}</span>)}
+        <span aria-hidden="true" class="text-ink-muted">›</span>
+      </a>
+    ))}
+  </div>
+</AdminLayout>

@@ -11,7 +11,7 @@ const p: Project = found ?? { slug: '', title: '', status: 'ongoing', yearStart:
 const editions = p.editions ?? [];
 const tab = Astro.url.searchParams.get('tab') === 'ediciones' ? 'ediciones' : 'datos';
 const selected = editions.find((e) => e.year === Astro.url.searchParams.get('ed')) ?? editions.find((e) => !e.upcoming && e.year === '2026') ?? editions[editions.length - 1];
-const tabs = [{ id: 'datos', l: 'Datos del proyecto' }, { id: 'ediciones', l: `Ediciones${editions.length ? ` (${editions.length})` : ''}` }, { id: 'fotos', l: 'Fotos y documental' }];
+const tabs = [{ id: 'datos', l: 'Datos del proyecto' }, { id: 'ediciones', l: `Ediciones${editions.length ? ` (${editions.length})` : ''}` }, { id: 'fotos', l: 'Fotos' }];
 ---
 <AdminLayout title={isNew ? 'Nuevo proyecto' : p.title} current="proyectos">
   <a href="/admin/proyectos/" class="text-sm">‹ Todos los proyectos</a>
@@ -19,7 +19,6 @@ const tabs = [{ id: 'datos', l: 'Datos del proyecto' }, { id: 'ediciones', l: `E
     <h1 class="adm-h1">{isNew ? 'Añadir proyecto' : p.title}</h1>
     <div class="flex gap-3">
       {!isNew && <a href={`/projects/${p.slug}/`} class="adm-btn" target="_blank" rel="noopener">Ver en la web</a>}
-      <button class="adm-btn adm-btn-primary" type="button">Guardar cambios</button>
     </div>
   </div>
 
@@ -77,14 +76,14 @@ const tabs = [{ id: 'datos', l: 'Datos del proyecto' }, { id: 'ediciones', l: `E
       </div>
     ) : (
       <div class="grid items-start gap-6 lg:grid-cols-[240px_1fr]">
-        <div class="adm-card p-2">
+        <div class="adm-card flex gap-1 overflow-x-auto p-2 lg:block">
           {editions.map((e) => (
             <button type="button" data-ed={e.year} aria-pressed={e.year === selected?.year} class="adm-ed">
               <span class="font-medium">{e.year}</span>
               <span class="text-sm opacity-80">{e.upcoming ? 'Próxima' : e.event || `Edición ${e.number}`}</span>
             </button>
           ))}
-          <button type="button" class="adm-btn mt-2 w-full !border-dashed">+ Nueva edición</button>
+          <button type="button" class="adm-btn flex-none !border-dashed lg:mt-2 lg:w-full">+ Nueva edición</button>
         </div>
 
         <div>
@@ -117,10 +116,10 @@ const tabs = [{ id: 'datos', l: 'Datos del proyecto' }, { id: 'ediciones', l: `E
                 <div class="mt-3 flex flex-col gap-2" data-lineup>
                   {e.lineup.length === 0 && <p class="adm-hint" data-empty>Nadie añadido todavía.</p>}
                   {e.lineup.map((m) => (
-                    <div class="flex items-center gap-2" data-member>
+                    <div class="grid grid-cols-[1fr_auto] gap-2 sm:flex sm:items-center" data-member>
                       <input class="adm-input" list="people-list" value={m.name} aria-label="Nombre" />
-                      <input class="adm-input max-w-[200px]" value={m.role} aria-label="Función" />
-                      <button type="button" class="adm-btn !min-h-[44px] !px-3" data-remove aria-label={`Quitar a ${m.name}`}>✕</button>
+                      <input class="adm-input col-span-2 row-start-2 sm:max-w-[200px]" value={m.role} aria-label="Función" />
+                      <button type="button" class="adm-btn col-start-2 row-start-1 !min-h-[46px] !px-3" data-remove aria-label={`Quitar a ${m.name}`}>✕</button>
                     </div>
                   ))}
                 </div>
@@ -134,19 +133,69 @@ const tabs = [{ id: 'datos', l: 'Datos del proyecto' }, { id: 'ediciones', l: `E
     <datalist id="people-list">{people.map((x) => <option value={x.name}></option>)}</datalist>
   </section>
 
-  <section data-panel="fotos" hidden class="mt-8">
+  <section data-panel="fotos" hidden class="mt-8 flex flex-col gap-6">
     <div class="adm-card p-6">
-      <p class="adm-label">Portada</p>
-      <div class="grid h-40 max-w-[320px] place-items-center rounded-lg bg-placeholder text-sm text-placeholder-line">{p.cover ? p.cover.alt : 'Sin portada'}</div>
-      <button class="adm-btn mt-4" type="button">Cambiar portada</button>
-      <p class="adm-hint mt-6">Aquí irán también la galería y el documental (título, texto, tráiler y festivales).</p>
+      <h2 class="text-xl font-medium">Portada y cabecera</h2>
+      <div class="mt-4 grid gap-6 sm:grid-cols-2">
+        {[{ k: 'Portada (tarjeta del proyecto)', r: p.cover }, { k: 'Cabecera (página del proyecto)', r: p.hero ?? null }].map((x) => (
+          <div>
+            <p class="adm-label">{x.k}</p>
+            <div class="grid aspect-[16/10] place-items-center rounded-lg bg-placeholder px-4 text-center text-sm text-placeholder-line">{x.r ? x.r.alt : 'Sin foto'}</div>
+            <button class="adm-btn mt-3 w-full sm:w-auto" type="button">{x.r ? 'Cambiar foto' : 'Subir foto'}</button>
+          </div>
+        ))}
+      </div>
     </div>
+    <div class="adm-card p-6">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <h2 class="text-xl font-medium">Galería ({(p.gallery ?? []).length})</h2>
+        <button class="adm-btn" type="button">+ Añadir fotos</button>
+      </div>
+      {(p.gallery ?? []).length === 0 ? <p class="adm-hint mt-3">Este proyecto no tiene galería.</p> : (
+        <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          {(p.gallery ?? []).map((g) => (
+            <div class="rounded-lg border border-line p-2">
+              <div class="grid aspect-[4/3] place-items-center rounded bg-placeholder px-2 text-center text-xs text-placeholder-line">{g.alt}</div>
+              <div class="mt-2 flex items-center justify-between text-sm"><span class="adm-pill">{g.span === 'wide' ? 'Ancha' : g.span === 'tall' ? 'Alta' : g.span === 'big' ? 'Grande' : 'Normal'}</span><button type="button" aria-label="Quitar foto">✕</button></div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+    {p.documentary && (
+      <div class="adm-card flex flex-col gap-6 p-6">
+        <h2 class="text-xl font-medium">Documental</h2>
+        <div><label class="adm-label" for="doc-title">Título</label><input id="doc-title" class="adm-input" value={p.documentary.title} /></div>
+        <div><label class="adm-label" for="doc-text">Texto</label><textarea id="doc-text" class="adm-input">{p.documentary.text}</textarea></div>
+        <div><label class="adm-label" for="doc-trailer">Enlace al tráiler</label><input id="doc-trailer" class="adm-input" value={p.documentary.trailerUrl} /></div>
+        <div>
+          <p class="adm-label">Festivales ({p.documentary.festivals.length})</p>
+          <div class="flex flex-col gap-2">
+            {p.documentary.festivals.map((f) => (
+              <div class="grid grid-cols-[1fr_auto] gap-2 sm:flex sm:items-center">
+                <input class="adm-input sm:max-w-[140px]" value={f.date} aria-label="Fecha" />
+                <button type="button" class="adm-btn col-start-2 row-start-1 !min-h-[46px] !px-3 sm:order-last" aria-label="Quitar">✕</button>
+                <input class="adm-input col-span-2 row-start-2 sm:col-auto sm:flex-1" value={f.name} aria-label="Festival" />
+                <input class="adm-input col-span-2 row-start-3 sm:col-auto sm:max-w-[200px]" value={f.result} aria-label="Resultado" />
+              </div>
+            ))}
+          </div>
+          <button class="adm-btn mt-3" type="button">+ Añadir festival</button>
+        </div>
+      </div>
+    )}
   </section>
+
+  <div class="adm-actions">
+    <button class="adm-btn adm-btn-primary" type="button">Guardar cambios</button>
+    <a class="adm-btn" href="/admin/proyectos/">Cancelar</a>
+  </div>
 
   <style is:global>
     .adm-tab { flex: none; padding: 12px 18px; border: 0; border-bottom: 3px solid transparent; background: none; font: inherit; font-size: 16px; color: var(--color-ink-muted); cursor: pointer; margin-bottom: -1px; }
     .adm-tab[aria-selected="true"] { color: var(--color-navy); font-weight: 500; border-bottom-color: var(--color-orange); }
-    .adm-ed { display: flex; width: 100%; flex-direction: column; gap: 2px; padding: 10px 14px; border: 0; border-radius: 8px; background: none; font: inherit; text-align: left; color: var(--color-ink); cursor: pointer; }
+    .adm-ed { display: flex; flex: none; min-width: 104px; flex-direction: column; gap: 2px; padding: 10px 14px; border: 0; border-radius: 8px; background: none; font: inherit; text-align: left; color: var(--color-ink); cursor: pointer; }
+    @media (min-width: 1024px) { .adm-ed { width: 100%; } }
     .adm-ed:hover { background: var(--color-surface-soft); }
     .adm-ed[aria-pressed="true"] { background: var(--color-navy); color: #fff; }
     [hidden] { display: none !important; }
@@ -172,9 +221,9 @@ const tabs = [{ id: 'datos', l: 'Datos del proyecto' }, { id: 'ediciones', l: `E
         const list = t.parentElement!.querySelector('[data-lineup]')!;
         list.querySelector('[data-empty]')?.remove();
         const row = document.createElement('div');
-        row.className = 'flex items-center gap-2';
+        row.className = 'grid grid-cols-[1fr_auto] gap-2 sm:flex sm:items-center';
         row.setAttribute('data-member', '');
-        row.innerHTML = '<input class="adm-input" list="people-list" placeholder="Nombre" aria-label="Nombre" /><input class="adm-input max-w-[200px]" placeholder="Función" aria-label="Función" /><button type="button" class="adm-btn !min-h-[44px] !px-3" data-remove aria-label="Quitar">✕</button>';
+        row.innerHTML = '<input class="adm-input" list="people-list" placeholder="Nombre" aria-label="Nombre" /><input class="adm-input col-span-2 row-start-2 sm:max-w-[200px]" placeholder="Función" aria-label="Función" /><button type="button" class="adm-btn col-start-2 row-start-1 !min-h-[46px] !px-3" data-remove aria-label="Quitar">✕</button>';
         list.appendChild(row);
         row.querySelector('input')?.focus();
       }

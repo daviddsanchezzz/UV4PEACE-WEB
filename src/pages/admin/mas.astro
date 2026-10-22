@@ -1,0 +1,20 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { sections } from '../../admin/sections';
+const list = Object.values(sections);
+---
+<AdminLayout title="Más secciones" current="mas">
+  <p class="eyebrow text-ink-muted">Más</p>
+  <h1 class="adm-h1 mt-2">Otras secciones</h1>
+  <div class="adm-card mt-8">
+    {list.map((s) => (
+      <a href={`/admin/${s.slug}/`} class="adm-row hover:no-underline">
+        <span class="min-w-0 flex-1">
+          <span class="block font-medium">{s.label}</span>
+          <span class="block text-sm text-ink-muted">{s.rows.length} {s.rows.length === 1 ? "elemento" : "elementos"}</span>
+        </span>
+        <span aria-hidden="true" class="text-ink-muted">›</span>
+      </a>
+    ))}
+  </div>
+</AdminLayout>
