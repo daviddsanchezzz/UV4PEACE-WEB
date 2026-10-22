@@ -1,8 +1,8 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
-import { sections } from '../../../admin/sections';
+import { getSections } from '../../../admin/sections';
 
-const s = sections[Astro.params.section ?? ''];
+const s = (await getSections())[Astro.params.section ?? ''];
 if (!s) return Astro.redirect('/admin/inicio/');
 const isNew = Astro.params.id === 'nuevo';
 const row = s.rows.find((r) => r.id === Astro.params.id);

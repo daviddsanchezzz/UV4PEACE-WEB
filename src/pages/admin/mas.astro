@@ -1,7 +1,7 @@
 ---
 import AdminLayout from '../../layouts/AdminLayout.astro';
-import { sections } from '../../admin/sections';
-const list = Object.values(sections);
+import { getSections } from '../../admin/sections';
+const list = Object.values(await getSections());
 ---
 <AdminLayout title="Más secciones" current="mas">
   <p class="eyebrow text-ink-muted">Más</p>

@@ -7,9 +7,9 @@ import Button from '../components/Button.astro';
 import NewsletterForm from '../components/NewsletterForm.astro';
 import ContactForm from '../components/ContactForm.astro';
 import { site } from '../data/site';
-import { projects } from '../data/projects';
+import { getProject } from '../lib/content';
 
-const gwimPartner = projects.find((p) => p.slug === 'global-women-in-music')!.partner!;
+const gwimPartner = (await getProject('global-women-in-music'))!.partner!;
 ---
 <Base title="Get Involved" current="get-involved" description="Partner with us, propose a project, donate or spread the word.">
   <PageHeader eyebrow="Get involved" title={['Add your', 'voice']} lede="Four ways to help more artists reach the stages where decisions are made." />

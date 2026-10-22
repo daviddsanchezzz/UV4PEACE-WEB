@@ -1,7 +1,8 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
-import { people, type PersonGroup } from '../../../data/people';
+import { getPeople, type PersonGroup } from '../../../lib/content';
 
+const people = await getPeople();
 const groupLabel: Record<PersonGroup, string> = { team: 'Equipo', board: 'Junta', ambassador: 'Embajadoras', artist: 'Artistas' };
 const initials = (n: string) => n.split(' ').map((w) => w[0]).slice(0, 2).join('');
 const counts = (Object.keys(groupLabel) as PersonGroup[]).map((g) => ({ g, n: people.filter((p) => p.group === g).length }));

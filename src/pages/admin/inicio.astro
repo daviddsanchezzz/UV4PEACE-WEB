@@ -1,11 +1,8 @@
 ---
 import AdminLayout from '../../layouts/AdminLayout.astro';
-import { people } from '../../data/people';
-import { projects } from '../../data/projects';
-import { press } from '../../data/press';
-import { partners } from '../../data/partners';
-import { testimonials } from '../../data/testimonials';
-import { stats } from '../../data/stats';
+import { getPeople, getProjects, getPress, getPartners, getTestimonials, getStats } from '../../lib/content';
+
+const [people, projects, press, partners, testimonials, stats] = await Promise.all([getPeople(), getProjects(), getPress(), getPartners(), getTestimonials(), getStats()]);
 
 const sections = [
   { id: 'proyectos', label: 'Proyectos', n: projects.length, hint: 'Con sus ediciones y line-ups', href: '/admin/proyectos/' },

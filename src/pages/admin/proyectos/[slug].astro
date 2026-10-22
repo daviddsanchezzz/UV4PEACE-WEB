@@ -1,8 +1,8 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
-import { projects, type Project } from '../../../data/projects';
-import { people } from '../../../data/people';
+import { getPeople, getProjects, type Project } from '../../../lib/content';
 
+const [people, projects] = await Promise.all([getPeople(), getProjects()]);
 const { slug } = Astro.params;
 const isNew = slug === 'nuevo';
 const found = projects.find((p) => p.slug === slug);

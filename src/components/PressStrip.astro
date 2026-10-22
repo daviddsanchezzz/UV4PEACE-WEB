@@ -1,11 +1,12 @@
 ---
 // Recognition list, most recent first. One consistent format for every item — splitting into
 // "featured cards" + "plain list" read as two overlapping treatments of the same kind of thing.
-import { press, featuredIn } from '../data/press';
+import { featuredIn } from '../data/press';
+import { getPress } from '../lib/content';
 
 interface Props { showFeaturedIn?: boolean }
 const { showFeaturedIn = true } = Astro.props;
-const items = [...press].sort((a, b) => b.date.localeCompare(a.date));
+const items = [...(await getPress())].sort((a, b) => b.date.localeCompare(a.date));
 ---
 <div>
   <ol class="border-t border-line">

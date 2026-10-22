@@ -1,9 +1,9 @@
 ---
 // Slow-scrolling partner strip. Logo files are not yet authorised, so every entry shows as
 // text (the design's own fallback) until a logo is uploaded and approved in the admin panel.
-import { partners } from '../data/partners';
+import { getPartners } from '../lib/content';
 import { site } from '../data/site';
-const active = partners.filter((p) => p.active).sort((a, b) => a.order - b.order);
+const active = (await getPartners()).filter((p) => p.active).sort((a, b) => a.order - b.order);
 ---
 <section aria-labelledby="partners-h" class="overflow-hidden border-y border-line py-14">
   <div class="wrap flex flex-wrap items-baseline justify-between gap-4">

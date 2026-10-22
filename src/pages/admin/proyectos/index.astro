@@ -1,6 +1,7 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
-import { projects } from '../../../data/projects';
+import { getProjects } from '../../../lib/content';
+const projects = await getProjects();
 ---
 <AdminLayout title="Proyectos" current="proyectos">
   <div class="flex flex-wrap items-end justify-between gap-4">

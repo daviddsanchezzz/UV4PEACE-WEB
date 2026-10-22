@@ -6,8 +6,9 @@ import Photo from '../components/Photo.astro';
 import PersonCard from '../components/PersonCard.astro';
 import Button from '../components/Button.astro';
 import { founder, site } from '../data/site';
-import { people } from '../data/people';
+import { getPeople } from '../lib/content';
 
+const people = await getPeople();
 const board = people.filter((p) => p.group === 'team' || p.group === 'board').sort((a, b) => a.order - b.order);
 const ambassadors = people.filter((p) => p.group === 'ambassador').sort((a, b) => a.order - b.order);
 const gwimArtists = people.filter((p) => p.group === 'artist' && p.project === 'global-women-in-music' && p.edition === '2026').sort((a, b) => a.order - b.order);

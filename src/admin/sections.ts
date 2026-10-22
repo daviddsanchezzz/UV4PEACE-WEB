@@ -1,9 +1,6 @@
 // Admin config for the simple content sections (press, partners, testimonials, stats).
 // Each one is a list plus a flat form, rendered by pages/admin/[section]/.
-import { press } from '../data/press';
-import { partners } from '../data/partners';
-import { testimonials } from '../data/testimonials';
-import { stats } from '../data/stats';
+import { getPress, getPartners, getTestimonials, getStats } from '../lib/content';
 
 export type FieldType = 'text' | 'textarea' | 'select' | 'toggle';
 export interface Field { key: string; label: string; type: FieldType; hint?: string; options?: { v: string; l: string }[]; placeholder?: string }
@@ -15,7 +12,9 @@ const tier = [{ v: 'main', l: 'Socio principal' }, { v: 'partner', l: 'Socio' },
 const kindLabel = Object.fromEntries(kind.map((k) => [k.v, k.l]));
 const tierLabel = Object.fromEntries(tier.map((k) => [k.v, k.l]));
 
-export const sections: Record<string, Section> = {
+export async function getSections(): Promise<Record<string, Section>> {
+  const [press, partners, testimonials, stats] = await Promise.all([getPress(), getPartners(), getTestimonials(), getStats()]);
+  return {
   prensa: {
     slug: 'prensa', label: 'Prensa y premios', singular: 'reconocimiento', reorder: false,
     intro: 'Premios, reconocimientos y selecciones que aparecen en la home y en la página Press.',
@@ -61,4 +60,5 @@ export const sections: Record<string, Section> = {
     ],
     rows: stats.map((s) => ({ id: s.id, title: `${s.n} · ${s.label}`, sub: 'Home, bloque «Impact in numbers»', pills: [], values: { n: s.n, label: s.label } })),
   },
-};
+  };
+}

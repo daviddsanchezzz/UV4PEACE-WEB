@@ -13,11 +13,12 @@ import TestimonialCard from '../components/TestimonialCard.astro';
 import CtaCard from '../components/CtaCard.astro';
 import NewsletterForm from '../components/NewsletterForm.astro';
 import { site, sdgs, founder } from '../data/site';
-import { projects } from '../data/projects';
+import { getProjects, getTestimonials } from '../lib/content';
 import { statsNote } from '../data/stats';
-import { testimonials } from '../data/testimonials';
 import { featuredIn } from '../data/press';
 
+const projects = await getProjects();
+const testimonials = await getTestimonials();
 const gwim = projects.find((p) => p.slug === 'global-women-in-music')!;
 const homeTestimonials = testimonials.filter((t) => t.published && t.home).sort((a, b) => a.order - b.order);
 const projectTitle = (slug: string) => projects.find((p) => p.slug === slug)?.title;
