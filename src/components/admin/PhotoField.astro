@@ -1,0 +1,108 @@
+---
+// Photo picker for the admin: upload (resized in the browser), alt text and a focus point the public
+// site uses to crop around. The value lives in a hidden input as JSON: { src, alt, pos }.
+import type { ImageRef } from '../../data/types';
+
+interface Props { name?: string; label?: string; value?: ImageRef | null; ratio?: string; focus?: boolean }
+const { name, label, value = null, ratio = '4 / 5', focus = true } = Astro.props;
+const remote = value && /^https?:\/\//.test(value.src);
+const [x, y] = (value?.pos ?? '50% 25%').split(' ');
+---
+<div data-photo data-focus={focus ? '' : undefined}>
+  {label && <p class="adm-label">{label}</p>}
+  <input type="hidden" data-photo-value name={name} value={value ? JSON.stringify(value) : ''} />
+  <div data-photo-frame class="relative w-full overflow-hidden rounded-lg bg-placeholder" style={`aspect-ratio:${ratio}`}>
+    <img data-photo-img src={remote ? value!.src : undefined} alt="" hidden={!remote} class="absolute inset-0 h-full w-full object-cover" style={`object-position:${value?.pos ?? '50% 50%'}`} />
+    <span data-photo-empty hidden={Boolean(remote)} class="absolute inset-0 grid place-items-center px-4 text-center text-sm text-placeholder-line">{value ? `Foto actual de la web (${value.src})` : 'Sin foto'}</span>
+    {focus && <span data-photo-dot hidden={!value} class="absolute h-7 w-7 -translate-x-1/2 -translate-y-1/2 cursor-grab touch-none rounded-full border-[3px] border-orange bg-white/40 shadow" style={`left:${x};top:${y}`} aria-label="Punto de encuadre"></span>}
+  </div>
+  {focus && <p class="adm-hint">Arrastra el círculo naranja hacia lo importante. La web recorta la foto alrededor de ese punto.</p>}
+  <input data-photo-alt class="adm-input mt-3" value={value?.alt ?? ''} placeholder="Descripción de la foto (para personas con lector de pantalla)" aria-label="Descripción de la foto" />
+  <div class="mt-3 flex flex-wrap gap-2">
+    <label class="adm-btn cursor-pointer"><span data-photo-btn>{value ? 'Cambiar foto' : 'Subir foto'}</span><input type="file" data-photo-file accept="image/jpeg,image/png,image/webp" class="sr-only" /></label>
+    <button type="button" data-photo-remove class="adm-btn" hidden={!value}>Quitar foto</button>
+  </div>
+  <p data-photo-msg class="adm-hint" role="status"></p>
+</div>
+
+<script>
+  // Photos are shrunk before upload: phone photos are often 5 MB or more and the site never shows them that large.
+  const MAX_SIDE = 2000;
+  async function shrink(file: File): Promise<Blob> {
+    const bmp = await createImageBitmap(file);
+    const k = Math.min(1, MAX_SIDE / Math.max(bmp.width, bmp.height));
+    const c = document.createElement('canvas');
+    c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+    c.getContext('2d')!.drawImage(bmp, 0, 0, c.width, c.height);
+    return new Promise((ok, no) => c.toBlob((b) => (b ? ok(b) : no(new Error('toBlob'))), 'image/jpeg', 0.86));
+  }
+
+  function mount(root: HTMLElement) {
+    if (root.dataset.ready) return;
+    root.dataset.ready = '1';
+    const q = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
+    const value = q<HTMLInputElement>('[data-photo-value]');
+    const img = q<HTMLImageElement>('[data-photo-img]');
+    const empty = q('[data-photo-empty]');
+    const dot = root.querySelector<HTMLElement>('[data-photo-dot]');
+    const frame = q('[data-photo-frame]');
+    const alt = q<HTMLInputElement>('[data-photo-alt]');
+    const msg = q('[data-photo-msg]');
+    const remove = q<HTMLButtonElement>('[data-photo-remove]');
+    const btn = q('[data-photo-btn]');
+    let state: { src: string; alt: string; pos: string } | null = value.value ? JSON.parse(value.value) : null;
+
+    const sync = () => {
+      value.value = state ? JSON.stringify({ ...state, alt: alt.value.trim() }) : '';
+      value.dispatchEvent(new Event('change', { bubbles: true }));
+    };
+    const draw = () => {
+      const remote = state && /^https?:\/\//.test(state.src);
+      img.hidden = !remote; empty.hidden = Boolean(remote);
+      if (remote) { img.src = state!.src; img.style.objectPosition = state!.pos; }
+      else empty.textContent = state ? `Foto actual de la web (${state.src})` : 'Sin foto';
+      if (dot) dot.hidden = !state;
+      remove.hidden = !state;
+      btn.textContent = state ? 'Cambiar foto' : 'Subir foto';
+    };
+
+    q<HTMLInputElement>('[data-photo-file]').addEventListener('change', async (e) => {
+      const input = e.target as HTMLInputElement;
+      const file = input.files?.[0];
+      if (!file) return;
+      msg.textContent = 'Subiendo…';
+      try {
+        const blob = await shrink(file);
+        const fd = new FormData(); fd.append('file', blob, 'foto.jpg');
+        const res = await fetch('/admin/api/media/upload', { method: 'POST', body: fd });
+        const out = await res.json().catch(() => ({}));
+        if (!res.ok || !out.url) throw new Error(out.error || 'No se ha podido subir la foto.');
+        state = { src: out.url, alt: alt.value.trim(), pos: state?.pos ?? '50% 25%' };
+        if (dot) { const [x, y] = state.pos.split(' '); dot.style.left = x; dot.style.top = y; }
+        msg.textContent = 'Foto subida.';
+        draw(); sync();
+      } catch (err) {
+        msg.textContent = err instanceof Error ? err.message : 'No se ha podido subir la foto.';
+      }
+      input.value = '';
+    });
+    alt.addEventListener('input', () => { if (state) sync(); });
+    remove.addEventListener('click', () => { state = null; msg.textContent = ''; draw(); sync(); });
+
+    if (dot) {
+      const move = (e: PointerEvent) => {
+        const r = frame.getBoundingClientRect();
+        const x = Math.round(Math.min(100, Math.max(0, ((e.clientX - r.left) / r.width) * 100)));
+        const y = Math.round(Math.min(100, Math.max(0, ((e.clientY - r.top) / r.height) * 100)));
+        dot.style.left = x + '%'; dot.style.top = y + '%';
+        if (state) { state.pos = `${x}% ${y}%`; img.style.objectPosition = state.pos; sync(); }
+      };
+      dot.addEventListener('pointerdown', (e) => { dot.setPointerCapture(e.pointerId); dot.addEventListener('pointermove', move); });
+      dot.addEventListener('pointerup', () => dot.removeEventListener('pointermove', move));
+    }
+  }
+
+  const mountAll = (scope: ParentNode = document) => scope.querySelectorAll<HTMLElement>('[data-photo]').forEach(mount);
+  (window as any).uvPhotos = mountAll;
+  mountAll();
+</script>

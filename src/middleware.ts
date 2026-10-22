@@ -11,7 +11,15 @@ const sessionOnly = new Set(['/admin/nueva-contrasena', '/admin/api/password']);
 
 export const onRequest = defineMiddleware(async (ctx, next) => {
   const path = ctx.url.pathname.replace(/\/+$/, '') || '/';
-  if (path !== '/admin' && !path.startsWith('/admin/')) return next();
+  if (path !== '/admin' && !path.startsWith('/admin/')) {
+    const res = await next();
+    // Public pages are rendered from the database. The CDN keeps each one for a minute, so edits show up
+    // quickly without a visit costing a database read every time.
+    if (ctx.request.method === 'GET' && !path.startsWith('/api/') && res.status === 200 && !res.headers.has('Cache-Control')) {
+      res.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+    }
+    return res;
+  }
 
   if (!supabaseConfigured()) {
     if (import.meta.env.DEV) return next();

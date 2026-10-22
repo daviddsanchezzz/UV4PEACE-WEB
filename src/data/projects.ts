@@ -59,6 +59,8 @@ export interface Project {
   documentary?: Documentary;
   gallery?: (ImageRef & { span?: 'wide' | 'tall' | 'big' })[];
   partner?: ProjectPartnerBlock;
+  /** Set by the database; hidden rows only reach the admin. */
+  published?: boolean;
 }
 
 const gwim: Project = {

@@ -16,6 +16,8 @@ export interface Person {
   bio: string;
   website: string;
   order: number;
+  /** Set by the database; hidden rows only reach the admin. */
+  published?: boolean;
 }
 
 export const people: Person[] = [

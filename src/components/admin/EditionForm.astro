@@ -1,0 +1,49 @@
+---
+// One edition of a project: date, venue, director, description, video and line-up.
+// Fields carry data-e / data-m attributes that the project page script reads when saving.
+import type { Edition } from '../../data/projects';
+
+interface Props { e?: Partial<Edition>; hidden?: boolean }
+const { e = {}, hidden = false } = Astro.props;
+const lineup = e.lineup ?? [];
+---
+<div data-edform={e.year ?? ''} hidden={hidden} class="adm-card flex flex-col gap-6 p-6">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <h2 class="text-xl font-medium">Edición <span data-ed-title>{e.year}</span></h2>
+    <label class="flex items-center gap-2 text-sm"><input type="checkbox" data-e="upcoming" checked={Boolean(e.upcoming)} /> Aún no ha ocurrido (se muestra «Próximamente»)</label>
+  </div>
+  <div class="grid gap-6 sm:grid-cols-2">
+    <div><label class="adm-label">Año</label><input class="adm-input" data-e="year" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" value={e.year ?? ''} placeholder="2027" /></div>
+    <div><label class="adm-label">Fecha</label><input class="adm-input" data-e="date_label" value={e.date ?? ''} placeholder="12 Mar 2027" /></div>
+    <div><label class="adm-label">Evento</label><input class="adm-input" data-e="event" value={e.event ?? ''} placeholder="Ej. CSW70" /></div>
+    <div>
+      <label class="adm-label">Sede</label>
+      <input class="adm-input" data-e="venue" value={e.venue ?? ''} placeholder="Sede sin confirmar" />
+      <p class="adm-hint">Si la dejas vacía, la web no muestra la sede.</p>
+    </div>
+    <div><label class="adm-label">Dirección musical</label><input class="adm-input" data-e="conductor" value={e.conductor ?? ''} /></div>
+  </div>
+  <div>
+    <label class="adm-label">Descripción</label>
+    <textarea class="adm-input !min-h-[100px]" data-e="description">{e.description ?? ''}</textarea>
+  </div>
+  <div>
+    <label class="adm-label">Enlace al vídeo</label>
+    <input class="adm-input" data-e="watch_url" value={e.watchUrl ?? ''} placeholder="https://youtube.com/…" />
+  </div>
+  <div>
+    <div class="flex items-baseline justify-between"><p class="adm-label !mb-0">Line-up</p><span class="adm-hint !mt-0">Elige de Personas o escribe un nombre nuevo</span></div>
+    <div class="mt-3 flex flex-col gap-2" data-lineup>
+      {lineup.length === 0 && <p class="adm-hint" data-empty>Nadie añadido todavía.</p>}
+      {lineup.map((m) => (
+        <div class="grid grid-cols-[1fr_auto] gap-2 sm:flex sm:items-center" data-member>
+          <input class="adm-input" list="people-list" data-m="name" value={m.name} aria-label="Nombre" />
+          <input class="adm-input col-span-2 row-start-2 sm:max-w-[200px]" data-m="role" value={m.role} aria-label="Función" />
+          <button type="button" class="adm-btn col-start-2 row-start-1 !min-h-[46px] !px-3" data-remove aria-label={`Quitar a ${m.name}`}>✕</button>
+        </div>
+      ))}
+    </div>
+    <button type="button" class="adm-btn mt-3" data-add>+ Añadir a la persona</button>
+  </div>
+  <button type="button" class="adm-btn self-start !border-transparent !px-0 !text-[#a33] hover:!bg-transparent hover:underline" data-remove-edition>Quitar esta edición</button>
+</div>

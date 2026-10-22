@@ -1,5 +1,4 @@
 ---
-export const prerender = true;
 // Project template. Every block below renders only if the project has that data
 // (see src/data/projects.ts) — a minimal project still produces a full card + hero.
 import Base from '../../layouts/Base.astro';
@@ -10,18 +9,15 @@ import StatBlock from '../../components/StatBlock.astro';
 import TestimonialCard from '../../components/TestimonialCard.astro';
 import PersonCard from '../../components/PersonCard.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
-import { statusLabel, type Project } from '../../data/projects';
+import { statusLabel } from '../../data/projects';
 import { getProjects, getTestimonials, getSettings } from '../../lib/content';
 const settings = await getSettings();
 
-export async function getStaticPaths() {
-  const projects = await getProjects();
-  return projects.map((p) => ({ params: { slug: p.slug }, props: { project: p } }));
-}
-interface Props { project: Project }
-const { project: p } = Astro.props;
-
 const projects = await getProjects();
+const p = projects.find((x) => x.slug === Astro.params.slug);
+if (!p) return Astro.rewrite('/404');
+
+
 const testimonials = await getTestimonials();
 const spanClass = { wide: 'lg:col-span-2', tall: 'lg:row-span-2', big: 'lg:col-span-2 lg:row-span-2' } as const;
 const others = projects.filter((x) => x.slug !== p.slug).slice(0, 3);
@@ -165,17 +161,17 @@ const highlight = heldEditions[heldEditions.length - 1];
   </script>
 
   <!-- Documentary + trailer -->
-  {p.documentary && (
+  {p.documentary?.title && (
     <section aria-labelledby="doc-h" class="bg-navy text-white">
       <div class="wrap grid grid-cols-[repeat(auto-fit,minmax(min(100%,440px),1fr))] gap-[clamp(40px,5vw,80px)] py-[clamp(64px,8vw,112px)]">
         <div data-reveal>
           <div class="eyebrow text-sky">Documentary</div>
           <h2 id="doc-h" class="t-h1 mt-4">{p.documentary.title}</h2>
           <p class="body mt-5">{p.documentary.text}</p>
-          <Button href={p.documentary.trailerUrl} external class="mt-7">Watch the trailer</Button>
+          {p.documentary.trailerUrl && <Button href={p.documentary.trailerUrl} external class="mt-7">Watch the trailer</Button>}
         </div>
         <ol class="border-t border-white/20">
-          {p.documentary.festivals.map((f) => (
+          {(p.documentary.festivals ?? []).map((f) => (
             <li data-reveal class="grid grid-cols-[96px_minmax(0,1fr)] gap-4 border-b border-white/20 py-[18px]">
               <div class="pt-0.5 text-sm font-medium uppercase tracking-[0.1em] text-sky">{f.date}</div>
               <div><div class="text-lg">{f.name}</div><div class="mt-0.5 text-sm text-line">{f.result}</div></div>
@@ -183,13 +179,13 @@ const highlight = heldEditions[heldEditions.length - 1];
           ))}
         </ol>
       </div>
-      <a href={p.documentary.trailerUrl} target="_blank" rel="noopener" aria-label={`Play the trailer of ${p.documentary.title}`} class="group relative block h-[clamp(300px,42vw,620px)] overflow-hidden bg-navy-deep">
+      {p.documentary.poster && p.documentary.trailerUrl && <a href={p.documentary.trailerUrl} target="_blank" rel="noopener" aria-label={`Play the trailer of ${p.documentary.title}`} class="group relative block h-[clamp(300px,42vw,620px)] overflow-hidden bg-navy-deep">
         <Photo {...p.documentary.poster} />
         <div class="absolute inset-0 bg-[rgba(10,22,38,.35)]"></div>
         <span class="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-3.5 rounded-full bg-white py-5 pl-[26px] pr-8 text-sm font-medium uppercase tracking-[0.14em] text-navy shadow-[0_10px_30px_rgba(0,0,0,.25)] transition-transform group-hover:scale-105">
           <span class="h-0 w-0 border-y-[9px] border-l-[14px] border-y-transparent border-l-orange"></span>Play trailer
         </span>
-      </a>
+      </a>}
     </section>
   )}
 

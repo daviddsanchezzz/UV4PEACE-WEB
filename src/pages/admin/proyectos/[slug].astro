@@ -1,17 +1,30 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
+import PhotoField from '../../../components/admin/PhotoField.astro';
+import EditionForm from '../../../components/admin/EditionForm.astro';
 import { getPeople, getProjects, type Project } from '../../../lib/content';
+import { createClient, supabaseConfigured } from '../../../lib/supabase';
 
-const [people, projects] = await Promise.all([getPeople(), getProjects()]);
+const db = supabaseConfigured() ? createClient(Astro.request, Astro.cookies) : undefined;
+const [people, projects] = await Promise.all([getPeople(db), getProjects(db)]);
 const { slug } = Astro.params;
 const isNew = slug === 'nuevo';
 const found = projects.find((p) => p.slug === slug);
 if (!isNew && !found) return Astro.redirect('/admin/proyectos/');
-const p: Project = found ?? { slug: '', title: '', status: 'ongoing', yearStart: '', dateLabel: '', city: '', summary: '', cover: null, editions: [] };
+const p: Project = found ?? { slug: '', title: '', status: 'ongoing', yearStart: '', dateLabel: '', city: '', summary: '', cover: null, editions: [], published: true };
 const editions = p.editions ?? [];
-const tab = Astro.url.searchParams.get('tab') === 'ediciones' ? 'ediciones' : 'datos';
-const selected = editions.find((e) => e.year === Astro.url.searchParams.get('ed')) ?? editions.find((e) => !e.upcoming && e.year === '2026') ?? editions[editions.length - 1];
-const tabs = [{ id: 'datos', l: 'Datos del proyecto' }, { id: 'ediciones', l: `Ediciones${editions.length ? ` (${editions.length})` : ''}` }, { id: 'fotos', l: 'Fotos' }];
+const tab = ['ediciones', 'fotos'].includes(Astro.url.searchParams.get('tab') ?? '') ? Astro.url.searchParams.get('tab')! : 'datos';
+const selected = editions.find((e) => e.year === Astro.url.searchParams.get('ed')) ?? editions.filter((e) => !e.upcoming).at(-1) ?? editions.at(-1);
+const tabs = [{ id: 'datos', l: 'Datos del proyecto' }, { id: 'ediciones', l: 'Ediciones' }, { id: 'fotos', l: 'Fotos y documental' }];
+const gallery = p.gallery ?? [];
+const doc = p.documentary;
+const spans = [{ v: '', l: 'Normal' }, { v: 'wide', l: 'Ancha' }, { v: 'tall', l: 'Alta' }, { v: 'big', l: 'Grande' }];
+const errors: Record<string, string> = {
+  faltan: 'Faltan el título o el estado.', mes: 'El mes de inicio debe tener el formato AAAA-MM, por ejemplo 2027-03.', anio: 'Cada edición necesita un año de 4 cifras, sin repetir.',
+  enlace: 'Los enlaces deben empezar por https://', foto: 'Alguna foto no es válida. Súbela de nuevo.', guardar: 'No se pudo guardar. Inténtalo de nuevo en un momento.',
+  funcion: 'La base de datos aún no tiene activada la función de guardado de proyectos. Avisa a quien mantiene la web.', quitar: 'No se pudo quitar. Inténtalo de nuevo en un momento.',
+};
+const error = errors[Astro.url.searchParams.get('error') ?? ''];
 ---
 <AdminLayout title={isNew ? 'Nuevo proyecto' : p.title} current="proyectos">
   <a href="/admin/proyectos/" class="text-sm">‹ Todos los proyectos</a>
@@ -21,6 +34,11 @@ const tabs = [{ id: 'datos', l: 'Datos del proyecto' }, { id: 'ediciones', l: `E
       {!isNew && <a href={`/projects/${p.slug}/`} class="adm-btn" target="_blank" rel="noopener">Ver en la web</a>}
     </div>
   </div>
+  {error && <p role="alert" class="adm-card mt-6 border-l-4 border-l-[#a33] p-4 text-[#a33]">{error}</p>}
+
+  <form id="project-form" novalidate method="post" action="/admin/api/projects/save">
+  <input type="hidden" name="slug" value={isNew ? '' : p.slug} />
+  <input type="hidden" name="payload" id="payload" />
 
   <div class="mt-8 flex gap-1 overflow-x-auto border-b border-line" role="tablist" aria-label="Secciones del proyecto">
     {tabs.map((t) => (
@@ -32,164 +50,144 @@ const tabs = [{ id: 'datos', l: 'Datos del proyecto' }, { id: 'ediciones', l: `E
     <div class="adm-card grid gap-6 p-6 lg:grid-cols-2">
       <div class="lg:col-span-2">
         <label class="adm-label" for="title">Título</label>
-        <input id="title" class="adm-input" value={p.title} />
+        <input id="title" data-f="title" class="adm-input" value={p.title} />
+      </div>
+      <div>
+        <label class="adm-label" for="title_accent">Parte del título en color</label>
+        <input id="title_accent" data-f="title_accent" class="adm-input" value={p.titleAccent ?? ''} placeholder="Ej. in Music" />
+        <p class="adm-hint">Opcional. Debe ser un trozo del título tal como está escrito.</p>
       </div>
       <div>
         <label class="adm-label" for="status">Estado</label>
-        <select id="status" class="adm-input">
+        <select id="status" data-f="status" class="adm-input">
           <option value="ongoing" selected={p.status === 'ongoing'}>En marcha</option>
           <option value="past" selected={p.status === 'past'}>Pasado</option>
         </select>
       </div>
       <div>
         <label class="adm-label" for="dates">Fechas (como se leen en la web)</label>
-        <input id="dates" class="adm-input" value={p.dateLabel} />
+        <input id="dates" data-f="date_label" class="adm-input" value={p.dateLabel} placeholder="2023 – today" />
+      </div>
+      <div>
+        <label class="adm-label" for="year_start">Mes de inicio, para ordenar</label>
+        <input id="year_start" data-f="year_start" class="adm-input" value={p.yearStart} placeholder="2023-03" pattern="\d{4}-\d{2}" />
+        <p class="adm-hint">Formato AAAA-MM.</p>
       </div>
       <div>
         <label class="adm-label" for="city">Ciudad o lugar</label>
-        <input id="city" class="adm-input" value={p.city} />
+        <input id="city" data-f="city" class="adm-input" value={p.city} />
       </div>
-      <div>
-        <label class="adm-label" for="feat">¿Destacar en la home?</label>
-        <select id="feat" class="adm-input"><option selected={!p.featured}>No</option><option selected={p.featured}>Sí, es el proyecto destacado</option></select>
+      <div class="flex flex-col justify-end gap-3">
+        <label class="flex items-center gap-3 text-base"><input type="checkbox" data-f="featured" class="h-5 w-5" checked={Boolean(p.featured)} /> Destacar en la home (solo uno a la vez)</label>
+        <label class="flex items-center gap-3 text-base"><input type="checkbox" data-f="published" class="h-5 w-5" checked={p.published !== false} /> Mostrar en la web</label>
       </div>
       <div class="lg:col-span-2">
         <label class="adm-label" for="summary">Resumen</label>
-        <textarea id="summary" class="adm-input !min-h-[96px]">{p.summary}</textarea>
+        <textarea id="summary" data-f="summary" class="adm-input !min-h-[96px]">{p.summary}</textarea>
         <p class="adm-hint">Una o dos frases. Aparece en la tarjeta del proyecto.</p>
       </div>
-      {p.intro && (
-        <div class="lg:col-span-2">
-          <label class="adm-label" for="intro">Texto de introducción</label>
-          <textarea id="intro" class="adm-input">{p.intro}</textarea>
-        </div>
-      )}
+      <div class="lg:col-span-2">
+        <label class="adm-label" for="intro">Texto de introducción</label>
+        <textarea id="intro" data-f="intro" class="adm-input">{p.intro ?? ''}</textarea>
+      </div>
+      <div class="lg:col-span-2">
+        <label class="adm-label" for="body">Texto principal</label>
+        <textarea id="body" data-f="body" class="adm-input !min-h-[140px]">{p.body ?? ''}</textarea>
+        <p class="adm-hint">Separa los párrafos con una línea en blanco.</p>
+      </div>
+      <div class="lg:col-span-2">
+        <label class="adm-label" for="vision">Visión</label>
+        <textarea id="vision" data-f="vision" class="adm-input">{p.vision ?? ''}</textarea>
+      </div>
     </div>
   </section>
 
   <section data-panel="ediciones" hidden={tab !== 'ediciones'} class="mt-8">
-    {editions.length === 0 ? (
-      <div class="adm-card p-8 text-center">
-        <p class="font-medium">Este proyecto no tiene ediciones</p>
-        <p class="adm-hint">Las ediciones sirven para proyectos que se repiten cada año, con su sede, director y line-up.</p>
-        <button class="adm-btn adm-btn-primary mt-4" type="button">+ Añadir primera edición</button>
+    <div class="grid items-start gap-6 lg:grid-cols-[240px_1fr]">
+      <div class="adm-card flex gap-1 overflow-x-auto p-2 lg:block" id="ed-list">
+        {editions.map((e) => (
+          <button type="button" data-ed={e.year} aria-pressed={e.year === selected?.year} class="adm-ed">
+            <span class="font-medium" data-ed-label>{e.year}</span>
+            <span class="text-sm opacity-80">{e.upcoming ? 'Próxima' : e.event || `Edición ${e.number}`}</span>
+          </button>
+        ))}
+        <button type="button" id="ed-new" class="adm-btn flex-none !border-dashed lg:mt-2 lg:w-full">+ Nueva edición</button>
       </div>
-    ) : (
-      <div class="grid items-start gap-6 lg:grid-cols-[240px_1fr]">
-        <div class="adm-card flex gap-1 overflow-x-auto p-2 lg:block">
-          {editions.map((e) => (
-            <button type="button" data-ed={e.year} aria-pressed={e.year === selected?.year} class="adm-ed">
-              <span class="font-medium">{e.year}</span>
-              <span class="text-sm opacity-80">{e.upcoming ? 'Próxima' : e.event || `Edición ${e.number}`}</span>
-            </button>
-          ))}
-          <button type="button" class="adm-btn flex-none !border-dashed lg:mt-2 lg:w-full">+ Nueva edición</button>
-        </div>
-
-        <div>
-          {editions.map((e) => (
-            <div data-edform={e.year} hidden={e.year !== selected?.year} class="adm-card flex flex-col gap-6 p-6">
-              <div class="flex flex-wrap items-center justify-between gap-3">
-                <h2 class="text-xl font-medium">Edición {e.year}</h2>
-                <label class="flex items-center gap-2 text-sm"><input type="checkbox" checked={e.upcoming} /> Aún no ha ocurrido (se muestra «Próximamente»)</label>
-              </div>
-              <div class="grid gap-6 sm:grid-cols-2">
-                <div><label class="adm-label">Fecha</label><input class="adm-input" value={e.date} /></div>
-                <div><label class="adm-label">Evento</label><input class="adm-input" value={e.event} placeholder="Ej. CSW70" /></div>
-                <div>
-                  <label class="adm-label">Sede</label>
-                  <input class="adm-input" value={e.venue} placeholder="Sede sin confirmar" />
-                  {!e.venue && !e.upcoming && <p class="adm-hint text-[#8a5a00]">Si la dejas vacía, la web no muestra la sede.</p>}
-                </div>
-                <div><label class="adm-label">Dirección musical</label><input class="adm-input" value={e.conductor} /></div>
-              </div>
-              <div>
-                <label class="adm-label">Descripción</label>
-                <textarea class="adm-input !min-h-[100px]">{e.description}</textarea>
-              </div>
-              <div>
-                <label class="adm-label">Enlace al vídeo</label>
-                <input class="adm-input" value={e.watchUrl} placeholder="https://youtube.com/…" />
-              </div>
-              <div>
-                <div class="flex items-baseline justify-between"><p class="adm-label !mb-0">Line-up ({e.lineup.length})</p><span class="adm-hint !mt-0">Elige de Personas o escribe un nombre nuevo</span></div>
-                <div class="mt-3 flex flex-col gap-2" data-lineup>
-                  {e.lineup.length === 0 && <p class="adm-hint" data-empty>Nadie añadido todavía.</p>}
-                  {e.lineup.map((m) => (
-                    <div class="grid grid-cols-[1fr_auto] gap-2 sm:flex sm:items-center" data-member>
-                      <input class="adm-input" list="people-list" value={m.name} aria-label="Nombre" />
-                      <input class="adm-input col-span-2 row-start-2 sm:max-w-[200px]" value={m.role} aria-label="Función" />
-                      <button type="button" class="adm-btn col-start-2 row-start-1 !min-h-[46px] !px-3" data-remove aria-label={`Quitar a ${m.name}`}>✕</button>
-                    </div>
-                  ))}
-                </div>
-                <button type="button" class="adm-btn mt-3" data-add>+ Añadir a la persona</button>
-              </div>
-            </div>
-          ))}
-        </div>
+      <div id="ed-forms">
+        <p class="adm-card p-8 text-center text-ink-muted" id="ed-none" hidden={editions.length > 0}>Este proyecto no tiene ediciones. Sirven para proyectos que se repiten cada año, con su sede, director y line-up.</p>
+        {editions.map((e) => <EditionForm e={e} hidden={e.year !== selected?.year} />)}
       </div>
-    )}
+    </div>
     <datalist id="people-list">{people.map((x) => <option value={x.name}></option>)}</datalist>
+    <template id="tpl-edition"><EditionForm hidden /></template>
   </section>
 
-  <section data-panel="fotos" hidden class="mt-8 flex flex-col gap-6">
+  <section data-panel="fotos" hidden={tab !== 'fotos'} class="mt-8 flex flex-col gap-6">
     <div class="adm-card p-6">
       <h2 class="text-xl font-medium">Portada y cabecera</h2>
       <div class="mt-4 grid gap-6 sm:grid-cols-2">
-        {[{ k: 'Portada (tarjeta del proyecto)', r: p.cover }, { k: 'Cabecera (página del proyecto)', r: p.hero ?? null }].map((x) => (
-          <div>
-            <p class="adm-label">{x.k}</p>
-            <div class="grid aspect-[16/10] place-items-center rounded-lg bg-placeholder px-4 text-center text-sm text-placeholder-line">{x.r ? x.r.alt : 'Sin foto'}</div>
-            <button class="adm-btn mt-3 w-full sm:w-auto" type="button">{x.r ? 'Cambiar foto' : 'Subir foto'}</button>
-          </div>
-        ))}
+        <PhotoField label="Portada (tarjeta del proyecto)" value={p.cover} ratio="16 / 10" />
+        <PhotoField label="Cabecera (página del proyecto)" value={p.hero ?? null} ratio="16 / 10" />
       </div>
     </div>
     <div class="adm-card p-6">
       <div class="flex flex-wrap items-center justify-between gap-3">
-        <h2 class="text-xl font-medium">Galería ({(p.gallery ?? []).length})</h2>
-        <button class="adm-btn" type="button">+ Añadir fotos</button>
+        <h2 class="text-xl font-medium">Galería</h2>
+        <button class="adm-btn" type="button" id="gal-add">+ Añadir foto</button>
       </div>
-      {(p.gallery ?? []).length === 0 ? <p class="adm-hint mt-3">Este proyecto no tiene galería.</p> : (
-        <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-          {(p.gallery ?? []).map((g) => (
-            <div class="rounded-lg border border-line p-2">
-              <div class="grid aspect-[4/3] place-items-center rounded bg-placeholder px-2 text-center text-xs text-placeholder-line">{g.alt}</div>
-              <div class="mt-2 flex items-center justify-between text-sm"><span class="adm-pill">{g.span === 'wide' ? 'Ancha' : g.span === 'tall' ? 'Alta' : g.span === 'big' ? 'Grande' : 'Normal'}</span><button type="button" aria-label="Quitar foto">✕</button></div>
+      <p class="adm-hint mt-2">«Ancha», «Alta» y «Grande» hacen que la foto ocupe más sitio en la galería de la web.</p>
+      <p class="adm-hint mt-3" id="gal-empty" hidden={gallery.length > 0}>Este proyecto no tiene galería.</p>
+      <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" id="gal">
+        {gallery.map((g) => (
+          <div class="rounded-lg border border-line p-3" data-gal>
+            <PhotoField value={g} ratio="4 / 3" focus={false} />
+            <div class="mt-3 flex items-center justify-between gap-2">
+              <select class="adm-input !min-h-[40px]" data-span aria-label="Tamaño">{spans.map((o) => <option value={o.v} selected={o.v === (g.span ?? '')}>{o.l}</option>)}</select>
+              <button type="button" class="adm-btn !min-h-[40px]" data-gal-remove aria-label="Quitar foto">✕</button>
+            </div>
+          </div>
+        ))}
+      </div>
+      <template id="tpl-gal">
+        <div class="rounded-lg border border-line p-3" data-gal>
+          <PhotoField ratio="4 / 3" focus={false} />
+          <div class="mt-3 flex items-center justify-between gap-2">
+            <select class="adm-input !min-h-[40px]" data-span aria-label="Tamaño">{spans.map((o) => <option value={o.v}>{o.l}</option>)}</select>
+            <button type="button" class="adm-btn !min-h-[40px]" data-gal-remove aria-label="Quitar foto">✕</button>
+          </div>
+        </div>
+      </template>
+    </div>
+    <div class="adm-card flex flex-col gap-6 p-6" id="doc">
+      <h2 class="text-xl font-medium">Documental</h2>
+      <p class="adm-hint !mt-0">Opcional. Si dejas vacíos el título, el texto y el enlace, la web no muestra la sección.</p>
+      <div><label class="adm-label" for="doc-title">Título</label><input id="doc-title" data-d="title" class="adm-input" value={doc?.title ?? ''} /></div>
+      <div><label class="adm-label" for="doc-text">Texto</label><textarea id="doc-text" data-d="text" class="adm-input">{doc?.text ?? ''}</textarea></div>
+      <div><label class="adm-label" for="doc-trailer">Enlace al tráiler</label><input id="doc-trailer" data-d="trailerUrl" class="adm-input" value={doc?.trailerUrl ?? ''} placeholder="https://" /></div>
+      <div class="max-w-[420px]"><PhotoField label="Imagen del tráiler" value={doc?.poster ?? null} ratio="16 / 9" focus={false} /></div>
+      <div>
+        <p class="adm-label">Festivales</p>
+        <div class="flex flex-col gap-2" id="fests">
+          {(doc?.festivals ?? []).map((f) => (
+            <div class="grid grid-cols-[1fr_auto] gap-2 sm:flex sm:items-center" data-fest>
+              <input class="adm-input sm:max-w-[140px]" data-ft="date" value={f.date} aria-label="Fecha" />
+              <button type="button" class="adm-btn col-start-2 row-start-1 !min-h-[46px] !px-3 sm:order-last" data-fest-remove aria-label="Quitar">✕</button>
+              <input class="adm-input col-span-2 row-start-2 sm:col-auto sm:flex-1" data-ft="name" value={f.name} aria-label="Festival" />
+              <input class="adm-input col-span-2 row-start-3 sm:col-auto sm:max-w-[200px]" data-ft="result" value={f.result} aria-label="Resultado" />
             </div>
           ))}
         </div>
-      )}
-    </div>
-    {p.documentary && (
-      <div class="adm-card flex flex-col gap-6 p-6">
-        <h2 class="text-xl font-medium">Documental</h2>
-        <div><label class="adm-label" for="doc-title">Título</label><input id="doc-title" class="adm-input" value={p.documentary.title} /></div>
-        <div><label class="adm-label" for="doc-text">Texto</label><textarea id="doc-text" class="adm-input">{p.documentary.text}</textarea></div>
-        <div><label class="adm-label" for="doc-trailer">Enlace al tráiler</label><input id="doc-trailer" class="adm-input" value={p.documentary.trailerUrl} /></div>
-        <div>
-          <p class="adm-label">Festivales ({p.documentary.festivals.length})</p>
-          <div class="flex flex-col gap-2">
-            {p.documentary.festivals.map((f) => (
-              <div class="grid grid-cols-[1fr_auto] gap-2 sm:flex sm:items-center">
-                <input class="adm-input sm:max-w-[140px]" value={f.date} aria-label="Fecha" />
-                <button type="button" class="adm-btn col-start-2 row-start-1 !min-h-[46px] !px-3 sm:order-last" aria-label="Quitar">✕</button>
-                <input class="adm-input col-span-2 row-start-2 sm:col-auto sm:flex-1" value={f.name} aria-label="Festival" />
-                <input class="adm-input col-span-2 row-start-3 sm:col-auto sm:max-w-[200px]" value={f.result} aria-label="Resultado" />
-              </div>
-            ))}
-          </div>
-          <button class="adm-btn mt-3" type="button">+ Añadir festival</button>
-        </div>
+        <button class="adm-btn mt-3" type="button" id="fest-add">+ Añadir festival</button>
       </div>
-    )}
+    </div>
   </section>
 
   <div class="adm-actions">
-    <button class="adm-btn adm-btn-primary" type="button">Guardar cambios</button>
+    <button class="adm-btn adm-btn-primary" type="submit">Guardar cambios</button>
     <a class="adm-btn" href="/admin/proyectos/">Cancelar</a>
+    {!isNew && <button class="adm-btn !border-transparent !text-[#a33]" type="submit" formaction="/admin/api/projects/delete" formnovalidate id="delete" onclick="return confirm('¿Quitar este proyecto de la web con todas sus ediciones? No se puede deshacer.')">Quitar de la web</button>}
   </div>
+  </form>
 
   <style is:global>
     .adm-tab { flex: none; padding: 12px 18px; border: 0; border-bottom: 3px solid transparent; background: none; font: inherit; font-size: 16px; color: var(--color-ink-muted); cursor: pointer; margin-bottom: -1px; }
@@ -200,33 +198,120 @@ const tabs = [{ id: 'datos', l: 'Datos del proyecto' }, { id: 'ediciones', l: `E
     .adm-ed[aria-pressed="true"] { background: var(--color-navy); color: #fff; }
     [hidden] { display: none !important; }
   </style>
+
   <script>
-    const tabs = document.querySelectorAll<HTMLElement>('[data-tab]');
-    const panels = document.querySelectorAll<HTMLElement>('[data-panel]');
+    const form = document.getElementById('project-form') as HTMLFormElement;
+    const $ = <T extends HTMLElement>(sel: string, root: ParentNode = document) => root.querySelector<T>(sel)!;
+    const all = <T extends HTMLElement>(sel: string, root: ParentNode = document) => [...root.querySelectorAll<T>(sel)];
+
+    // Tabs
+    const tabs = all('[data-tab]');
+    const panels = all('[data-panel]');
     const show = (id: string) => {
       tabs.forEach((t) => t.setAttribute('aria-selected', String(t.dataset.tab === id)));
       panels.forEach((p) => (p.hidden = p.dataset.panel !== id));
     };
     tabs.forEach((t) => t.addEventListener('click', () => show(t.dataset.tab!)));
-    const eds = document.querySelectorAll<HTMLElement>('[data-ed]');
-    const forms = document.querySelectorAll<HTMLElement>('[data-edform]');
-    eds.forEach((b) => b.addEventListener('click', () => {
-      eds.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-      forms.forEach((f) => (f.hidden = f.dataset.edform !== b.dataset.ed));
-    }));
-    document.addEventListener('click', (e) => {
+
+    // Editions
+    const forms = $('#ed-forms');
+    const list = $('#ed-list');
+    const select = (key: string) => {
+      all('[data-ed]', list).forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.ed === key)));
+      all('[data-edform]', forms).forEach((f) => (f.hidden = f.dataset.edform !== key));
+    };
+    const refreshNone = () => { $('#ed-none').hidden = all('[data-edform]', forms).length > 0; };
+    list.addEventListener('click', (e) => {
+      const b = (e.target as HTMLElement).closest<HTMLElement>('[data-ed]');
+      if (b) select(b.dataset.ed!);
+    });
+    $('#ed-new').addEventListener('click', () => {
+      const key = 'new-' + Date.now();
+      const f = ($('#tpl-edition') as HTMLTemplateElement).content.firstElementChild!.cloneNode(true) as HTMLElement;
+      f.dataset.edform = key; forms.appendChild(f);
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'adm-ed'; b.dataset.ed = key;
+      b.innerHTML = '<span class="font-medium" data-ed-label>Nueva</span><span class="text-sm opacity-80">Edición nueva</span>';
+      list.insertBefore(b, $('#ed-new')); refreshNone(); select(key);
+      $<HTMLInputElement>('[data-e="year"]', f).focus();
+    });
+    forms.addEventListener('input', (e) => {
+      const t = e.target as HTMLInputElement;
+      if (t.dataset.e !== 'year') return;
+      const f = t.closest<HTMLElement>('[data-edform]')!;
+      $('[data-ed-title]', f).textContent = t.value;
+      const b = all('[data-ed]', list).find((x) => x.dataset.ed === f.dataset.edform);
+      if (b) $('[data-ed-label]', b).textContent = t.value || 'Nueva';
+    });
+    forms.addEventListener('click', (e) => {
       const t = e.target as HTMLElement;
       if (t.matches('[data-remove]')) t.closest('[data-member]')?.remove();
       if (t.matches('[data-add]')) {
-        const list = t.parentElement!.querySelector('[data-lineup]')!;
-        list.querySelector('[data-empty]')?.remove();
+        const l = $('[data-lineup]', t.parentElement!);
+        l.querySelector('[data-empty]')?.remove();
         const row = document.createElement('div');
         row.className = 'grid grid-cols-[1fr_auto] gap-2 sm:flex sm:items-center';
         row.setAttribute('data-member', '');
-        row.innerHTML = '<input class="adm-input" list="people-list" placeholder="Nombre" aria-label="Nombre" /><input class="adm-input col-span-2 row-start-2 sm:max-w-[200px]" placeholder="Función" aria-label="Función" /><button type="button" class="adm-btn col-start-2 row-start-1 !min-h-[46px] !px-3" data-remove aria-label="Quitar">✕</button>';
-        list.appendChild(row);
+        row.innerHTML = '<input class="adm-input" list="people-list" data-m="name" placeholder="Nombre" aria-label="Nombre" /><input class="adm-input col-span-2 row-start-2 sm:max-w-[200px]" data-m="role" placeholder="Función" aria-label="Función" /><button type="button" class="adm-btn col-start-2 row-start-1 !min-h-[46px] !px-3" data-remove aria-label="Quitar">✕</button>';
+        l.appendChild(row);
         row.querySelector('input')?.focus();
       }
+      if (t.matches('[data-remove-edition]')) {
+        if (!confirm('¿Quitar esta edición con su line-up? Se aplica al guardar.')) return;
+        const f = t.closest<HTMLElement>('[data-edform]')!;
+        all('[data-ed]', list).find((x) => x.dataset.ed === f.dataset.edform)?.remove();
+        f.remove(); refreshNone();
+        const next = all('[data-ed]', list)[0];
+        if (next) select(next.dataset.ed!);
+      }
+    });
+
+    // Gallery
+    const gal = $('#gal');
+    const galEmpty = () => { $('#gal-empty').hidden = all('[data-gal]', gal).length > 0; };
+    $('#gal-add').addEventListener('click', () => {
+      const n = ($('#tpl-gal') as HTMLTemplateElement).content.firstElementChild!.cloneNode(true) as HTMLElement;
+      gal.appendChild(n); (window as any).uvPhotos(n); galEmpty();
+      $<HTMLElement>('[data-photo-file]', n).click();
+    });
+    gal.addEventListener('click', (e) => {
+      const b = (e.target as HTMLElement).closest('[data-gal-remove]');
+      if (b) { b.closest('[data-gal]')!.remove(); galEmpty(); }
+    });
+
+    // Festivals
+    const fests = $('#fests');
+    $('#fest-add').addEventListener('click', () => {
+      const row = document.createElement('div');
+      row.className = 'grid grid-cols-[1fr_auto] gap-2 sm:flex sm:items-center';
+      row.setAttribute('data-fest', '');
+      row.innerHTML = '<input class="adm-input sm:max-w-[140px]" data-ft="date" placeholder="Fecha" aria-label="Fecha" /><button type="button" class="adm-btn col-start-2 row-start-1 !min-h-[46px] !px-3 sm:order-last" data-fest-remove aria-label="Quitar">✕</button><input class="adm-input col-span-2 row-start-2 sm:col-auto sm:flex-1" data-ft="name" placeholder="Festival" aria-label="Festival" /><input class="adm-input col-span-2 row-start-3 sm:col-auto sm:max-w-[200px]" data-ft="result" placeholder="Resultado" aria-label="Resultado" />';
+      fests.appendChild(row); row.querySelector('input')?.focus();
+    });
+    fests.addEventListener('click', (e) => { (e.target as HTMLElement).closest('[data-fest-remove]')?.closest('[data-fest]')?.remove(); });
+
+    // Everything is sent as one JSON document: the database saves it in a single step.
+    const photo = (root: ParentNode) => { const v = $<HTMLInputElement>('[data-photo-value]', root).value; return v ? JSON.parse(v) : null; };
+    form.addEventListener('submit', (e) => {
+      const submitter = (e as SubmitEvent).submitter as HTMLElement | null;
+      if (submitter?.id === 'delete') return;
+      const f: Record<string, unknown> = {};
+      all<HTMLInputElement>('[data-f]').forEach((el) => { f[el.dataset.f!] = el.type === 'checkbox' ? el.checked : el.value; });
+      const photos = all('[data-panel="fotos"] > .adm-card:first-child [data-photo]');
+      f.cover = photo(photos[0]); f.hero = photo(photos[1]);
+      f.gallery = all('[data-gal]', gal).map((g) => ({ ...(photo(g) ?? {}), span: $<HTMLSelectElement>('[data-span]', g).value })).filter((g) => (g as any).src);
+      const d: Record<string, unknown> = {};
+      all<HTMLInputElement>('[data-d]').forEach((el) => { d[el.dataset.d!] = el.value; });
+      d.poster = photo($('#doc'));
+      d.festivals = all('[data-fest]', fests).map((r) => ({ date: $<HTMLInputElement>('[data-ft="date"]', r).value, name: $<HTMLInputElement>('[data-ft="name"]', r).value, result: $<HTMLInputElement>('[data-ft="result"]', r).value }));
+      f.documentary = d;
+      f.editions = all('[data-edform]', forms).map((ef) => {
+        const o: Record<string, unknown> = {};
+        all<HTMLInputElement>('[data-e]', ef).forEach((el) => { o[el.dataset.e!] = el.type === 'checkbox' ? el.checked : el.value; });
+        o.lineup = all('[data-member]', ef).map((m) => ({ name: $<HTMLInputElement>('[data-m="name"]', m).value, role: $<HTMLInputElement>('[data-m="role"]', m).value }));
+        return o;
+      });
+      $<HTMLInputElement>('#payload').value = JSON.stringify(f);
     });
   </script>
 </AdminLayout>

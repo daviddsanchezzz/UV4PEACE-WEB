@@ -1,7 +1,11 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
+import RowMove from '../../../components/admin/RowMove.astro';
 import { getProjects } from '../../../lib/content';
-const projects = await getProjects();
+import { createClient, supabaseConfigured } from '../../../lib/supabase';
+
+const projects = await getProjects(supabaseConfigured() ? createClient(Astro.request, Astro.cookies) : undefined);
+const ok = ({ guardado: 'Cambios guardados.', creado: 'Proyecto añadido.', quitado: 'Proyecto quitado de la web.', orden: 'Orden cambiado.' } as Record<string, string>)[Astro.url.searchParams.get('ok') ?? ''];
 ---
 <AdminLayout title="Proyectos" current="proyectos">
   <div class="flex flex-wrap items-end justify-between gap-4">
@@ -11,27 +15,52 @@ const projects = await getProjects();
     </div>
     <a href="/admin/proyectos/nuevo/" class="adm-btn adm-btn-primary">+ Añadir proyecto</a>
   </div>
+  {ok && <p role="status" class="adm-pill adm-pill-ok mt-4 !text-sm">{ok} Se verá en la web en menos de un minuto.</p>}
   <div class="mt-8 flex flex-wrap items-center gap-3">
     <label for="q" class="sr-only">Buscar</label>
     <input id="q" class="adm-input max-w-[320px]" type="search" placeholder="Buscar proyecto" />
     <div class="flex gap-2" role="group" aria-label="Filtrar por estado">
-      <button class="adm-btn !min-h-[38px] !bg-navy !text-white" type="button">Todos</button>
-      <button class="adm-btn !min-h-[38px]" type="button">En marcha</button>
-      <button class="adm-btn !min-h-[38px]" type="button">Pasados</button>
+      <button class="adm-btn !min-h-[38px] !bg-navy !text-white" type="button" data-filter="">Todos</button>
+      <button class="adm-btn !min-h-[38px]" type="button" data-filter="ongoing">En marcha</button>
+      <button class="adm-btn !min-h-[38px]" type="button" data-filter="past">Pasados</button>
     </div>
   </div>
-  <div class="adm-card mt-6">
-    {projects.map((p) => (
-      <a href={`/admin/proyectos/${p.slug}/`} class="adm-row hover:no-underline">
-        <span class="grid h-12 w-16 flex-none place-items-center rounded-md bg-placeholder text-xs text-placeholder-line">{p.cover ? 'foto' : '—'}</span>
-        <span class="min-w-0 flex-1">
-          <span class="block truncate font-medium">{p.title}</span>
-          <span class="block truncate text-sm text-ink-muted">{p.dateLabel}{p.city ? ` · ${p.city}` : ''}</span>
-        </span>
-        {p.editions && <span class="adm-pill hidden sm:inline-flex">{p.editions.filter((e) => !e.upcoming).length} ediciones</span>}
-        <span class={`adm-pill ${p.status === 'ongoing' ? 'adm-pill-ok' : ''}`}>{p.status === 'ongoing' ? 'En marcha' : 'Pasado'}</span>
-        <span aria-hidden="true" class="text-ink-muted">›</span>
-      </a>
+  <p class="adm-hint mt-4">Usa las flechas de cada fila para cambiar el orden en que aparecen en la web.</p>
+  <div class="adm-card mt-3" id="list">
+    {projects.map((p, i) => (
+      <div class="adm-line" id={p.slug} data-status={p.status} data-text={`${p.title} ${p.city}`.toLowerCase()}>
+        <a href={`/admin/proyectos/${p.slug}/`} class="adm-row hover:no-underline">
+          {p.cover && /^https?:/.test(p.cover.src)
+            ? <img src={p.cover.src} alt="" class="h-12 w-16 flex-none rounded-md object-cover" />
+            : <span class="grid h-12 w-16 flex-none place-items-center rounded-md bg-placeholder text-xs text-placeholder-line">{p.cover ? 'foto' : '—'}</span>}
+          <span class="min-w-0 flex-1">
+            <span class="block truncate font-medium">{p.title}</span>
+            <span class="block truncate text-sm text-ink-muted">{p.dateLabel}{p.city ? ` · ${p.city}` : ''}</span>
+          </span>
+          {p.editions && <span class="adm-pill hidden sm:inline-flex">{p.editions.filter((e) => !e.upcoming).length} ediciones</span>}
+          {p.published === false && <span class="adm-pill adm-pill-warn">Oculto</span>}
+          <span class={`adm-pill ${p.status === 'ongoing' ? 'adm-pill-ok' : ''}`}>{p.status === 'ongoing' ? 'En marcha' : 'Pasado'}</span>
+          <span aria-hidden="true" class="text-ink-muted">›</span>
+        </a>
+        <RowMove section="proyectos" id={p.slug} first={i === 0} last={i === projects.length - 1} />
+      </div>
     ))}
   </div>
+
+  <script>
+    const q = document.getElementById('q') as HTMLInputElement;
+    const buttons = [...document.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+    const lines = [...document.querySelectorAll<HTMLElement>('#list .adm-line')];
+    let status = '';
+    const apply = () => {
+      const t = q.value.trim().toLowerCase();
+      lines.forEach((l) => { l.hidden = Boolean((status && l.dataset.status !== status) || (t && !l.dataset.text!.includes(t))); });
+    };
+    q.addEventListener('input', apply);
+    buttons.forEach((b) => b.addEventListener('click', () => {
+      status = b.dataset.filter!;
+      buttons.forEach((x) => { x.classList.toggle('!bg-navy', x === b); x.classList.toggle('!text-white', x === b); });
+      apply();
+    }));
+  </script>
 </AdminLayout>

@@ -1,10 +1,15 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
 import { getPeople, type PersonGroup } from '../../../lib/content';
+import RowMove from '../../../components/admin/RowMove.astro';
+import { createClient, supabaseConfigured } from '../../../lib/supabase';
 
-const people = await getPeople();
+const people = await getPeople(supabaseConfigured() ? createClient(Astro.request, Astro.cookies) : undefined);
+const ok = ({ guardado: 'Cambios guardados.', creado: 'Persona añadida.', quitado: 'Quitada de la web.', orden: 'Orden cambiado.' } as Record<string, string>)[Astro.url.searchParams.get('ok') ?? ''];
 const groupLabel: Record<PersonGroup, string> = { team: 'Equipo', board: 'Junta', ambassador: 'Embajadoras', artist: 'Artistas' };
 const initials = (n: string) => n.split(' ').map((w) => w[0]).slice(0, 2).join('');
+const scope = (g: PersonGroup) => (g === 'team' || g === 'board' ? 'tb' : g);
+const inScope = (p: { group: PersonGroup }) => people.filter((x) => scope(x.group) === scope(p.group));
 const counts = (Object.keys(groupLabel) as PersonGroup[]).map((g) => ({ g, n: people.filter((p) => p.group === g).length }));
 ---
 <AdminLayout title="Personas" current="personas">
@@ -16,29 +21,55 @@ const counts = (Object.keys(groupLabel) as PersonGroup[]).map((g) => ({ g, n: pe
     <a href="/admin/personas/nueva/" class="adm-btn adm-btn-primary">+ Añadir persona</a>
   </div>
 
+  {ok && <p role="status" class="adm-pill adm-pill-ok mt-4 !text-sm">{ok} Se verá en la web en menos de un minuto.</p>}
   <div class="mt-8 flex flex-wrap items-center gap-3">
     <label for="q" class="sr-only">Buscar</label>
     <input id="q" class="adm-input max-w-[320px]" type="search" placeholder="Buscar por nombre o cargo" />
     <div class="flex flex-wrap gap-2" role="group" aria-label="Filtrar por grupo">
-      <button class="adm-btn !min-h-[38px] !bg-navy !text-white" type="button">Todas {people.length}</button>
-      {counts.filter((c) => c.n > 0).map((c) => <button class="adm-btn !min-h-[38px]" type="button">{groupLabel[c.g]} {c.n}</button>)}
+      <button class="adm-btn !min-h-[38px] !bg-navy !text-white" type="button" data-filter="">Todas {people.length}</button>
+      {counts.filter((c) => c.n > 0).map((c) => <button class="adm-btn !min-h-[38px]" type="button" data-filter={c.g}>{groupLabel[c.g]} {c.n}</button>)}
     </div>
   </div>
 
-  <p class="adm-hint mt-4">Arrastra el asa de cada fila para cambiar el orden en que aparecen en la web.</p>
-  <div class="adm-card mt-3">
-    {people.map((p) => (
-      <a href={`/admin/personas/${p.slug}/`} class="adm-row hover:no-underline">
-        <span class="cursor-grab select-none text-xl leading-none text-placeholder-line" aria-hidden="true">⠿</span>
-        <span class="adm-avatar h-11 w-11 text-sm">{initials(p.name)}</span>
-        <span class="min-w-0 flex-1">
-          <span class="block truncate font-medium">{p.name}</span>
-          <span class="block truncate text-sm text-ink-muted">{p.role}{p.city ? ` · ${p.city}` : ''}</span>
-        </span>
-        <span class="adm-pill hidden sm:inline-flex">{groupLabel[p.group]}</span>
-        {!p.photo && <span class="adm-pill adm-pill-warn hidden md:inline-flex">Sin foto</span>}
-        <span aria-hidden="true" class="text-ink-muted">›</span>
-      </a>
-    ))}
+  <p class="adm-hint mt-4">Usa las flechas de cada fila para cambiar el orden en que aparecen en la web. El equipo y la junta comparten una misma lista.</p>
+  <div class="adm-card mt-3" id="list">
+    {people.map((p) => {
+      const mates = inScope(p);
+      return (
+        <div class="adm-line" id={p.slug} data-group={p.group} data-text={`${p.name} ${p.role}`.toLowerCase()}>
+          <a href={`/admin/personas/${p.slug}/`} class="adm-row hover:no-underline">
+            {p.photo && /^https?:/.test(p.photo.src)
+              ? <img src={p.photo.src} alt="" class="h-11 w-11 flex-none rounded-full object-cover" style={`object-position:${p.photo.pos ?? '50% 50%'}`} />
+              : <span class="adm-avatar h-11 w-11 text-sm">{initials(p.name)}</span>}
+            <span class="min-w-0 flex-1">
+              <span class="block truncate font-medium">{p.name}</span>
+              <span class="block truncate text-sm text-ink-muted">{p.role}{p.city ? ` · ${p.city}` : ''}</span>
+            </span>
+            <span class="adm-pill hidden sm:inline-flex">{groupLabel[p.group]}</span>
+            {p.published === false && <span class="adm-pill adm-pill-warn hidden md:inline-flex">Oculta</span>}
+            {!p.photo && <span class="adm-pill adm-pill-warn hidden md:inline-flex">Sin foto</span>}
+            <span aria-hidden="true" class="text-ink-muted">›</span>
+          </a>
+          <RowMove section="personas" id={p.slug} first={mates[0] === p} last={mates[mates.length - 1] === p} />
+        </div>
+      );
+    })}
   </div>
+
+  <script>
+    const q = document.getElementById('q') as HTMLInputElement;
+    const buttons = [...document.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+    const lines = [...document.querySelectorAll<HTMLElement>('#list .adm-line')];
+    let group = '';
+    const apply = () => {
+      const t = q.value.trim().toLowerCase();
+      lines.forEach((l) => { l.hidden = Boolean((group && l.dataset.group !== group) || (t && !l.dataset.text!.includes(t))); });
+    };
+    q.addEventListener('input', apply);
+    buttons.forEach((b) => b.addEventListener('click', () => {
+      group = b.dataset.filter!;
+      buttons.forEach((x) => { x.classList.toggle('!bg-navy', x === b); x.classList.toggle('!text-white', x === b); });
+      apply();
+    }));
+  </script>
 </AdminLayout>

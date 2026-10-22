@@ -1,0 +1,11 @@
+---
+// Up and down arrows that change a row's place on the website.
+interface Props { section: string; id: string; first?: boolean; last?: boolean }
+const { section, id, first = false, last = false } = Astro.props;
+---
+<form method="post" action="/admin/api/content/move" class="adm-move">
+  <input type="hidden" name="section" value={section} />
+  <input type="hidden" name="id" value={id} />
+  <button type="submit" name="dir" value="up" disabled={first} aria-label="Subir">↑</button>
+  <button type="submit" name="dir" value="down" disabled={last} aria-label="Bajar">↓</button>
+</form>

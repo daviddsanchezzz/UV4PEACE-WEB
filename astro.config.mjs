@@ -1,6 +1,5 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
-import sitemap from '@astrojs/sitemap';
 import vercel from '@astrojs/vercel';
 
 // Public pages are prerendered (static); /admin and form endpoints (added in later phases)
@@ -19,7 +18,6 @@ export default defineConfig({
       { hostname: '**.vercel.app', protocol: 'https' }, // the project address and branch previews
     ],
   },
-  integrations: [sitemap()],
   // sanitize-html requires an ES-module-only dependency, which Vercel's Node runtime cannot load: bundle it instead.
   vite: { plugins: [tailwindcss()], ssr: { noExternal: [/^(sanitize-html|htmlparser2|domhandler|domutils|domelementtype|dom-serializer|entities|parse-srcset|launder|is-plain-object|escape-string-regexp)$/] } },
   image: {
