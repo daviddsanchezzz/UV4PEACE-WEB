@@ -5,7 +5,9 @@ import { defineMiddleware } from 'astro:middleware';
 import { createClient, supabaseConfigured } from './lib/supabase';
 
 // Reachable without a session: the login screen and the endpoints that create or recover one.
-const open = new Set(['/admin', '/admin/olvide', '/admin/auth/callback', '/admin/api/login', '/admin/api/reset', '/admin/api/logout']);
+const open = new Set(['/admin', '/admin/olvide', '/admin/auth/callback', '/admin/auth/confirm', '/admin/auth/aceptar', '/admin/api/login', '/admin/api/reset', '/admin/api/logout']);
+// Needs a session but not an `editors` row: a newly invited person chooses a password before being given access.
+const sessionOnly = new Set(['/admin/nueva-contrasena', '/admin/api/password']);
 
 export const onRequest = defineMiddleware(async (ctx, next) => {
   const path = ctx.url.pathname.replace(/\/+$/, '') || '/';
@@ -23,10 +25,12 @@ export const onRequest = defineMiddleware(async (ctx, next) => {
     const supabase = createClient(ctx.request, ctx.cookies);
     const { data } = await supabase.auth.getUser();
     if (!data.user) return ctx.redirect('/admin/', 303);
-    const { data: editor } = await supabase.from('editors').select('user_id').eq('user_id', data.user.id).maybeSingle();
-    if (!editor) {
-      await supabase.auth.signOut();
-      return ctx.redirect('/admin/?error=permiso', 303);
+    if (!sessionOnly.has(path)) {
+      const { data: editor } = await supabase.from('editors').select('user_id').eq('user_id', data.user.id).maybeSingle();
+      if (!editor) {
+        await supabase.auth.signOut();
+        return ctx.redirect('/admin/?error=permiso', 303);
+      }
     }
     ctx.locals.userEmail = data.user.email ?? undefined;
     res = await next();

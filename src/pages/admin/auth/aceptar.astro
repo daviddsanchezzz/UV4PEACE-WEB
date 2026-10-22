@@ -1,0 +1,42 @@
+---
+// Fallback for emails that still deliver the session in the address (#access_token=...): the browser
+// keeps it, we store it as the panel's session cookie, clean the address and ask for a new password.
+import '../../../styles/global.css';
+const url = import.meta.env.PUBLIC_SUPABASE_URL ?? '';
+const key = import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? '';
+---
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="referrer" content="no-referrer" />
+    <title>Entrando… · Panel UV4PEACE</title>
+  </head>
+  <body class="grid min-h-svh place-items-center bg-navy px-4 font-sans text-white antialiased">
+    <main class="text-center">
+      <p id="msg" role="status" class="text-lg">Un momento, estamos preparando tu cuenta…</p>
+      <p id="err" hidden class="mt-4"><a href="/admin/" class="btn btn-primary">Volver a entrar</a></p>
+    </main>
+    <script define:vars={{ url, key }}>
+      window.__cfg = { url, key };
+    </script>
+    <script>
+      import { createBrowserClient } from '@supabase/ssr';
+      const cfg = (window as unknown as { __cfg: { url: string; key: string } }).__cfg;
+      const params = new URLSearchParams(location.hash.replace(/^#/, ''));
+      const access_token = params.get('access_token');
+      const refresh_token = params.get('refresh_token');
+      const fail = (t: string) => { document.getElementById('msg')!.textContent = t; document.getElementById('err')!.hidden = false; };
+      history.replaceState(null, '', location.pathname); // take the token out of the address bar right away
+      if (!cfg.url || !cfg.key || !access_token || !refresh_token) fail('El enlace no es válido o ha caducado.');
+      else {
+        createBrowserClient(cfg.url, cfg.key).auth.setSession({ access_token, refresh_token }).then(({ error }) => {
+          if (error) fail('El enlace ha caducado. Pide uno nuevo.');
+          else location.replace('/admin/nueva-contrasena/');
+        });
+      }
+    </script>
+  </body>
+</html>

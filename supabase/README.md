@@ -51,3 +51,13 @@
 ## Production project
 
 `uv4peace_web` (Frankfurt, eu-central-1) was set up from these migrations and `seed.sql`. Every table's content was compared with a local copy by hash and matches. The Supabase advisor reports only the intended public functions (`subscribe`, `confirm_subscription`, `unsubscribe`) and the two helper checks (`is_editor`, `is_owner`), which return nothing but a yes/no about the caller and must stay executable because the row level security policies call them.
+
+## Invitation and recovery emails
+
+Supabase invitations arrive with the session in the address (`#access_token=…`). Two things handle it:
+- Any page forwards such a link to `/admin/auth/aceptar/`, which stores the session as the panel's cookie, removes the token from the address bar and asks for a password. This works with the default templates.
+- Better, in Authentication → Emails, change the **Invite user** and **Reset password** templates so the button links to a one-time token instead:
+  - Invite: `{{ .SiteURL }}/admin/auth/confirm?token_hash={{ .TokenHash }}&type=invite`
+  - Reset password: `{{ .SiteURL }}/admin/auth/confirm?token_hash={{ .TokenHash }}&type=recovery`
+
+A newly invited person can choose a password straight away, but only enters the panel once they are in `editors` (run `editors.sql`).

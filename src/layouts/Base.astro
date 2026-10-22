@@ -32,6 +32,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta name="theme-color" content="#14365A" />
+    <script is:inline>
+      // An emailed invitation or recovery link may land on any page with the session in the address (#access_token=...).
+      // Forward it to the page that stores it safely.
+      if (location.hash.indexOf('access_token=') > -1 && /type=(invite|recovery)/.test(location.hash)) location.replace('/admin/auth/aceptar/' + location.hash);
+    </script>
   </head>
   <body class="bg-surface font-sans text-ink antialiased">
     <a href="#main" class="skip-link">Skip to content</a>
