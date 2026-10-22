@@ -18,6 +18,7 @@ const selected = editions.find((e) => e.year === Astro.url.searchParams.get('ed'
 const tabs = [{ id: 'datos', l: 'Datos del proyecto' }, { id: 'ediciones', l: 'Ediciones' }, { id: 'fotos', l: 'Fotos y documental' }];
 const gallery = p.gallery ?? [];
 const doc = p.documentary;
+const pb = p.partner;
 const spans = [{ v: '', l: 'Normal' }, { v: 'wide', l: 'Ancha' }, { v: 'tall', l: 'Alta' }, { v: 'big', l: 'Grande' }];
 const errors: Record<string, string> = {
   faltan: 'Faltan el título o el estado.', mes: 'El mes de inicio debe tener el formato AAAA-MM, por ejemplo 2027-03.', anio: 'Cada edición necesita un año de 4 cifras, sin repetir.',
@@ -99,6 +100,45 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
         <label class="adm-label" for="vision">Visión</label>
         <textarea id="vision" data-f="vision" class="adm-input">{p.vision ?? ''}</textarea>
       </div>
+    </div>
+
+    <div class="adm-card mt-6 flex flex-col gap-4 p-6" id="stats-card">
+      <h2 class="text-xl font-medium">Cifras del proyecto</h2>
+      <p class="adm-hint !mt-0">Los números que aparecen en la página del proyecto. Escribe el valor como debe verse, por ejemplo «2,400» o «200+». Si no añades ninguna, el bloque no se muestra.</p>
+      <div class="flex flex-col gap-2" id="stat-rows">
+        {(p.stats ?? []).map((x) => (
+          <div class="grid grid-cols-[110px_1fr_auto] gap-2" data-stat>
+            <input class="adm-input" data-sn value={x.n} aria-label="Valor" placeholder="2,400" />
+            <input class="adm-input" data-sl value={x.label} aria-label="Etiqueta" placeholder="Asistentes" />
+            <button type="button" class="adm-btn !min-h-[46px] !px-3" data-stat-remove aria-label="Quitar cifra">✕</button>
+          </div>
+        ))}
+      </div>
+      <button type="button" class="adm-btn self-start" id="stat-add">+ Añadir cifra</button>
+      <div>
+        <label class="adm-label" for="stats_note">Nota bajo las cifras</label>
+        <input id="stats_note" data-f="stats_note" class="adm-input" value={p.statsNote ?? ''} placeholder="Global Women in Music, 2023–2026" />
+      </div>
+    </div>
+
+    <div class="adm-card mt-6 flex flex-col gap-6 p-6" id="partner-card">
+      <div>
+        <h2 class="text-xl font-medium">Bloque «Hazte socio»</h2>
+        <p class="adm-hint">Franja azul al final de la página con una invitación a colaborar. Si dejas vacíos el título y el texto, no se muestra.</p>
+      </div>
+      <div class="grid gap-6 sm:grid-cols-2">
+        <div><label class="adm-label" for="pb-eyebrow">Etiqueta pequeña</label><input id="pb-eyebrow" data-pb="eyebrow" class="adm-input" value={pb?.eyebrow ?? ''} placeholder="Partner with us" /></div>
+        <div></div>
+        <div><label class="adm-label" for="pb-title">Título</label><input id="pb-title" data-pb="title" class="adm-input" value={pb?.title ?? ''} /></div>
+        <div><label class="adm-label" for="pb-accent">Parte del título en color</label><input id="pb-accent" data-pb="titleAccent" class="adm-input" value={pb?.titleAccent ?? ''} /></div>
+      </div>
+      <div><label class="adm-label" for="pb-text">Texto</label><textarea id="pb-text" data-pb="text" class="adm-input">{pb?.text ?? ''}</textarea></div>
+      <div>
+        <label class="adm-label" for="pb-benefits">Ventajas de ser socio</label>
+        <textarea id="pb-benefits" data-pb="benefits" class="adm-input !min-h-[120px]">{(pb?.benefits ?? []).join('\n')}</textarea>
+        <p class="adm-hint">Una por línea.</p>
+      </div>
+      <div class="max-w-[420px]"><PhotoField label="Foto" value={pb?.photo ?? null} ratio="4 / 3" focus={false} /></div>
     </div>
   </section>
 
@@ -279,6 +319,17 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
       if (b) { b.closest('[data-gal]')!.remove(); galEmpty(); }
     });
 
+    // Project figures
+    const statRows = $('#stat-rows');
+    $('#stat-add').addEventListener('click', () => {
+      const row = document.createElement('div');
+      row.className = 'grid grid-cols-[110px_1fr_auto] gap-2';
+      row.setAttribute('data-stat', '');
+      row.innerHTML = '<input class="adm-input" data-sn aria-label="Valor" placeholder="2,400" /><input class="adm-input" data-sl aria-label="Etiqueta" placeholder="Asistentes" /><button type="button" class="adm-btn !min-h-[46px] !px-3" data-stat-remove aria-label="Quitar cifra">✕</button>';
+      statRows.appendChild(row); row.querySelector('input')?.focus();
+    });
+    statRows.addEventListener('click', (e) => { (e.target as HTMLElement).closest('[data-stat-remove]')?.closest('[data-stat]')?.remove(); });
+
     // Festivals
     const fests = $('#fests');
     $('#fest-add').addEventListener('click', () => {
@@ -305,6 +356,12 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
       d.poster = photo($('#doc'));
       d.festivals = all('[data-fest]', fests).map((r) => ({ date: $<HTMLInputElement>('[data-ft="date"]', r).value, name: $<HTMLInputElement>('[data-ft="name"]', r).value, result: $<HTMLInputElement>('[data-ft="result"]', r).value }));
       f.documentary = d;
+      f.stats = all('[data-stat]', statRows).map((r) => ({ n: $<HTMLInputElement>('[data-sn]', r).value, label: $<HTMLInputElement>('[data-sl]', r).value }));
+      const pbo: Record<string, unknown> = {};
+      all<HTMLInputElement>('[data-pb]').forEach((el) => { pbo[el.dataset.pb!] = el.value; });
+      pbo.benefits = String(pbo.benefits ?? '').split('\n');
+      pbo.photo = photo($('#partner-card'));
+      f.partner = pbo;
       f.editions = all('[data-edform]', forms).map((ef) => {
         const o: Record<string, unknown> = {};
         all<HTMLInputElement>('[data-e]', ef).forEach((el) => { o[el.dataset.e!] = el.type === 'checkbox' ? el.checked : el.value; });

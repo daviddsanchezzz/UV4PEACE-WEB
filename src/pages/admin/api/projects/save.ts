@@ -53,7 +53,20 @@ function clean(raw: Obj) {
     };
   }
 
+  let partner_block: Obj | null = null;
+  const pb = raw.partner as Obj | null | undefined;
+  if (pb && (str(pb.title) || str(pb.text))) {
+    const ph = photo(pb.photo);
+    if (!ph) throw new Invalid('pbfoto');
+    partner_block = {
+      eyebrow: str(pb.eyebrow, 120), title: str(pb.title, 200), titleAccent: str(pb.titleAccent, 200), text: str(pb.text, 2000), photo: ph,
+      benefits: (Array.isArray(pb.benefits) ? pb.benefits : []).slice(0, 20).map((b) => str(b, 300)).filter(Boolean),
+    };
+  }
+  const stats = (Array.isArray(raw.stats) ? raw.stats : []).slice(0, 12).map((x: Obj) => ({ n: str(x.n, 40), label: str(x.label, 120) })).filter((x) => x.n && x.label);
+
   return {
+    stats, stats_note: str(raw.stats_note, 200), partner_block,
     title, title_accent: str(raw.title_accent, 200), status: str(raw.status), year_start: yearStart, date_label: str(raw.date_label, 100), city: str(raw.city, 120), summary: str(raw.summary, 600),
     featured: Boolean(raw.featured), published: Boolean(raw.published), intro: str(raw.intro, 4000), body: str(raw.body, 8000), vision: str(raw.vision, 4000),
     cover: photo(raw.cover), hero: photo(raw.hero), gallery, documentary, editions,
@@ -83,9 +96,13 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
     target = base;
     for (let n = 2; used.has(target); n++) target = `${base}-${n}`;
   }
-  const { error } = await supabase.rpc('save_project', { p_slug: slug, p: { ...payload, slug: target } });
+  // The partner block is written with a plain update; save_project handles everything else in one transaction.
+  const { partner_block, ...forFunction } = payload;
+  const { error } = await supabase.rpc('save_project', { p_slug: slug, p: { ...forFunction, slug: target } });
   if (error) { console.error('project save failed', error.message); return err(error.message.includes('save_project') ? 'funcion' : 'guardar'); }
 
+  const { error: pbError } = await supabase.from('projects').update({ partner_block }).eq('slug', target);
+  if (pbError) { console.error('project partner block failed', pbError.message); return err('guardar'); }
   await supabase.from('content_changes').insert({ table_name: 'projects', row_slug: target, summary: `${slug ? 'Editado' : 'Añadido'} proyecto «${payload.title}»`, user_id: auth.user?.id ?? null, published_at: new Date().toISOString() });
   return redirect(`/admin/proyectos/?ok=${slug ? 'guardado' : 'creado'}`, 303);
 };

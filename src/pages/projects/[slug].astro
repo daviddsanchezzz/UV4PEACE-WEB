@@ -58,7 +58,7 @@ const highlight = heldEditions[heldEditions.length - 1];
           </div>
         )}
       </div>
-      {p.stats && <div data-reveal class="mt-12"><StatBlock variant="compact" /></div>}
+      {p.stats?.length && <div data-reveal class="mt-12"><StatBlock variant="compact" items={p.stats} note={p.statsNote} /></div>}
     </section>
   ) : (
     <section class="wrap py-[clamp(72px,9vw,128px)]">
