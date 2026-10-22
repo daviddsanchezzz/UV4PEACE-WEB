@@ -47,3 +47,7 @@
 - Until it is set (here, or with `PUBLIC_GA_ID` in Vercel) the site loads nothing from Google, sets no cookies and shows no banner.
 - Once set, visitors get a cookie banner with Accept all and Reject all with equal weight. Google Analytics is only requested after they accept, with advertising and Google Signals off. The choice is a first-party cookie (`uv4p_consent`) kept for 6 months. "Cookie settings" in the footer and on the Cookies page reopens it, and turning Analytics off deletes the `_ga*` cookies.
 - To do when the ID exists: add the cookie names (`_ga`, `_ga_<ID>`, `uv4p_consent`) to the Cookies Policy table, and in GA4 turn off data sharing, Google signals and set data retention to 2 months.
+
+## Production project
+
+`uv4peace_web` (Frankfurt, eu-central-1) was set up from these migrations and `seed.sql`. Every table's content was compared with a local copy by hash and matches. The Supabase advisor reports only the intended public functions (`subscribe`, `confirm_subscription`, `unsubscribe`) and the two helper checks (`is_editor`, `is_owner`), which return nothing but a yes/no about the caller and must stay executable because the row level security policies call them.

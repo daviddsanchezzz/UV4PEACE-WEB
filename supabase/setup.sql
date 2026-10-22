@@ -25,7 +25,14 @@ language sql stable security definer set search_path = public as $$
   select exists (select 1 from editors where user_id = auth.uid());
 $$;
 
-create function touch_updated_at() returns trigger language plpgsql as $$
+-- Same idea for owners. Policies on `editors` must not query `editors` themselves (that recurses forever),
+-- so both checks run as the function owner and skip row level security.
+create function is_owner() returns boolean
+language sql stable security definer set search_path = public as $$
+  select exists (select 1 from editors where user_id = auth.uid() and role = 'owner');
+$$;
+
+create function touch_updated_at() returns trigger language plpgsql set search_path = public as $$
 begin new.updated_at = now(); return new; end $$;
 
 -- Projects and people ---------------------------------------------------------------------
@@ -214,7 +221,7 @@ drop policy partners_read     on partners;     create policy partners_read     o
 alter table editors          enable row level security;
 alter table content_changes  enable row level security;
 create policy editors_self       on editors         for select to authenticated using (user_id = auth.uid() or is_editor());
-create policy editors_owner_all  on editors         for all    to authenticated using (exists (select 1 from editors e where e.user_id = auth.uid() and e.role = 'owner')) with check (exists (select 1 from editors e where e.user_id = auth.uid() and e.role = 'owner'));
+create policy editors_owner_write on editors        for all    to authenticated using (is_owner()) with check (is_owner());
 create policy changes_editors    on content_changes for all    to authenticated using (is_editor()) with check (is_editor());
 
 -- Storage: public bucket for photos and logos; only editors upload ------------------------------
