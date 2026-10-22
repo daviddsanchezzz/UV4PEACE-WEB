@@ -17,7 +17,7 @@ const [x, y] = (value?.pos ?? '50% 25%').split(' ');
     {focus && <span data-photo-dot hidden={!value} class="absolute h-7 w-7 -translate-x-1/2 -translate-y-1/2 cursor-grab touch-none rounded-full border-[3px] border-orange bg-white/40 shadow" style={`left:${x};top:${y}`} aria-label="Punto de encuadre"></span>}
   </div>
   {focus && <p class="adm-hint">Arrastra el círculo naranja hacia lo importante. La web recorta la foto alrededor de ese punto.</p>}
-  <input data-photo-alt class="adm-input mt-3" value={value?.alt ?? ''} placeholder="Descripción de la foto (para personas con lector de pantalla)" aria-label="Descripción de la foto" />
+  <input data-photo-alt class="adm-input mt-3" value={value?.alt ?? ''} placeholder="Descripción de la foto" aria-label="Descripción de la foto" />
   <div class="mt-3 flex flex-wrap gap-2">
     <label class="adm-btn cursor-pointer"><span data-photo-btn>{value ? 'Cambiar foto' : 'Subir foto'}</span><input type="file" data-photo-file accept="image/jpeg,image/png,image/webp" class="sr-only" /></label>
     <button type="button" data-photo-remove class="adm-btn" hidden={!value}>Quitar foto</button>

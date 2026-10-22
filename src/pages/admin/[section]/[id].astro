@@ -39,7 +39,7 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
     <div class="adm-actions">
       <button class="adm-btn adm-btn-primary" type="submit">Guardar cambios</button>
       <a class="adm-btn" href={`/admin/${s.slug}/`}>Cancelar</a>
-      {!isNew && <button class="adm-btn !border-[#e3b4b4] !bg-white !text-[#a33] hover:!bg-[#fbeeee]" type="submit" formaction="/admin/api/content/delete" formnovalidate onclick="return confirm('¿Quitar de la web? No se puede deshacer.')">Quitar de la web</button>}
+      {!isNew && <button class="adm-btn adm-btn-danger" type="submit" formaction="/admin/api/content/delete" formnovalidate onclick="return confirm('¿Quitar de la web? No se puede deshacer.')">Quitar<span class="hidden sm:inline">&nbsp;de la web</span></button>}
     </div>
   </form>
 </AdminLayout>

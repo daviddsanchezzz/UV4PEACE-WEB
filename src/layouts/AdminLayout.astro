@@ -73,7 +73,7 @@ const tabActive = (id: string) => (id === 'mas' ? moreIds.includes(current) : cu
         .adm-side { position: sticky; top: 0; height: 100vh; flex-direction: column; align-items: stretch; flex-wrap: nowrap; padding: 24px 16px; gap: 24px; }
         .adm-nav { display: flex; flex-direction: column; }
         .adm-tabbar { display: none; }
-        .adm-actions { position: static; margin: 24px 0 0; padding: 0; background: none; border: 0; }
+        .adm-actions { position: static; margin: 24px 0 0; padding: 0; background: none; border: 0; box-shadow: none; }
         .adm-nav a { border-radius: 8px; }
         .adm-logout { display: block; margin-top: auto; }
         .adm-logout button { width: 100%; padding: 8px 14px; border: 0; background: none; color: #cfe0f1; font: inherit; font-size: 14px; text-align: left; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -90,6 +90,11 @@ const tabActive = (id: string) => (id === 'mas' ? moreIds.includes(current) : cu
       .adm-input:focus { outline: none; border-color: var(--color-sky-text); box-shadow: 0 0 0 3px rgba(85,173,239,.3); }
       .adm-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 20px; border-radius: 9999px; border: 1.5px solid var(--color-navy); background: transparent; font: inherit; font-size: 15px; font-weight: 500; color: var(--color-navy); cursor: pointer; }
       .adm-btn:hover { background: var(--color-navy); color: #fff; text-decoration: none; }
+      .adm-actions { gap: 8px; }
+      .adm-actions .adm-btn { padding: 0 14px; font-size: 14px; }
+      @media (min-width: 1024px) { .adm-actions { gap: 10px; } .adm-actions .adm-btn { padding: 0 20px; font-size: 15px; } }
+      .adm-btn-danger { border-color: #e3b4b4; background: #fff; color: #a33; }
+      .adm-btn-danger:hover { background: #fbeeee; border-color: #a33; }
       .adm-btn-primary { background: var(--color-orange); border-color: var(--color-orange); }
       .adm-btn-primary:hover { background: var(--color-orange-hover); border-color: var(--color-orange-hover); color: var(--color-navy); }
       .adm-pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 9999px; font-size: 12px; font-weight: 500; background: #e6f1fb; color: var(--color-sky-text); }
