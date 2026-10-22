@@ -37,7 +37,11 @@ export type Db = Pick<SupabaseClient, 'from'>;
 async function rows(table: string, db?: Db, order = 'sort_order'): Promise<Record<string, any>[] | null> {
   if (!configured() && !db) return null;
   try {
-    const { data, error } = await (db ?? publicClient()).from(table).select('*').order(order).abortSignal(AbortSignal.timeout(5000));
+    // AbortSignal.timeout fired at once on Vercel's runtime, so the deadline is a plain race instead.
+    const query = (db ?? publicClient()).from(table).select('*').order(order);
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const deadline = new Promise<never>((_, no) => { timer = setTimeout(() => no(new Error('timeout')), 5000); });
+    const { data, error } = await Promise.race([query, deadline]).finally(() => clearTimeout(timer));
     if (error) { console.error(`content: could not read ${table}`, error.message); return null; }
     return data;
   } catch (e) {
