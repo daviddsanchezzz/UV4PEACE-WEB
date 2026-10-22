@@ -1,9 +1,9 @@
 ---
-// Admin shell for the content panel. Prototype: no auth or writes yet (Phase 2 wires Supabase).
+// Admin shell for the content panel. Saved changes go live on the public site within about a minute.
 import '../styles/global.css';
 
-interface Props { title: string; current?: string; pending?: number }
-const { title, current = '', pending = 3 } = Astro.props;
+interface Props { title: string; current?: string }
+const { title, current = '' } = Astro.props;
 
 const nav = [
   { id: 'inicio', label: 'Inicio', href: '/admin/inicio/' },
@@ -41,10 +41,7 @@ const tabActive = (id: string) => (id === 'mas' ? moreIds.includes(current) : cu
         ))}
       </nav>
       <form method="post" action="/admin/api/logout" class="adm-logout"><button type="submit">Salir{Astro.locals.userEmail ? ` (${Astro.locals.userEmail})` : ''}</button></form>
-      <a href="/admin/publicar/" class="adm-pub">
-        <span>Publicar cambios</span>
-        {pending > 0 && <b>{pending}</b>}
-      </a>
+      <a href="/" target="_blank" rel="noopener" class="adm-pub"><span>Ver la web</span></a>
     </aside>
     <main class="adm-main"><slot /></main>
     <nav class="adm-tabbar" aria-label="Navegación">

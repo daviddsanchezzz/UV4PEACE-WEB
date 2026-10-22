@@ -1,6 +1,6 @@
 // Admin config for the simple content sections (press, partners, testimonials, stats).
 // Each one is a list plus a flat form, rendered by pages/admin/[section]/.
-import { getPress, getPartners, getTestimonials, getStats } from '../lib/content';
+import { getPress, getPartners, getTestimonials, getStats, type Db } from '../lib/content';
 
 export type FieldType = 'text' | 'textarea' | 'select' | 'toggle';
 export interface Field { key: string; label: string; type: FieldType; hint?: string; options?: { v: string; l: string }[]; placeholder?: string }
@@ -12,8 +12,8 @@ const tier = [{ v: 'main', l: 'Socio principal' }, { v: 'partner', l: 'Socio' },
 const kindLabel = Object.fromEntries(kind.map((k) => [k.v, k.l]));
 const tierLabel = Object.fromEntries(tier.map((k) => [k.v, k.l]));
 
-export async function getSections(): Promise<Record<string, Section>> {
-  const [press, partners, testimonials, stats] = await Promise.all([getPress(), getPartners(), getTestimonials(), getStats()]);
+export async function getSections(db?: Db): Promise<Record<string, Section>> {
+  const [press, partners, testimonials, stats] = await Promise.all([getPress(db), getPartners(db), getTestimonials(db), getStats(db)]);
   return {
   prensa: {
     slug: 'prensa', label: 'Prensa y premios', singular: 'reconocimiento', reorder: false,
@@ -22,11 +22,12 @@ export async function getSections(): Promise<Record<string, Section>> {
       { key: 'title', label: 'Título', type: 'text' },
       { key: 'by', label: 'Quién lo otorga o dónde', type: 'text' },
       { key: 'kind', label: 'Tipo', type: 'select', options: kind },
-      { key: 'dateLabel', label: 'Fecha (como se lee en la web)', type: 'text', placeholder: 'Ago 2025' },
+      { key: 'dateLabel', label: 'Fecha (como se lee en la web)', type: 'text', placeholder: 'Aug 2025' },
+      { key: 'date', label: 'Mes y año, para ordenar', type: 'text', placeholder: '2025-08', hint: 'Formato AAAA-MM. Lo más reciente sale primero.' },
       { key: 'url', label: 'Enlace', type: 'text', placeholder: 'https://', hint: 'Opcional.' },
       { key: 'featured', label: 'Mostrar en la home', type: 'toggle' },
     ],
-    rows: press.map((p) => ({ id: p.id, title: p.title, sub: `${p.dateLabel} · ${p.by}`, pills: [{ t: kindLabel[p.kind] }, ...(p.featured ? [{ t: 'En la home', tone: 'ok' as const }] : [])], values: { title: p.title, by: p.by, kind: p.kind, dateLabel: p.dateLabel, url: p.url, featured: p.featured } })),
+    rows: press.map((p) => ({ id: p.id, title: p.title, sub: `${p.dateLabel} · ${p.by}`, pills: [{ t: kindLabel[p.kind] }, ...(p.featured ? [{ t: 'En la home', tone: 'ok' as const }] : [])], values: { title: p.title, by: p.by, kind: p.kind, dateLabel: p.dateLabel, date: p.date, url: p.url, featured: p.featured } })),
   },
   socios: {
     slug: 'socios', label: 'Socios', singular: 'socio', reorder: true,

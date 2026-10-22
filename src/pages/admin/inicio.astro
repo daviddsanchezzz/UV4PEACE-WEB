@@ -1,8 +1,11 @@
 ---
 import AdminLayout from '../../layouts/AdminLayout.astro';
 import { getPeople, getProjects, getPress, getPartners, getTestimonials, getStats } from '../../lib/content';
+import { createClient, supabaseConfigured } from '../../lib/supabase';
 
-const [people, projects, press, partners, testimonials, stats] = await Promise.all([getPeople(), getProjects(), getPress(), getPartners(), getTestimonials(), getStats()]);
+const db = supabaseConfigured() ? createClient(Astro.request, Astro.cookies) : undefined;
+
+const [people, projects, press, partners, testimonials, stats] = await Promise.all([getPeople(), getProjects(), getPress(db), getPartners(db), getTestimonials(db), getStats(db)]);
 
 const sections = [
   { id: 'proyectos', label: 'Proyectos', n: projects.length, hint: 'Con sus ediciones y line-ups', href: '/admin/proyectos/' },
@@ -12,23 +15,12 @@ const sections = [
   { id: 'testimonios', label: 'Testimonios', n: testimonials.length, hint: 'Citas de artistas y público', href: '/admin/testimonios/' },
   { id: 'cifras', label: 'Cifras', n: stats.length, hint: 'Números de impacto de la home', href: '/admin/cifras/' },
 ];
-const recent = [
-  { what: 'Persona editada', name: 'Vesna Šouc', when: 'Hoy, 10:42' },
-  { what: 'Edición añadida', name: 'Global Women in Music · 2027', when: 'Ayer' },
-  { what: 'Foto cambiada', name: 'Tim Ries', when: 'Hace 3 días' },
-];
+const { data: changes } = db ? await db.from('content_changes').select('summary, created_at').order('created_at', { ascending: false }).limit(5) : { data: null };
+const recent = (changes ?? []).map((c) => ({ name: c.summary, when: new Date(c.created_at).toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) }));
 ---
 <AdminLayout title="Inicio" current="inicio">
   <p class="eyebrow text-ink-muted">Hola, Verónica</p>
   <h1 class="adm-h1 mt-2">¿Qué quieres cambiar hoy?</h1>
-
-  <section class="adm-card mt-8 flex flex-wrap items-center justify-between gap-4 border-l-4 border-l-orange p-5" aria-label="Cambios sin publicar">
-    <div>
-      <p class="font-medium">Tienes 3 cambios sin publicar</p>
-      <p class="adm-hint !mt-1">La web pública sigue mostrando la versión anterior hasta que publiques.</p>
-    </div>
-    <a href="/admin/publicar/" class="adm-btn adm-btn-primary">Revisar y publicar</a>
-  </section>
 
   <h2 class="mt-10 text-sm font-medium uppercase tracking-[0.14em] text-ink-muted">Secciones</h2>
   <div class="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
@@ -45,11 +37,11 @@ const recent = [
 
   <h2 class="mt-10 text-sm font-medium uppercase tracking-[0.14em] text-ink-muted">Últimos cambios</h2>
   <div class="adm-card mt-4">
+    {recent.length === 0 && <p class="adm-row text-ink-muted">Todavía no hay cambios.</p>}
     {recent.map((r) => (
       <div class="adm-row">
         <div class="min-w-0 flex-1">
           <p class="font-medium">{r.name}</p>
-          <p class="adm-hint !mt-0.5">{r.what}</p>
         </div>
         <span class="text-sm text-ink-muted">{r.when}</span>
       </div>

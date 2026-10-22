@@ -1,5 +1,5 @@
 ---
-export const prerender = true;
+export const prerender = false;
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
 import Photo from '../components/Photo.astro';
@@ -7,6 +7,8 @@ import PressStrip from '../components/PressStrip.astro';
 import MediaCoverage from '../components/MediaCoverage.astro';
 import { getSettings } from '../lib/content';
 const settings = await getSettings();
+// Content is read from Supabase on request; the CDN keeps each page for a minute so edits show up quickly without hitting the database on every visit.
+Astro.response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
 ---
 <Base title="Press" current="press" description="Recognition, media coverage and press resources for United Voices 4 Peace.">
   <PageHeader eyebrow="Press room" title={['Recognised for', 'uniting communities']} />

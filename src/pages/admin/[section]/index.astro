@@ -1,9 +1,11 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
 import { getSections } from '../../../admin/sections';
+import { createClient, supabaseConfigured } from '../../../lib/supabase';
 
-const s = (await getSections())[Astro.params.section ?? ''];
+const s = (await getSections(supabaseConfigured() ? createClient(Astro.request, Astro.cookies) : undefined))[Astro.params.section ?? ''];
 if (!s) return Astro.redirect('/admin/inicio/');
+const ok = ({ guardado: 'Cambios guardados.', creado: 'Añadido.', quitado: 'Quitado de la web.' } as Record<string, string>)[Astro.url.searchParams.get('ok') ?? ''];
 ---
 <AdminLayout title={s.label} current={s.slug}>
   <div class="flex flex-wrap items-end justify-between gap-4">
@@ -13,12 +15,12 @@ if (!s) return Astro.redirect('/admin/inicio/');
     </div>
     <a href={`/admin/${s.slug}/nuevo/`} class="adm-btn adm-btn-primary">+ Añadir {s.singular}</a>
   </div>
+  {ok && <p role="status" class="adm-pill adm-pill-ok mt-4 !text-sm">{ok} Se verá en la web en menos de un minuto.</p>}
   <p class="mt-3 max-w-[62ch] text-ink-muted">{s.intro}</p>
-  {s.reorder && <p class="adm-hint mt-3">Arrastra el asa de cada fila para cambiar el orden en la web.</p>}
   <div class="adm-card mt-6">
     {s.rows.map((r) => (
       <a href={`/admin/${s.slug}/${r.id}/`} class="adm-row hover:no-underline">
-        {s.reorder && <span class="adm-handle" aria-hidden="true">⠿</span>}
+        
         <span class="min-w-0 flex-1">
           <span class="block truncate font-medium">{r.title}</span>
           <span class="block truncate text-sm text-ink-muted">{r.sub}</span>

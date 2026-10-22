@@ -1,5 +1,5 @@
 ---
-export const prerender = true;
+export const prerender = false;
 import Base from '../layouts/Base.astro';
 import Photo from '../components/Photo.astro';
 import Button from '../components/Button.astro';
@@ -7,6 +7,8 @@ import { site } from '../data/site';
 import { getStats, getSettings } from '../lib/content';
 const settings = await getSettings();
 const stats = await getStats();
+// Content is read from Supabase on request; the CDN keeps each page for a minute so edits show up quickly without hitting the database on every visit.
+Astro.response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
 ---
 <Base title="Donate" description="Every gift brings more women composers to the stage.">
   <section class="mx-auto grid max-w-[1320px] grid-cols-[repeat(auto-fit,minmax(min(100%,440px),1fr))]">
