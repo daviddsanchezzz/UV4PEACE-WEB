@@ -39,7 +39,7 @@ function clean(raw: Obj) {
   const gallery = (Array.isArray(raw.gallery) ? raw.gallery : []).slice(0, 60).map((g: Obj) => {
     const ph = photo(g);
     if (!ph) throw new Invalid('foto');
-    return { ...ph, ...(['wide', 'tall', 'big'].includes(str(g.span)) ? { span: str(g.span) } : {}) };
+    return ph;
   });
 
   let documentary: Obj | null = null;

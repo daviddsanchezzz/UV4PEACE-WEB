@@ -19,7 +19,6 @@ const tabs = [{ id: 'datos', l: 'Datos del proyecto' }, { id: 'ediciones', l: 'E
 const gallery = p.gallery ?? [];
 const doc = p.documentary;
 const pb = p.partner;
-const spans = [{ v: '', l: 'Normal' }, { v: 'wide', l: 'Ancha' }, { v: 'tall', l: 'Alta' }, { v: 'big', l: 'Grande' }];
 const errors: Record<string, string> = {
   faltan: 'Faltan el título o el estado.', mes: 'El mes de inicio debe tener el formato AAAA-MM, por ejemplo 2027-03.', anio: 'Cada edición necesita un año de 4 cifras, sin repetir.',
   enlace: 'Los enlaces deben empezar por https://', foto: 'Alguna foto no es válida. Súbela de nuevo.', guardar: 'No se pudo guardar. Inténtalo de nuevo en un momento.',
@@ -175,14 +174,13 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
         <h2 class="text-xl font-medium">Galería</h2>
         <button class="adm-btn" type="button" id="gal-add">+ Añadir foto</button>
       </div>
-      <p class="adm-hint mt-2">«Ancha», «Alta» y «Grande» hacen que la foto ocupe más sitio en la galería de la web.</p>
+      <p class="adm-hint mt-2">Todas las fotos se muestran con el mismo tamaño en la web.</p>
       <p class="adm-hint mt-3" id="gal-empty" hidden={gallery.length > 0}>Este proyecto no tiene galería.</p>
       <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" id="gal">
         {gallery.map((g) => (
           <div class="rounded-lg border border-line p-3" data-gal>
             <PhotoField value={g} ratio="4 / 3" focus={false} />
-            <div class="mt-3 flex items-center justify-between gap-2">
-              <select class="adm-input !min-h-[40px]" data-span aria-label="Tamaño">{spans.map((o) => <option value={o.v} selected={o.v === (g.span ?? '')}>{o.l}</option>)}</select>
+            <div class="mt-3 flex justify-end">
               <button type="button" class="adm-btn !min-h-[40px]" data-gal-remove aria-label="Quitar foto">✕</button>
             </div>
           </div>
@@ -191,8 +189,7 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
       <template id="tpl-gal">
         <div class="rounded-lg border border-line p-3" data-gal>
           <PhotoField ratio="4 / 3" focus={false} />
-          <div class="mt-3 flex items-center justify-between gap-2">
-            <select class="adm-input !min-h-[40px]" data-span aria-label="Tamaño">{spans.map((o) => <option value={o.v}>{o.l}</option>)}</select>
+          <div class="mt-3 flex justify-end">
             <button type="button" class="adm-btn !min-h-[40px]" data-gal-remove aria-label="Quitar foto">✕</button>
           </div>
         </div>
@@ -350,7 +347,7 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
       all<HTMLInputElement>('[data-f]').forEach((el) => { f[el.dataset.f!] = el.type === 'checkbox' ? el.checked : el.value; });
       const photos = all('[data-panel="fotos"] > .adm-card:first-child [data-photo]');
       f.cover = photo(photos[0]); f.hero = photo(photos[1]);
-      f.gallery = all('[data-gal]', gal).map((g) => ({ ...(photo(g) ?? {}), span: $<HTMLSelectElement>('[data-span]', g).value })).filter((g) => (g as any).src);
+      f.gallery = all('[data-gal]', gal).map((g) => photo(g)).filter((g) => g && g.src).map(({ src, alt, pos }) => ({ src, alt, pos }));
       const d: Record<string, unknown> = {};
       all<HTMLInputElement>('[data-d]').forEach((el) => { d[el.dataset.d!] = el.value; });
       d.poster = photo($('#doc'));

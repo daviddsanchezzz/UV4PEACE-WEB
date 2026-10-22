@@ -19,7 +19,6 @@ if (!p) return Astro.rewrite('/404');
 
 
 const testimonials = await getTestimonials();
-const spanClass = { wide: 'lg:col-span-2', tall: 'lg:row-span-2', big: 'lg:col-span-2 lg:row-span-2' } as const;
 const others = projects.filter((x) => x.slug !== p.slug).slice(0, 3);
 const projectQuotes = testimonials.filter((t) => t.published && t.project === p.slug).sort((a, b) => a.order - b.order);
 // The most recent non-upcoming edition becomes the highlighted edition on the page.
@@ -195,7 +194,7 @@ const highlight = heldEditions[heldEditions.length - 1];
       <h2 id="gal-h" class="t-h2">Gallery</h2>
       <div class="mt-9 grid grid-flow-dense auto-rows-[clamp(200px,20vw,280px)] grid-cols-[repeat(auto-fit,minmax(min(100%,260px),1fr))] gap-3">
         {p.gallery.map((g) => (
-          <figure data-reveal class:list={['group relative m-0 overflow-hidden rounded-card bg-placeholder', g.span && spanClass[g.span]]}>
+          <figure data-reveal class="group relative m-0 overflow-hidden rounded-card bg-placeholder">
             <Photo src={g.src} alt={g.alt} pos={g.pos} sizes="(min-width:1024px) 640px, 100vw" class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
           </figure>
         ))}
