@@ -11,44 +11,53 @@ const LINE = '#D9E6F2';
 const font = "'Jost','Helvetica Neue',Arial,sans-serif";
 
 // Email clients drop <style> blocks, so every element gets its own inline style.
-const inline = (tag: string, css: string) => (_: string, attribs: Record<string, string>) => ({
-  tagName: tag,
-  attribs: { ...attribs, style: css },
-});
+const inline = (tag: string, css: string) => () => ({ tagName: tag, attribs: { style: css } });
 
 // The editor wraps list items in <p>, which would add extra spacing inside the list in email.
 const unwrapListParagraphs = (html: string) => html.replace(/<li>\s*<p>([\s\S]*?)<\/p>\s*<\/li>/g, '<li>$1</li>');
 
+const TAGS = ['p', 'h2', 'h3', 'strong', 'em', 'u', 'ul', 'ol', 'li', 'blockquote', 'a', 'br', 'hr', 'img'];
+const align = (attribs: Record<string, string>) => {
+  const m = /text-align:\s*(left|center|right)/i.exec(attribs.style ?? '');
+  return m ? `text-align:${m[1].toLowerCase()};` : '';
+};
+const buttonStyle = `display:inline-block;padding:14px 28px;border-radius:999px;background:#E5A236;color:${NAVY};font:500 15px ${font};letter-spacing:.06em;text-transform:uppercase;text-decoration:none;`;
+const isHttps = (src?: string) => /^https:\/\//i.test(src ?? '');
+
+const schemes = { allowedSchemes: ['http', 'https', 'mailto'], allowedSchemesByTag: { img: ['https'] }, allowProtocolRelative: false };
+const drop = (f: { tag: string; attribs: Record<string, string> }) => (f.tag === 'a' && !f.attribs.href) || (f.tag === 'img' && !isHttps(f.attribs.src));
+
+/** What gets stored: only what the editor can produce (its tags, https links and images, left/center/right alignment). */
+export function sanitizeForStorage(html: string): string {
+  return sanitizeHtml(html, {
+    allowedTags: TAGS,
+    allowedAttributes: { a: ['href', 'data-button'], img: ['src', 'alt'], p: ['style'], h2: ['style'], h3: ['style'] },
+    allowedStyles: { '*': { 'text-align': [/^(left|center|right)$/] } },
+    ...schemes,
+    exclusiveFilter: drop,
+  }).trim();
+}
+
+/** What gets sent: the stored HTML with the email styling applied inline. Every styled tag gets our style only. */
 export function sanitizeBody(html: string): string {
+  const styled = ['a', 'img', 'p', 'h2', 'h3', 'ul', 'ol', 'li', 'blockquote', 'hr'];
   return sanitizeHtml(unwrapListParagraphs(html), {
-    allowedTags: ['p', 'h2', 'h3', 'strong', 'em', 'u', 's', 'ul', 'ol', 'li', 'blockquote', 'a', 'br', 'hr'],
-    allowedAttributes: { a: ['href', 'style'], '*': ['style'] },
-    allowedSchemes: ['http', 'https', 'mailto'],
-    allowProtocolRelative: false,
-    // Keep only our own inline styles: drop whatever came in with the pasted content.
-    allowedStyles: {},
+    allowedTags: TAGS,
+    allowedAttributes: Object.fromEntries(styled.map((t) => [t, t === 'a' ? ['href', 'style'] : t === 'img' ? ['src', 'alt', 'style'] : ['style']])),
+    ...schemes,
     transformTags: {
-      p: inline('p', `margin:0 0 16px;font:400 17px/1.6 ${font};color:${NAVY};`),
-      h2: inline('h2', `margin:28px 0 12px;font:500 24px/1.25 ${font};color:${NAVY};`),
-      h3: inline('h3', `margin:24px 0 10px;font:600 19px/1.3 ${font};color:${NAVY};`),
+      p: (_, a) => ({ tagName: 'p', attribs: { style: `margin:0 0 16px;font:400 17px/1.6 ${font};color:${NAVY};${align(a)}` } }),
+      h2: (_, a) => ({ tagName: 'h2', attribs: { style: `margin:28px 0 12px;font:500 24px/1.25 ${font};color:${NAVY};${align(a)}` } }),
+      h3: (_, a) => ({ tagName: 'h3', attribs: { style: `margin:24px 0 10px;font:600 19px/1.3 ${font};color:${NAVY};${align(a)}` } }),
       ul: inline('ul', `margin:0 0 16px;padding-left:24px;font:400 17px/1.6 ${font};color:${NAVY};`),
       ol: inline('ol', `margin:0 0 16px;padding-left:24px;font:400 17px/1.6 ${font};color:${NAVY};`),
       li: inline('li', 'margin:0 0 6px;'),
       blockquote: inline('blockquote', `margin:0 0 16px;padding:4px 0 4px 16px;border-left:3px solid #E5A236;color:${INK_MUTED};`),
       hr: inline('hr', `border:0;border-top:1px solid ${LINE};margin:24px 0;`),
-      a: (_, attribs) => ({ tagName: 'a', attribs: { href: attribs.href ?? '', style: `color:${SKY};text-decoration:underline;` } }),
+      a: (_, a) => ({ tagName: 'a', attribs: { href: a.href ?? '', style: a['data-button'] ? buttonStyle : `color:${SKY};text-decoration:underline;` } }),
+      img: (_, a) => ({ tagName: 'img', attribs: { src: a.src ?? '', alt: a.alt ?? '', style: 'display:block;max-width:100%;height:auto;border:0;border-radius:8px;margin:0 auto 16px;' } }),
     },
-    exclusiveFilter: (f) => f.tag === 'a' && !f.attribs.href,
-  }).trim();
-}
-
-/** What gets stored: the editor's own tags only. Email styling is applied at send time. */
-export function sanitizeForStorage(html: string): string {
-  return sanitizeHtml(html, {
-    allowedTags: ['p', 'h2', 'h3', 'strong', 'em', 'u', 's', 'ul', 'ol', 'li', 'blockquote', 'a', 'br', 'hr'],
-    allowedAttributes: { a: ['href'] },
-    allowedSchemes: ['http', 'https', 'mailto'],
-    allowProtocolRelative: false,
+    exclusiveFilter: drop,
   }).trim();
 }
 

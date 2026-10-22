@@ -1,0 +1,292 @@
+---
+// Rich text editor for newsletters (TipTap). Keeps its HTML in a hidden input named `name`,
+// announces edits with an `editor:change` event on document, and exposes `.rte.{getHtml,setHtml}` on the root.
+interface Props { name: string; value?: string; labelId: string; placeholder?: string }
+const { name, value = '', labelId, placeholder = 'Escribe aquí tu mensaje…' } = Astro.props;
+
+const icons: Record<string, string> = {
+  bold: '<path d="M6 4h8a4 4 0 0 1 0 8H6zM6 12h9a4 4 0 0 1 0 8H6z"/>',
+  italic: '<line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/>',
+  underline: '<path d="M6 3v7a6 6 0 0 0 12 0V3"/><line x1="4" y1="21" x2="20" y2="21"/>',
+  left: '<line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/>',
+  center: '<line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="18" y1="18" x2="6" y2="18"/>',
+  right: '<line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="7" y2="18"/>',
+  bullet: '<line x1="9" y1="6" x2="21" y2="6"/><line x1="9" y1="12" x2="21" y2="12"/><line x1="9" y1="18" x2="21" y2="18"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/>',
+  ordered: '<path d="M10 6h11M10 12h11M10 18h11M4 6h1v4M4 10h2M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/>',
+  quote: '<path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V21z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3z"/>',
+  link: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+  image: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>',
+  button: '<rect x="2" y="7" width="20" height="10" rx="5"/><path d="M8 12h8"/>',
+  hr: '<line x1="3" y1="12" x2="21" y2="12"/>',
+  undo: '<path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/>',
+  redo: '<path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3L21 13"/>',
+  clear: '<path d="M4 7V4h16v3M9 20h6M12 4v16"/><line x1="3" y1="3" x2="21" y2="21"/>',
+};
+const groups: { cmd: string; label: string; keys?: string }[][] = [
+  [{ cmd: 'bold', label: 'Negrita', keys: 'Ctrl+B' }, { cmd: 'italic', label: 'Cursiva', keys: 'Ctrl+I' }, { cmd: 'underline', label: 'Subrayado', keys: 'Ctrl+U' }, { cmd: 'clear', label: 'Quitar formato' }],
+  [{ cmd: 'left', label: 'Alinear a la izquierda' }, { cmd: 'center', label: 'Centrar' }, { cmd: 'right', label: 'Alinear a la derecha' }],
+  [{ cmd: 'bullet', label: 'Lista con viñetas' }, { cmd: 'ordered', label: 'Lista numerada' }, { cmd: 'quote', label: 'Cita' }],
+  [{ cmd: 'link', label: 'Enlace', keys: 'Ctrl+K' }, { cmd: 'button', label: 'Botón de llamada a la acción' }, { cmd: 'image', label: 'Imagen' }, { cmd: 'hr', label: 'Línea separadora' }],
+  [{ cmd: 'undo', label: 'Deshacer', keys: 'Ctrl+Z' }, { cmd: 'redo', label: 'Rehacer', keys: 'Ctrl+Shift+Z' }],
+];
+const shortcuts = [['Negrita', 'Ctrl+B'], ['Cursiva', 'Ctrl+I'], ['Subrayado', 'Ctrl+U'], ['Enlace', 'Ctrl+K'], ['Deshacer', 'Ctrl+Z'], ['Rehacer', 'Ctrl+Shift+Z'], ['Título', 'Ctrl+Alt+2'], ['Subtítulo', 'Ctrl+Alt+3'], ['Lista con viñetas', 'Ctrl+Shift+8'], ['Lista numerada', 'Ctrl+Shift+7'], ['Cita', 'Ctrl+Shift+B']];
+---
+<div class="rte" data-rte>
+  <div class="rte-toolbar" role="toolbar" aria-label="Formato del texto" data-toolbar>
+    <select class="rte-select" data-style aria-label="Estilo del párrafo">
+      <option value="p">Párrafo</option>
+      <option value="h2">Título</option>
+      <option value="h3">Subtítulo</option>
+    </select>
+    {groups.map((g) => (
+      <div class="rte-group">
+        {g.map((b) => (
+          <button type="button" class="rte-btn" data-cmd={b.cmd} title={b.keys ? `${b.label} (${b.keys})` : b.label} aria-label={b.label} aria-pressed="false">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={icons[b.cmd]} />
+          </button>
+        ))}
+      </div>
+    ))}
+  </div>
+
+  <div class="rte-bar" data-bar hidden>
+    <p class="rte-bar-title" data-bar-title></p>
+    <div class="rte-bar-row">
+      <label class="sr-only" for={`${name}-bar-text`}>Texto del botón</label>
+      <input id={`${name}-bar-text`} data-bar-text class="rte-input" placeholder="Texto del botón" maxlength="60" hidden />
+      <label class="sr-only" for={`${name}-bar-url`}>Dirección</label>
+      <input id={`${name}-bar-url`} data-bar-url class="rte-input" placeholder="https://" inputmode="url" />
+      <button type="button" class="rte-apply" data-bar-ok>Aplicar</button>
+      <button type="button" class="rte-ghost" data-bar-remove hidden>Quitar</button>
+      <button type="button" class="rte-ghost" data-bar-cancel>Cancelar</button>
+    </div>
+    <p class="rte-bar-error" data-bar-error role="alert" hidden></p>
+  </div>
+
+  <div class="rte-area" data-area></div>
+  <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" data-file hidden />
+
+  <div class="rte-status">
+    <span data-count aria-live="polite">0 palabras</span>
+    <span class="rte-dot" aria-hidden="true">·</span>
+    <span data-read>Lectura: —</span>
+    <span class="rte-status-right" data-note role="status"></span>
+    <button type="button" class="rte-link" data-help-open>Atajos de teclado</button>
+  </div>
+
+  <input type="hidden" name={name} value={value} data-field />
+
+  <dialog class="rte-help" data-help aria-labelledby={`${name}-help-t`}>
+    <div class="rte-help-head"><p id={`${name}-help-t`}>Atajos de teclado</p><button type="button" class="rte-ghost" data-help-close>Cerrar</button></div>
+    <dl>{shortcuts.map(([a, k]) => <div><dt>{a}</dt><dd><kbd>{k}</kbd></dd></div>)}</dl>
+    <p class="rte-help-foot">En Mac, usa Cmd en lugar de Ctrl.</p>
+  </dialog>
+  <script type="application/json" data-config set:html={JSON.stringify({ placeholder, labelId })} />
+</div>
+
+<style is:global>
+  .rte { position: relative; }
+  .rte-toolbar { position: sticky; top: 56px; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 4px; padding: 8px; border: 1.5px solid var(--color-line); border-bottom: 1px solid var(--color-line); border-radius: 10px 10px 0 0; background: #fff; box-shadow: 0 2px 6px -4px rgba(20,54,90,.25); }
+  @media (min-width: 1024px) { .rte-toolbar { top: 0; } }
+  .rte-group { display: flex; gap: 2px; padding-right: 6px; margin-right: 2px; border-right: 1px solid var(--color-line); }
+  .rte-group:last-child { border-right: 0; margin-right: 0; padding-right: 0; }
+  .rte-btn { display: grid; place-items: center; width: 36px; height: 36px; border: 0; border-radius: 8px; background: transparent; color: var(--color-ink); cursor: pointer; }
+  .rte-btn:hover { background: var(--color-surface-soft); }
+  .rte-btn[aria-pressed="true"] { background: var(--color-navy); color: #fff; }
+  .rte-btn:disabled { opacity: .35; cursor: default; }
+  .rte-select { height: 36px; margin-right: 6px; padding: 0 28px 0 10px; border: 1px solid var(--color-line); border-radius: 8px; background: #fff; font: inherit; font-size: 14px; color: var(--color-ink); }
+  .rte-bar { padding: 10px 12px; border: 1.5px solid var(--color-line); border-top: 0; background: var(--color-surface-soft); }
+  .rte-bar-title { margin: 0 0 8px; font-size: 13px; font-weight: 500; color: var(--color-ink-muted); }
+  .rte-bar-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .rte-input { flex: 1; min-width: 180px; min-height: 40px; padding: 0 12px; border: 1.5px solid var(--color-line); border-radius: 8px; background: #fff; font: inherit; font-size: 15px; color: var(--color-ink); }
+  .rte-input:focus { outline: none; border-color: var(--color-sky-text); box-shadow: 0 0 0 3px rgba(85,173,239,.3); }
+  .rte-apply, .rte-ghost { min-height: 40px; padding: 0 16px; border-radius: 9999px; font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; }
+  .rte-apply { border: 1.5px solid var(--color-orange); background: var(--color-orange); color: var(--color-navy); }
+  .rte-ghost { border: 1.5px solid var(--color-navy); background: transparent; color: var(--color-navy); }
+  .rte-bar-error { margin: 8px 0 0; font-size: 13px; color: #8f2a2a; }
+  .rte-area { min-height: 340px; padding: 18px 22px; border: 1.5px solid var(--color-line); border-top: 0; background: #fff; font-size: 17px; line-height: 1.6; color: var(--color-ink); }
+  .rte-area:focus-within { border-color: var(--color-sky-text); box-shadow: 0 0 0 3px rgba(85,173,239,.3); }
+  .rte-area .ProseMirror { outline: none; min-height: 300px; }
+  .rte-area .ProseMirror p.is-editor-empty:first-child::before { content: attr(data-placeholder); float: left; height: 0; color: var(--color-placeholder-line); pointer-events: none; }
+  .rte-area p { margin: 0 0 14px; }
+  .rte-area h2 { margin: 22px 0 10px; font-size: 24px; font-weight: 500; line-height: 1.25; }
+  .rte-area h3 { margin: 18px 0 8px; font-size: 19px; font-weight: 600; line-height: 1.3; }
+  .rte-area ul, .rte-area ol { margin: 0 0 14px; padding-left: 24px; }
+  .rte-area ul { list-style: disc; } .rte-area ol { list-style: decimal; }
+  .rte-area blockquote { margin: 0 0 14px; padding: 2px 0 2px 14px; border-left: 3px solid var(--color-orange); color: var(--color-ink-muted); }
+  .rte-area a { color: var(--color-sky-text); text-decoration: underline; }
+  .rte-area a[data-button] { display: inline-block; padding: 10px 22px; border-radius: 9999px; background: var(--color-orange); color: var(--color-navy); font-size: 14px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; text-decoration: none; }
+  .rte-area hr { margin: 20px 0; border: 0; border-top: 1px solid var(--color-line); }
+  .rte-area img { display: block; max-width: 100%; height: auto; margin: 0 auto 14px; border-radius: 8px; }
+  .rte-area img.ProseMirror-selectednode { outline: 3px solid var(--color-sky); outline-offset: 2px; }
+  .rte-status { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; padding: 8px 12px; border: 1.5px solid var(--color-line); border-top: 1px solid var(--color-line); border-radius: 0 0 10px 10px; background: var(--color-surface-soft); font-size: 13px; color: var(--color-ink-muted); }
+  .rte-status-right { margin-left: auto; }
+  .rte-link { border: 0; background: none; padding: 0; font: inherit; font-size: 13px; color: var(--color-sky-text); text-decoration: underline; cursor: pointer; }
+  .rte-help { margin: auto; width: min(460px, 92vw); padding: 0; border: 0; border-radius: 12px; }
+  .rte-help::backdrop { background: rgba(14,34,56,.6); }
+  .rte-help-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--color-line); font-weight: 500; }
+  .rte-help dl { margin: 0; padding: 8px 16px; }
+  .rte-help dl div { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--color-line); font-size: 15px; }
+  .rte-help dl div:last-child { border-bottom: 0; }
+  .rte-help dd { margin: 0; }
+  .rte-help kbd { padding: 2px 8px; border: 1px solid var(--color-line); border-radius: 6px; background: var(--color-surface-soft); font: inherit; font-size: 13px; }
+  .rte-help-foot { margin: 0; padding: 0 16px 14px; font-size: 13px; color: var(--color-ink-muted); }
+</style>
+
+<script>
+  import { Editor, Extension } from '@tiptap/core';
+  import StarterKit from '@tiptap/starter-kit';
+  import Link from '@tiptap/extension-link';
+  import Underline from '@tiptap/extension-underline';
+  import TextAlign from '@tiptap/extension-text-align';
+  import Image from '@tiptap/extension-image';
+  import Placeholder from '@tiptap/extension-placeholder';
+
+  // A link can be flagged as a call-to-action button; the email turns those into pill buttons.
+  const ButtonLink = Link.extend({
+    inclusive: false,
+    addAttributes() {
+      return {
+        ...this.parent?.(),
+        button: { default: false, parseHTML: (el) => el.hasAttribute('data-button'), renderHTML: (a) => (a.button ? { 'data-button': 'true' } : {}) },
+      };
+    },
+  });
+  // Ctrl/Cmd+K opens the link bar, like in most editors.
+  const LinkShortcut = Extension.create({ name: 'linkShortcut', addKeyboardShortcuts: () => ({ 'Mod-k': () => { document.dispatchEvent(new CustomEvent('rte:link')); return true; } }) });
+
+  document.querySelectorAll<HTMLElement>('[data-rte]').forEach((root) => {
+    const $ = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
+    const field = $<HTMLInputElement>('[data-field]');
+    const cfg = JSON.parse($('[data-config]').textContent ?? '{}');
+    const note = $('[data-note]');
+    const say = (t: string) => { note.textContent = t; };
+
+    const editor = new Editor({
+      element: $('[data-area]'),
+      extensions: [
+        StarterKit.configure({ heading: { levels: [2, 3] }, code: false, codeBlock: false, strike: false }),
+        Underline, ButtonLink.configure({ openOnClick: false, autolink: false, HTMLAttributes: { rel: 'noopener noreferrer nofollow', target: '_blank' } }),
+        TextAlign.configure({ types: ['heading', 'paragraph'], alignments: ['left', 'center', 'right'] }),
+        Image.configure({ inline: false, allowBase64: false }),
+        Placeholder.configure({ placeholder: cfg.placeholder }),
+        LinkShortcut,
+      ],
+      content: field.value || '<p></p>',
+      editorProps: { attributes: { role: 'textbox', 'aria-multiline': 'true', 'aria-labelledby': cfg.labelId, spellcheck: 'true' } },
+      onUpdate: () => { sync(); document.dispatchEvent(new CustomEvent('editor:change')); },
+      onSelectionUpdate: () => refresh(),
+      onTransaction: () => refresh(),
+    });
+
+    const words = () => (editor.getText().trim().match(/\S+/g) ?? []).length;
+    function sync() {
+      field.value = editor.isEmpty ? '' : editor.getHTML();
+      const n = words();
+      $('[data-count]').textContent = `${n} ${n === 1 ? 'palabra' : 'palabras'}`;
+      $('[data-read]').textContent = n < 30 ? 'Lectura: menos de 1 min' : `Lectura: ${Math.max(1, Math.round(n / 200))} min`;
+    }
+
+    // Toolbar state
+    const buttons = [...root.querySelectorAll<HTMLButtonElement>('[data-cmd]')];
+    const style = $<HTMLSelectElement>('[data-style]');
+    const isOn: Record<string, () => boolean> = {
+      bold: () => editor.isActive('bold'), italic: () => editor.isActive('italic'), underline: () => editor.isActive('underline'),
+      left: () => editor.isActive({ textAlign: 'left' }), center: () => editor.isActive({ textAlign: 'center' }), right: () => editor.isActive({ textAlign: 'right' }),
+      bullet: () => editor.isActive('bulletList'), ordered: () => editor.isActive('orderedList'), quote: () => editor.isActive('blockquote'),
+      link: () => editor.isActive('link') && !editor.getAttributes('link').button, button: () => editor.isActive('link') && !!editor.getAttributes('link').button, image: () => editor.isActive('image'),
+    };
+    function refresh() {
+      buttons.forEach((b) => {
+        const c = b.dataset.cmd!;
+        b.setAttribute('aria-pressed', String(isOn[c]?.() ?? false));
+        if (c === 'undo') b.disabled = !editor.can().undo();
+        if (c === 'redo') b.disabled = !editor.can().redo();
+      });
+      style.value = editor.isActive('heading', { level: 2 }) ? 'h2' : editor.isActive('heading', { level: 3 }) ? 'h3' : 'p';
+    }
+
+    // Link / button / image-description bar
+    type Mode = 'link' | 'button' | 'alt';
+    const bar = $('[data-bar]'), barTitle = $('[data-bar-title]'), barUrl = $<HTMLInputElement>('[data-bar-url]'), barText = $<HTMLInputElement>('[data-bar-text]');
+    const barRemove = $<HTMLButtonElement>('[data-bar-remove]'), barError = $('[data-bar-error]');
+    let mode: Mode = 'link';
+    const openBar = (m: Mode) => {
+      mode = m; barError.hidden = true; bar.hidden = false;
+      const hasLink = editor.isActive('link');
+      barTitle.textContent = m === 'link' ? 'Enlace: escribe la dirección completa' : m === 'button' ? 'Botón: texto y dirección a la que lleva' : 'Describe la imagen para quien no pueda verla';
+      barUrl.placeholder = m === 'alt' ? 'Ej. Orquesta y compositoras sobre el escenario' : 'https://';
+      barUrl.inputMode = m === 'alt' ? 'text' : 'url';
+      barText.hidden = !(m === 'button' && editor.state.selection.empty && !hasLink);
+      barRemove.hidden = !(m !== 'alt' && hasLink);
+      barUrl.value = m === 'alt' ? (editor.getAttributes('image').alt ?? '') : (editor.getAttributes('link').href ?? '');
+      (barText.hidden ? barUrl : barText).focus();
+    };
+    const closeBar = () => { bar.hidden = true; editor.view.focus(); };
+    const fail = (t: string) => { barError.textContent = t; barError.hidden = false; };
+    $('[data-bar-cancel]').addEventListener('click', closeBar);
+    barRemove.addEventListener('click', () => { editor.chain().focus().extendMarkRange('link').unsetLink().run(); closeBar(); });
+    [barUrl, barText].forEach((i) => i.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); $('[data-bar-ok]').click(); } if (e.key === 'Escape') closeBar(); }));
+    $('[data-bar-ok]').addEventListener('click', () => {
+      const v = barUrl.value.trim();
+      if (mode === 'alt') { editor.chain().focus().updateAttributes('image', { alt: v }).run(); return closeBar(); }
+      // Accept what people actually type: an email, "www.site.org", or "site.org/page" without the https://.
+      const href = /^[\w.+-]+@[\w-]+(\.[\w-]+)+$/.test(v) ? `mailto:${v}` : /^(https?:\/\/|mailto:)/i.test(v) ? v : /^[\w-]+(\.[\w-]+)+(\/\S*)?$/.test(v) ? `https://${v}` : v;
+      if (!/^(https?:\/\/[^\s.]+\.[^\s]+|mailto:[^\s]+@[^\s]+)$/i.test(href)) return fail('Escribe una dirección válida, por ejemplo https://uv4peace.org');
+      const button = mode === 'button';
+      if (button && !barText.hidden) {
+        const label = barText.value.trim();
+        if (!label) return fail('Escribe el texto que llevará el botón.');
+        // A new empty line follows the button so the cursor does not stay inside it.
+        editor.chain().focus().insertContent([{ type: 'paragraph', attrs: { textAlign: 'center' }, content: [{ type: 'text', text: label, marks: [{ type: 'link', attrs: { href, button: true } }] }] }, { type: 'paragraph', attrs: { textAlign: 'left' } }]).run();
+      } else {
+        editor.chain().focus().extendMarkRange('link').setLink({ href, button } as never).run();
+      }
+      closeBar();
+    });
+    document.addEventListener('rte:link', () => openBar('link'));
+
+    // Images: uploaded to the site's storage, so they stay online for as long as the email does.
+    const file = $<HTMLInputElement>('[data-file]');
+    file.addEventListener('change', async () => {
+      const f = file.files?.[0]; file.value = '';
+      if (!f) return;
+      say('Subiendo imagen…');
+      try {
+        const body = new FormData(); body.set('file', f);
+        const res = await fetch('/admin/api/newsletter/image', { method: 'POST', body });
+        const j = await res.json();
+        if (!j.ok) throw new Error(j.error);
+        editor.chain().focus().setImage({ src: j.url }).run();
+        say(''); openBar('alt');
+      } catch (e) { say(e instanceof Error ? e.message : 'No se ha podido subir la imagen.'); }
+    });
+
+    const run: Record<string, () => unknown> = {
+      bold: () => editor.chain().focus().toggleBold().run(), italic: () => editor.chain().focus().toggleItalic().run(), underline: () => editor.chain().focus().toggleUnderline().run(),
+      clear: () => editor.chain().focus().unsetAllMarks().clearNodes().run(),
+      left: () => editor.chain().focus().setTextAlign('left').run(), center: () => editor.chain().focus().setTextAlign('center').run(), right: () => editor.chain().focus().setTextAlign('right').run(),
+      bullet: () => editor.chain().focus().toggleBulletList().run(), ordered: () => editor.chain().focus().toggleOrderedList().run(), quote: () => editor.chain().focus().toggleBlockquote().run(),
+      hr: () => editor.chain().focus().setHorizontalRule().run(), undo: () => editor.chain().focus().undo().run(), redo: () => editor.chain().focus().redo().run(),
+      link: () => openBar('link'), button: () => openBar('button'),
+      image: () => (editor.isActive('image') ? openBar('alt') : file.click()),
+    };
+    // Pressing a toolbar button must not take the cursor out of the text.
+    buttons.forEach((b) => { b.addEventListener('mousedown', (e) => e.preventDefault()); b.addEventListener('click', () => { run[b.dataset.cmd!]?.(); refresh(); }); });
+    style.addEventListener('change', () => {
+      const c = editor.chain().focus();
+      (style.value === 'p' ? c.setParagraph() : c.setHeading({ level: style.value === 'h2' ? 2 : 3 })).run();
+    });
+
+    const help = $<HTMLDialogElement>('[data-help]');
+    $('[data-help-open]').addEventListener('click', () => help.showModal());
+    $('[data-help-close]').addEventListener('click', () => help.close());
+
+    (root as HTMLElement & { rte?: unknown }).rte = {
+      getHtml: () => field.value,
+      setHtml: (h: string) => { editor.commands.setContent(h || '<p></p>', true); sync(); },
+      setNote: say,
+    };
+    sync(); refresh();
+  });
+</script>
