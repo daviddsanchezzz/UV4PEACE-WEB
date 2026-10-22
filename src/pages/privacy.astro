@@ -2,17 +2,73 @@
 export const prerender = true;
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
-import { site } from '../data/site';
-import { getSettings } from '../lib/content';
-const settings = await getSettings();
 ---
-<Base title="Privacy policy">
-  <PageHeader eyebrow="Legal" title={['Privacy policy']} />
+<Base title="Privacy Policy">
+  <PageHeader eyebrow="Legal" title={['Privacy Policy']} />
   <section class="wrap pb-[clamp(72px,10vw,128px)]">
-    <div class="max-w-[720px]">
-      <h2 class="t-h3">Data controller</h2>
-      <ul class="body mt-3 text-ink-muted">{site.legalEntities.map((l) => <li>{l}</li>)}</ul>
-      <p class="body mt-3 text-ink-muted">Contact: <a href={`mailto:${settings.email}`}>{settings.email}</a></p>
+    <div class="max-w-[720px] [&_h2]:mt-12 [&_h3]:mt-8 [&_p]:mt-4">
+      <p class="body text-ink-muted">UNITED VOICES 4 PEACE takes the treatment of your personal data very seriously and for that reason it conforms to Law 2472/97 in force, of the Personal Data Protection Authority, applicable to the personal data bases, as well as to the Regulation (EU) 2016/679 of the European Parliament and the Council of 27 April 2016 on the protection of natural persons with regard to the processing of personal data and on the free movement of such data (General Data Protection Regulation – GDPR).</p>
+      <p class="body text-ink-muted">UNITED VOICES 4 PEACE commits itself to the full enforcement of the applicable laws and European regulations by taking account of the adoption of the appropriate technical and administrative measures for the protection of personal data.</p>
+
+      <h2 class="t-h3">Browsing our website</h2>
+      <p class="body text-ink-muted">You can browse our website without providing any personal information.</p>
+      <p class="body text-ink-muted">UNITED VOICES 4 PEACE collects personal data of its visitors / users, only when they provide them voluntarily.</p>
+      <p class="body text-ink-muted">Specific care is taken for the data collected with the help of cookies files (Read more in our <a href="/cookies/">Cookies Policy</a>). Due to frequent and vast changes made in technology, as well as the relevant attempts of the legislature to keep pace with these changes, UNITED VOICES 4 PEACE is bound to inform you on any modification made in its personal data management policy.</p>
+      <p class="body text-ink-muted">If visitors/users object to this policy, they must terminate and avoid browsing the web page.</p>
+
+      <h2 class="t-h3">Data keeping and processing principles</h2>
+      <p class="body text-ink-muted">UNITED VOICES 4 PEACE is bound to make every effort in order to safeguard the privacy of your data. Therefore, it may not transfer them to any third party (either a natural or legal person), for any reason whatsoever, except where Law provides otherwise, and exclusively to the competent authorities.</p>
+      <p class="body text-ink-muted">Minor visitors shall have access to our services only upon their parental or guardian consent, while, personal data are submitted by minors, and UNITED VOICES 4 PEACE will delete all relevant information.</p>
+      <p class="body text-ink-muted">Visitors/users may, at any time, contact the administrators of the website at info@uv4peace.gr in order to find out if there is a record of their data, and may change and delete them from the lists, whenever they so wish.</p>
+      <p class="body text-ink-muted">UNITED VOICES 4 PEACE keeps records of the personal data of users solely for financial, taxing and communication reasons. In the context of an ongoing optimisation of the services and information provided, it may process, under strict conditions of confidentiality and anonymity, part or all of the data you have sent for statistical and financial purposes.</p>
+
+      <h2 class="t-h3">The personal data we collect</h2>
+
+      <h3 class="text-[18px] font-medium italic text-ink">Information automatically stored –cookies</h3>
+      <p class="body text-ink-muted">UNITED VOICES 4 PEACE uses “cookies” only for facilitating the use of our website. Cookies are small data / text files stored by your browser in the hard disk of your computer and are necessary for the use of our website.</p>
+      <p class="body text-ink-muted">We use cookies in order to better understand the use of our website and also improve your browsing experience.</p>
+      <p class="body text-ink-muted">Cookies help us, for instance, to determine if you have already visited a page of our site. Cookies may also inform us if you have visited our site in the past or if you are a new visitor.</p>
+      <p class="body text-ink-muted">We use cookies that do not store personal data or personal information that can lead to the identification of the person to whom this data/information relates and which have been collected otherwise.</p>
+      <p class="body text-ink-muted">If you do not wish to have your information collected through cookies, please set the Internet browser accordingly in order to delete all the current cookies from the hard disk of your computer, block all future cookies and receive a warning before a cookie is stored (Read more in our <a href="/cookies/">Cookies Policy</a>).</p>
+
+      <h3 class="text-[18px] font-medium italic text-ink">Messages via the contact platform.</h3>
+      <p class="body text-ink-muted">You may submit your message in UNITED VOICES 4 PEACE either via the general contact form or through dedicated contact forms which are located in the web pages of the services and/or products.</p>
+      <p class="body text-ink-muted">By submitting your message via any contact form to UNITED VOICES 4 PEACE, you accept these Terms in relation to the use of your personal data (name and e-mail) by UNITED VOICES 4 PEACE.</p>
+      <p class="body text-ink-muted">UNITED VOICES 4 PEACE is bound neither to use this information for marketing purposes nor to transfer them to third parties.</p>
+
+      <h3 class="text-[18px] font-medium italic text-ink">IP Addresses</h3>
+      <p class="body text-ink-muted">UNITED VOICES 4 PEACE may locate the IP address through which the computer or any other electronic device obtains access to the Internet and, then, to UNITED VOICES 4 PEACE, and such information is processed for statistical purposes.</p>
+      <p class="body text-ink-muted">In cases where the browser seeks authorisation for receiving your location from our website, this data shall be used for providing customised information.</p>
+      <p class="body text-ink-muted">In any event, your may withdraw your permission at any time by changing your browser settings.</p>
+      <p class="body text-ink-muted">If you choose not to give your permission, then, your access to certain services of UNITED VOICES 4 PEACE may not be possible.</p>
+
+      <h2 class="t-h3">Hyperlinks</h2>
+      <p class="body text-ink-muted">Through the appropriate links in the site of UNITED VOICES 4 PEACE, access is provided to third-party sites.</p>
+      <p class="body text-ink-muted">These links have been installed with the sole purpose to facilitate visitors/users during their browsing in the Internet.</p>
+      <p class="body text-ink-muted">Inclusion of a link does not in any way constitute an indication of acceptance or approval of the content of such third-party website.</p>
+      <p class="body text-ink-muted">Each link leads to a different website and its browsing is subject to the Terms of Use of that website.</p>
+      <p class="body text-ink-muted">UNITED VOICES 4 PEACE shall have no liability for the content and the personal data management Policy of the website to which access is provided via the link.</p>
+      <p class="body text-ink-muted">Access by using the links provided to each website takes place under the sole responsibility of the user.</p>
+
+      <h2 class="t-h3">Storage time of your data</h2>
+      <p class="body text-ink-muted">Data provided by you will be kept/ stored by us only for the time period required for fulfilling the purpose for which you shared your data with us and in conformation with the underlying legislative provisions.</p>
+      <p class="body text-ink-muted">If you have provided us with your explicit consent to use your personal data for advertising purposes (subscription to the Newsletter), we will use your data to this end until you withdraw your consent.</p>
+      <p class="body text-ink-muted">You may withdraw your consent, at any time, with effect in futurum.</p>
+
+      <h2 class="t-h3">Communication, request for information, consent withdrawal, blocking, erasion</h2>
+      <p class="body text-ink-muted">You may, at any time and without cost, to object to the use of your personal data for the future, ask their complete deletion or ask for information about your personal data stored by us or their correction.</p>
+      <p class="body text-ink-muted">You may send an email with your request at info@uv4peace.gr or use the general contact form on our website.</p>
+
+      <h2 class="t-h3">Personal Data Safety</h2>
+      <p class="body text-ink-muted">UNITED VOICES 4 PEACE acknowledges the safety of data and transactions as a major issue, and, for this reason, all the necessary organisational and safety measures are taken, as well as the most appropriate technical mechanisms protecting the content are implemented, with the aim to provide user with the safest possible environment, pursuant to the respective legislative provisions.</p>
+      <p class="body text-ink-muted">UNITED VOICES 4 PEACE protects visitors/users from any interception of data by using the SSL-256 bit encryption method. The encryption applies to all stages and procedures of dealing and sending personal data-information.</p>
+      <p class="body text-ink-muted">Through its designers and administrators, UNITED VOICES 4 PEACE makes every possible effort in order to develop, update and optimise the services provided and the web site, in general.</p>
+      <p class="body text-ink-muted">However, there is always possibility that errors/ malfunctions/ interruptions occur in the content of the website and/or viruses or other malware emerge either from the site or its server.</p>
+
+      <h2 class="t-h3">Updating and modification</h2>
+      <p class="body text-ink-muted">The Company reserves the right to amend/ update individual parts of this Policy without having the obligation to previously inform you. Please, always read Personal Data Protection Policy before using our website in order to be informed about the latest version of this Policy in case of any amendments or updates.</p>
+
+      <p class="body !mt-12 text-ink-muted">Last update on Privacy and Personal Data Protection Policy: July 2018</p>
     </div>
   </section>
 </Base>
