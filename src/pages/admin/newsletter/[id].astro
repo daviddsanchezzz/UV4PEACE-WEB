@@ -1,0 +1,222 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { connect, getNewsletter, listSubscribers, countByStatus, newsletterLabel } from '../../../lib/newsletter-db';
+
+const id = Astro.params.id ?? 'nueva';
+const c = connect(Astro.request, Astro.cookies);
+const isNew = id === 'nueva';
+const item = isNew ? null : await getNewsletter(c, id);
+if (!isNew && !item) return Astro.redirect('/admin/newsletter/');
+const confirmed = countByStatus(await listSubscribers(c)).confirmed;
+const locked = item ? item.status !== 'draft' : false;
+const q = Astro.url.searchParams;
+const errors: Record<string, string> = {
+  guardar: 'No se ha podido guardar. Inténtalo de nuevo.',
+  confirmar: 'Marca la casilla de confirmación para enviar.',
+  estado: 'Esta newsletter ya no está en borrador (puede que alguien la haya enviado ya).',
+  vacia: 'Falta el asunto o el texto. Guarda la newsletter y vuelve a intentarlo.',
+  sinsuscriptores: 'No hay suscriptores confirmados a quienes enviar.',
+  cambio: `La lista de suscriptores ha cambiado (ahora hay ${q.get('ahora') ?? '?'} confirmados). Revisa el número y vuelve a confirmar.`,
+  envio: 'El servicio de correo no ha aceptado el envío. La newsletter sigue como borrador.',
+};
+const error = q.get('error') ? errors[q.get('error')!] ?? 'Ha ocurrido un error.' : '';
+---
+<AdminLayout title={item?.subject || 'Nueva newsletter'} current="newsletter">
+  <a href="/admin/newsletter/" class="text-sm">‹ Newsletter</a>
+  {c.sample && <p class="adm-card mt-4 border-l-4 border-l-orange px-4 py-3 text-sm">Datos de ejemplo: guardar y enviar se activarán al conectar la base de datos.</p>}
+  <div class="mt-3 flex flex-wrap items-center justify-between gap-3">
+    <h1 class="adm-h1">{isNew ? 'Nueva newsletter' : item!.subject || '(sin asunto)'}</h1>
+    {item && <span class={`adm-pill ${item.status === 'sent' ? 'adm-pill-ok' : 'adm-pill-warn'}`}>{newsletterLabel[item.status]}</span>}
+  </div>
+  {q.has('saved') && <p role="status" class="mt-4 rounded-lg bg-[#e1f3ea] px-4 py-3 text-sm text-[#1b6b45]">Borrador guardado.</p>}
+  {q.has('enviada') && <p role="status" class="mt-4 rounded-lg bg-[#e1f3ea] px-4 py-3 text-sm text-[#1b6b45]">Enviada a {q.get('enviada')} personas{Number(q.get('fallidos')) > 0 ? `, y ${q.get('fallidos')} envíos han fallado.` : '.'}</p>}
+  {error && <p role="alert" class="mt-4 rounded-lg bg-[#fdecec] px-4 py-3 text-sm text-[#8f2a2a]">{error}</p>}
+
+  {locked ? (
+    <div class="mt-8 grid items-start gap-6 lg:grid-cols-[1fr_340px]">
+      <iframe title="Contenido enviado" class="h-[640px] w-full rounded-lg border border-line bg-white" sandbox="" srcdoc={item!.body_html}></iframe>
+      <div class="adm-card p-5 text-sm">
+        <p class="font-medium">{item!.subject}</p>
+        <p class="adm-hint">Enviada el {item!.sent_at ? new Date(item!.sent_at).toLocaleString('es') : '—'}</p>
+        <p class="mt-3">{item!.recipients} envíos correctos{item!.failed ? ` · ${item!.failed} fallidos` : ''}</p>
+        <p class="adm-hint">Una newsletter enviada no se puede editar.</p>
+      </div>
+    </div>
+  ) : (
+    <form id="nl" method="post" action="/admin/api/newsletter/save" class="mt-8 grid items-start gap-6 lg:grid-cols-[1fr_340px]">
+      <input type="hidden" name="id" value={id} />
+      <input type="hidden" name="body_html" id="body_html" value={item?.body_html ?? ''} />
+      <div class="adm-card flex flex-col gap-6 p-6">
+        <div>
+          <label class="adm-label" for="subject">Asunto</label>
+          <input id="subject" name="subject" class="adm-input" value={item?.subject ?? ''} maxlength="200" placeholder="Lo primero que verá quien la reciba" />
+        </div>
+        <div>
+          <label class="adm-label" for="preheader">Texto de avance <span class="font-normal text-ink-muted">(opcional)</span></label>
+          <input id="preheader" name="preheader" class="adm-input" value={item?.preheader ?? ''} maxlength="200" placeholder="Aparece junto al asunto en la bandeja de entrada" />
+        </div>
+        <div>
+          <p class="adm-label" id="ed-label">Texto</p>
+          <div class="ed-toolbar" role="toolbar" aria-label="Formato del texto">
+            <button type="button" data-cmd="bold" title="Negrita"><b>N</b></button>
+            <button type="button" data-cmd="italic" title="Cursiva"><i>C</i></button>
+            <button type="button" data-cmd="h2" title="Título">Título</button>
+            <button type="button" data-cmd="h3" title="Subtítulo">Subtítulo</button>
+            <button type="button" data-cmd="bullet" title="Lista">• Lista</button>
+            <button type="button" data-cmd="ordered" title="Lista numerada">1. Lista</button>
+            <button type="button" data-cmd="quote" title="Cita">“ Cita</button>
+            <button type="button" data-cmd="link" title="Enlace">Enlace</button>
+            <button type="button" data-cmd="hr" title="Línea separadora">—</button>
+            <button type="button" data-cmd="undo" title="Deshacer">↶</button>
+            <button type="button" data-cmd="redo" title="Rehacer">↷</button>
+          </div>
+          <div id="link-bar" hidden class="ed-linkbar">
+            <label class="sr-only" for="link-url">Dirección del enlace</label>
+            <input id="link-url" type="url" class="adm-input" placeholder="https://" />
+            <button type="button" class="adm-btn adm-btn-primary" id="link-ok">Aplicar</button>
+            <button type="button" class="adm-btn" id="link-remove">Quitar enlace</button>
+          </div>
+          <div id="editor" class="ed-area" aria-labelledby="ed-label"></div>
+          <p class="adm-hint">Los saltos de línea, el tamaño y los colores se ajustan solos para que se vea bien en cualquier correo.</p>
+        </div>
+      </div>
+
+      <aside class="flex flex-col gap-4">
+        <div class="adm-card flex flex-col gap-3 p-5">
+          <button class="adm-btn adm-btn-primary w-full" type="submit">Guardar borrador</button>
+          <button class="adm-btn w-full" type="button" id="btn-preview">Vista previa</button>
+          <button class="adm-btn w-full" type="button" id="btn-test">Enviarme una prueba</button>
+          <p id="test-msg" role="status" class="text-sm" hidden></p>
+        </div>
+        {!isNew && (
+          <div class="adm-card p-5">
+            <p class="font-medium">Enviar a la lista</p>
+            <p class="adm-hint">Llegará a <strong>{confirmed}</strong> suscriptores confirmados. No se puede deshacer.</p>
+            <p id="dirty-msg" hidden class="mt-3 rounded-md bg-[#fdf0d8] px-3 py-2 text-sm text-[#8a5a00]">Hay cambios sin guardar. Guarda el borrador antes de enviar.</p>
+            <div id="send-box" class="mt-3 flex flex-col gap-3">
+              <label class="flex items-start gap-2.5 text-sm"><input type="checkbox" id="confirm-send" class="mt-0.5 h-[18px] w-[18px]" /> He revisado el texto y me he enviado una prueba.</label>
+              <button class="adm-btn adm-btn-primary w-full" type="submit" id="btn-send" formaction="/admin/api/newsletter/send" disabled>Enviar a {confirmed} personas</button>
+              <input type="hidden" name="expected" value={confirmed} />
+              <input type="hidden" name="confirm" id="confirm-field" value="" />
+            </div>
+          </div>
+        )}
+        {isNew && <p class="adm-hint">Guarda el borrador para poder enviarlo.</p>}
+      </aside>
+    </form>
+  )}
+
+  <dialog id="preview-dlg" class="ed-dialog" aria-label="Vista previa">
+    <div class="flex items-center justify-between gap-3 border-b border-line p-3">
+      <p class="font-medium">Así lo verán</p>
+      <form method="dialog"><button class="adm-btn">Cerrar</button></form>
+    </div>
+    <iframe id="preview-frame" title="Vista previa del correo" sandbox="" class="h-full w-full bg-white"></iframe>
+  </dialog>
+
+  <style is:global>
+    .ed-toolbar { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; border: 1.5px solid var(--color-line); border-bottom: 0; border-radius: 8px 8px 0 0; background: var(--color-surface-soft); }
+    .ed-toolbar button { min-height: 38px; min-width: 38px; padding: 0 12px; border: 1px solid transparent; border-radius: 6px; background: #fff; font: inherit; font-size: 14px; color: var(--color-ink); cursor: pointer; }
+    .ed-toolbar button:hover { border-color: var(--color-line); }
+    .ed-toolbar button[aria-pressed="true"] { background: var(--color-navy); color: #fff; }
+    .ed-linkbar { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px; border: 1.5px solid var(--color-line); border-bottom: 0; background: #fff; }
+    .ed-linkbar .adm-input { flex: 1; min-width: 200px; }
+    .ed-area { min-height: 320px; padding: 16px 18px; border: 1.5px solid var(--color-line); border-radius: 0 0 8px 8px; background: #fff; font-size: 17px; line-height: 1.6; }
+    .ed-area:focus-within { border-color: var(--color-sky-text); box-shadow: 0 0 0 3px rgba(85,173,239,.3); }
+    .ed-area .ProseMirror { outline: none; min-height: 288px; }
+    .ed-area p { margin: 0 0 14px; }
+    .ed-area h2 { margin: 22px 0 10px; font-size: 24px; font-weight: 500; line-height: 1.25; }
+    .ed-area h3 { margin: 18px 0 8px; font-size: 19px; font-weight: 600; }
+    .ed-area ul, .ed-area ol { margin: 0 0 14px; padding-left: 24px; }
+    .ed-area ul { list-style: disc; } .ed-area ol { list-style: decimal; }
+    .ed-area blockquote { margin: 0 0 14px; padding: 2px 0 2px 14px; border-left: 3px solid var(--color-orange); color: var(--color-ink-muted); }
+    .ed-area a { color: var(--color-sky-text); text-decoration: underline; }
+    .ed-area hr { margin: 20px 0; border: 0; border-top: 1px solid var(--color-line); }
+    .ed-dialog { margin: auto; width: min(680px, 94vw); height: min(760px, 90vh); padding: 0; border: 0; border-radius: 12px; }
+    .ed-dialog[open] { display: flex; flex-direction: column; }
+    .ed-dialog::backdrop { background: rgba(14,34,56,.6); }
+  </style>
+
+  <script>
+    import { Editor } from '@tiptap/core';
+    import StarterKit from '@tiptap/starter-kit';
+    import Link from '@tiptap/extension-link';
+
+    const host = document.getElementById('editor');
+    const field = document.getElementById('body_html') as HTMLInputElement | null;
+    const form = document.getElementById('nl') as HTMLFormElement | null;
+    if (host && field && form) {
+      const dirty = document.getElementById('dirty-msg');
+      const sendBox = document.getElementById('send-box');
+      const sendBtn = document.getElementById('btn-send') as HTMLButtonElement | null;
+      const confirmBox = document.getElementById('confirm-send') as HTMLInputElement | null;
+      const confirmField = document.getElementById('confirm-field') as HTMLInputElement | null;
+      let changed = false;
+
+      const editor = new Editor({
+        element: host,
+        extensions: [StarterKit.configure({ heading: { levels: [2, 3] }, code: false, codeBlock: false, strike: false }), Link.configure({ openOnClick: false, autolink: false })],
+        content: field.value || '<p></p>',
+        editorProps: { attributes: { 'aria-labelledby': 'ed-label', role: 'textbox', 'aria-multiline': 'true' } },
+        onUpdate: () => { field.value = editor.isEmpty ? '' : editor.getHTML(); markChanged(); refresh(); },
+        onSelectionUpdate: () => refresh(),
+      });
+
+      const markChanged = () => { changed = true; if (dirty) dirty.hidden = false; update(); };
+      const update = () => { if (sendBtn) sendBtn.disabled = changed || !confirmBox?.checked; if (confirmField) confirmField.value = confirmBox?.checked ? 'yes' : ''; };
+      ['subject', 'preheader'].forEach((i) => document.getElementById(i)?.addEventListener('input', markChanged));
+      confirmBox?.addEventListener('change', update);
+      update();
+
+      const buttons = [...document.querySelectorAll<HTMLButtonElement>('.ed-toolbar [data-cmd]')];
+      const linkBar = document.getElementById('link-bar')!;
+      const linkUrl = document.getElementById('link-url') as HTMLInputElement;
+      const active: Record<string, () => boolean> = {
+        bold: () => editor.isActive('bold'), italic: () => editor.isActive('italic'), h2: () => editor.isActive('heading', { level: 2 }), h3: () => editor.isActive('heading', { level: 3 }),
+        bullet: () => editor.isActive('bulletList'), ordered: () => editor.isActive('orderedList'), quote: () => editor.isActive('blockquote'), link: () => editor.isActive('link'),
+      };
+      function refresh() { buttons.forEach((b) => b.setAttribute('aria-pressed', String(active[b.dataset.cmd!]?.() ?? false))); }
+      const run: Record<string, () => void> = {
+        bold: () => editor.chain().focus().toggleBold().run(), italic: () => editor.chain().focus().toggleItalic().run(),
+        h2: () => editor.chain().focus().toggleHeading({ level: 2 }).run(), h3: () => editor.chain().focus().toggleHeading({ level: 3 }).run(),
+        bullet: () => editor.chain().focus().toggleBulletList().run(), ordered: () => editor.chain().focus().toggleOrderedList().run(),
+        quote: () => editor.chain().focus().toggleBlockquote().run(), hr: () => editor.chain().focus().setHorizontalRule().run(),
+        undo: () => editor.chain().focus().undo().run(), redo: () => editor.chain().focus().redo().run(),
+        link: () => { linkUrl.value = editor.getAttributes('link').href ?? ''; linkBar.hidden = false; linkUrl.focus(); },
+      };
+      // Keep the cursor in the text when a toolbar button is pressed, otherwise the next keystrokes are lost.
+      buttons.forEach((b) => b.addEventListener('mousedown', (e) => e.preventDefault()));
+      buttons.forEach((b) => b.addEventListener('click', () => { run[b.dataset.cmd!]?.(); refresh(); }));
+      document.getElementById('link-ok')!.addEventListener('click', () => {
+        const href = linkUrl.value.trim();
+        if (/^(https?:\/\/|mailto:)/i.test(href)) editor.chain().focus().extendMarkRange('link').setLink({ href }).run();
+        linkBar.hidden = true;
+      });
+      document.getElementById('link-remove')!.addEventListener('click', () => { editor.chain().focus().extendMarkRange('link').unsetLink().run(); linkBar.hidden = true; });
+      linkUrl.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); document.getElementById('link-ok')!.click(); } });
+      refresh();
+
+      const data = () => { const f = new FormData(); ['subject', 'preheader'].forEach((n) => f.set(n, (document.getElementById(n) as HTMLInputElement).value)); f.set('body_html', field.value); return f; };
+
+      document.getElementById('btn-preview')?.addEventListener('click', async () => {
+        const html = await (await fetch('/admin/api/newsletter/preview', { method: 'POST', body: data() })).text();
+        (document.getElementById('preview-frame') as HTMLIFrameElement).srcdoc = html;
+        (document.getElementById('preview-dlg') as HTMLDialogElement).showModal();
+      });
+
+      const testBtn = document.getElementById('btn-test') as HTMLButtonElement | null;
+      const msg = document.getElementById('test-msg');
+      testBtn?.addEventListener('click', async () => {
+        if (!msg) return;
+        testBtn.disabled = true; msg.hidden = true;
+        try {
+          const r = await fetch('/admin/api/newsletter/test', { method: 'POST', body: data() });
+          const j = await r.json();
+          msg.textContent = j.ok ? `Prueba enviada a ${j.to}. Revisa también la carpeta de spam.` : (j.error ?? 'No se ha podido enviar la prueba.');
+          msg.className = `text-sm ${j.ok ? 'text-[#1b6b45]' : 'text-[#8f2a2a]'}`;
+        } catch { msg.textContent = 'No se ha podido enviar la prueba.'; msg.className = 'text-sm text-[#8f2a2a]'; }
+        msg.hidden = false; testBtn.disabled = false;
+      });
+    }
+  </script>
+</AdminLayout>

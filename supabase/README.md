@@ -24,3 +24,11 @@
 - It uses [Resend](https://resend.com): create an account, verify the sending domain (uv4peace.org), and set `RESEND_API_KEY` and `CONTACT_FROM` in Vercel (server-side, not `PUBLIC_`).
 - Without `RESEND_API_KEY` the form shows an error with the contact address instead of claiming success.
 - Not done yet: rate limiting beyond the honeypot, and Turnstile if spam appears.
+
+## Newsletter
+
+- Migration `20261022000003_newsletter.sql` adds `subscribers` and `newsletters`. Visitors can only use the `subscribe`, `confirm_subscription` and `unsubscribe` functions, so nobody can list the emails. Only editors can read or edit the tables.
+- Sign-up is double opt-in: the visitor gets an email with a confirmation link and is only mailed after clicking it. Every email has an unsubscribe link and the one-click `List-Unsubscribe` header.
+- Sending goes through Resend (same `RESEND_API_KEY` and `CONTACT_FROM` as the contact form), 100 emails per call. The send button claims the draft first, so a double click cannot send twice, and it refuses if the audience size changed since the screen was loaded.
+- Vercel limits how long a function can run. A list of a few thousand people sends in well under a minute; beyond roughly 5,000 the send should move to a background job.
+- Not done yet: images inside the newsletter, open/click statistics, CSV import of an existing list, scheduled sending.

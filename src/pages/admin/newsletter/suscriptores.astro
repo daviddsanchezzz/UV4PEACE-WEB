@@ -1,0 +1,92 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { connect, listSubscribers, countByStatus, statusLabel } from '../../../lib/newsletter-db';
+
+const c = connect(Astro.request, Astro.cookies);
+const subs = await listSubscribers(c);
+const n = countByStatus(subs);
+const q = Astro.url.searchParams;
+const notice = q.has('anadido') ? ['ok', 'Suscriptor añadido.'] : q.has('borrado') ? ['ok', 'Suscriptor eliminado.']
+  : q.get('error') === 'correo' ? ['err', 'Ese correo no parece válido.'] : q.get('error') === 'existe' ? ['err', 'Ese correo ya está en la lista.']
+  : q.has('error') ? ['err', 'No se ha podido completar la acción. Inténtalo de nuevo.'] : null;
+const date = (d: string) => new Date(d).toLocaleDateString('es', { day: 'numeric', month: 'short', year: 'numeric' });
+---
+<AdminLayout title="Suscriptores" current="newsletter">
+  <a href="/admin/newsletter/" class="text-sm">‹ Newsletter</a>
+  {c.sample && <p class="adm-card mt-4 border-l-4 border-l-orange px-4 py-3 text-sm">Datos de ejemplo: el panel aún no está conectado a la base de datos.</p>}
+  <div class="mt-3 flex flex-wrap items-end justify-between gap-4">
+    <h1 class="adm-h1">{subs.length} suscriptores</h1>
+    <a href="/admin/api/newsletter/subscribers.csv" class="adm-btn">Descargar lista (CSV)</a>
+  </div>
+  <p class="mt-2 text-ink-muted">{n.confirmed} confirmados · {n.pending} sin confirmar · {n.unsubscribed} de baja</p>
+  {notice && <p role="status" class={`mt-4 rounded-lg px-4 py-3 text-sm ${notice[0] === 'ok' ? 'bg-[#e1f3ea] text-[#1b6b45]' : 'bg-[#fdecec] text-[#8f2a2a]'}`}>{notice[1]}</p>}
+
+  <form method="post" action="/admin/api/newsletter/subscriber" class="adm-card mt-6 flex flex-wrap items-end gap-3 p-5">
+    <input type="hidden" name="action" value="add" />
+    <div class="min-w-[240px] flex-1">
+      <label class="adm-label" for="new-email">Añadir a mano</label>
+      <input id="new-email" name="email" type="email" required class="adm-input" placeholder="persona@correo.org" />
+    </div>
+    <button class="adm-btn adm-btn-primary" type="submit">Añadir</button>
+    <p class="adm-hint w-full !mt-0">Añade solo a personas que ya hayan aceptado recibir vuestros correos. Entran como confirmadas.</p>
+  </form>
+
+  <div class="mt-8 flex flex-wrap items-center gap-3">
+    <label for="q" class="sr-only">Buscar</label>
+    <input id="q" class="adm-input max-w-[300px]" type="search" placeholder="Buscar correo" />
+    <div class="flex flex-wrap gap-2" role="group" aria-label="Filtrar por estado" id="filters">
+      <button type="button" data-f="all" class="adm-btn !min-h-[38px] !bg-navy !text-white">Todos</button>
+      <button type="button" data-f="confirmed" class="adm-btn !min-h-[38px]">Confirmados</button>
+      <button type="button" data-f="pending" class="adm-btn !min-h-[38px]">Sin confirmar</button>
+      <button type="button" data-f="unsubscribed" class="adm-btn !min-h-[38px]">De baja</button>
+    </div>
+  </div>
+
+  <div class="adm-card mt-4" id="list">
+    {subs.length === 0 && <p class="p-8 text-center text-ink-muted">Todavía no hay suscriptores.</p>}
+    {subs.map((s) => (
+      <div class="adm-row" data-row data-status={s.status} data-email={s.email.toLowerCase()}>
+        <span class="min-w-0 flex-1">
+          <span class="block truncate font-medium">{s.email}</span>
+          <span class="block truncate text-sm text-ink-muted">Alta el {date(s.created_at)}{s.source === 'manual' ? ' · añadido a mano' : ''}</span>
+        </span>
+        <span class={`adm-pill ${s.status === 'confirmed' ? 'adm-pill-ok' : s.status === 'pending' ? 'adm-pill-warn' : ''}`}>{statusLabel[s.status]}</span>
+        <form method="post" action="/admin/api/newsletter/subscriber" data-del>
+          <input type="hidden" name="action" value="delete" /><input type="hidden" name="id" value={s.id} />
+          <button type="submit" class="text-sm text-[#a33] hover:underline" aria-label={`Eliminar ${s.email}`}>Eliminar</button>
+        </form>
+      </div>
+    ))}
+  </div>
+  <p id="none" hidden class="mt-4 text-center text-ink-muted">Ningún suscriptor coincide.</p>
+
+  <script>
+    const rows = [...document.querySelectorAll<HTMLElement>('[data-row]')];
+    const input = document.getElementById('q') as HTMLInputElement;
+    const none = document.getElementById('none')!;
+    let status = 'all';
+    const apply = () => {
+      const term = input.value.trim().toLowerCase();
+      let shown = 0;
+      rows.forEach((r) => {
+        const ok = (status === 'all' || r.dataset.status === status) && (!term || r.dataset.email!.includes(term));
+        r.hidden = !ok; if (ok) shown++;
+      });
+      none.hidden = shown > 0 || rows.length === 0;
+    };
+    input.addEventListener('input', apply);
+    document.querySelectorAll<HTMLButtonElement>('#filters [data-f]').forEach((b) => b.addEventListener('click', () => {
+      status = b.dataset.f!;
+      document.querySelectorAll<HTMLElement>('#filters [data-f]').forEach((x) => x.classList.toggle('!bg-navy', x === b));
+      document.querySelectorAll<HTMLElement>('#filters [data-f]').forEach((x) => x.classList.toggle('!text-white', x === b));
+      apply();
+    }));
+    // Deleting a person cannot be undone, so ask once inside the page (no browser dialog).
+    document.querySelectorAll<HTMLFormElement>('[data-del]').forEach((f) => f.addEventListener('submit', (e) => {
+      const b = f.querySelector('button')!;
+      if (b.dataset.armed) return;
+      e.preventDefault(); b.dataset.armed = '1'; b.textContent = '¿Seguro? Pulsa otra vez'; b.classList.add('font-medium');
+      setTimeout(() => { delete b.dataset.armed; b.textContent = 'Eliminar'; b.classList.remove('font-medium'); }, 4000);
+    }));
+  </script>
+</AdminLayout>

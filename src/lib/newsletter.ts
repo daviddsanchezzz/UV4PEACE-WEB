@@ -16,8 +16,11 @@ const inline = (tag: string, css: string) => (_: string, attribs: Record<string,
   attribs: { ...attribs, style: css },
 });
 
+// The editor wraps list items in <p>, which would add extra spacing inside the list in email.
+const unwrapListParagraphs = (html: string) => html.replace(/<li>\s*<p>([\s\S]*?)<\/p>\s*<\/li>/g, '<li>$1</li>');
+
 export function sanitizeBody(html: string): string {
-  return sanitizeHtml(html, {
+  return sanitizeHtml(unwrapListParagraphs(html), {
     allowedTags: ['p', 'h2', 'h3', 'strong', 'em', 'u', 's', 'ul', 'ol', 'li', 'blockquote', 'a', 'br', 'hr'],
     allowedAttributes: { a: ['href', 'style'], '*': ['style'] },
     allowedSchemes: ['http', 'https', 'mailto'],
@@ -36,6 +39,16 @@ export function sanitizeBody(html: string): string {
       a: (_, attribs) => ({ tagName: 'a', attribs: { href: attribs.href ?? '', style: `color:${SKY};text-decoration:underline;` } }),
     },
     exclusiveFilter: (f) => f.tag === 'a' && !f.attribs.href,
+  }).trim();
+}
+
+/** What gets stored: the editor's own tags only. Email styling is applied at send time. */
+export function sanitizeForStorage(html: string): string {
+  return sanitizeHtml(html, {
+    allowedTags: ['p', 'h2', 'h3', 'strong', 'em', 'u', 's', 'ul', 'ol', 'li', 'blockquote', 'a', 'br', 'hr'],
+    allowedAttributes: { a: ['href'] },
+    allowedSchemes: ['http', 'https', 'mailto'],
+    allowProtocolRelative: false,
   }).trim();
 }
 
