@@ -185,7 +185,7 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
   <div class="adm-actions">
     <button class="adm-btn adm-btn-primary" type="submit">Guardar cambios</button>
     <a class="adm-btn" href="/admin/proyectos/">Cancelar</a>
-    {!isNew && <button class="adm-btn !border-transparent !text-[#a33]" type="submit" formaction="/admin/api/projects/delete" formnovalidate id="delete" onclick="return confirm('¿Quitar este proyecto de la web con todas sus ediciones? No se puede deshacer.')">Quitar de la web</button>}
+    {!isNew && <button class="adm-btn !border-[#e3b4b4] !bg-white !text-[#a33] hover:!bg-[#fbeeee]" type="submit" formaction="/admin/api/projects/delete" formnovalidate id="delete" onclick="return confirm('¿Quitar este proyecto de la web con todas sus ediciones? No se puede deshacer.')">Quitar de la web</button>}
   </div>
   </form>
 
