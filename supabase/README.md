@@ -14,6 +14,6 @@
 
 - Authentication → Providers: enable Email. Turn **off** "Allow new users to sign up" so only invited accounts exist.
 - Authentication → URL Configuration: set Site URL to the production domain and add `https://<domain>/admin/auth/callback` (and the Vercel preview domain while testing) to Redirect URLs.
-- Create the two users in Authentication → Users, then add each to `editors` with role `owner`.
+- Create the two users in Authentication → Users (veronicasabbag@hotmail.com and davidsr1919@gmail.com), then run `editors.sql`, which adds both to `editors` as `owner`.
 - Vercel env vars (Production and Preview): `PUBLIC_SUPABASE_URL`, `PUBLIC_SUPABASE_ANON_KEY` (see `.env.example`).
 - Until those two variables exist, `/admin` answers 503 in production, so deploying early is safe.
