@@ -1,0 +1,14 @@
+/// <reference path="../.astro/types.d.ts" />
+/// <reference types="astro/client" />
+
+interface ImportMetaEnv {
+  readonly PUBLIC_SUPABASE_URL?: string;
+  readonly PUBLIC_SUPABASE_ANON_KEY?: string;
+}
+
+declare namespace App {
+  interface Locals {
+    /** Set by the admin middleware for signed-in editors. */
+    userEmail?: string;
+  }
+}

@@ -17,4 +17,7 @@ const list = Object.values(await getSections());
       </a>
     ))}
   </div>
+  <form method="post" action="/admin/api/logout" class="mt-6">
+    <button type="submit" class="adm-btn w-full sm:w-auto">Salir{Astro.locals.userEmail ? ` (${Astro.locals.userEmail})` : ''}</button>
+  </form>
 </AdminLayout>

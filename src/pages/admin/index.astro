@@ -1,6 +1,15 @@
 ---
-// Login screen (prototype: the form does not authenticate yet).
+// Login screen. Posts to /admin/api/login; the middleware lets this page through without a session.
 import '../../styles/global.css';
+
+const error = Astro.url.searchParams.get('error');
+const messages: Record<string, string> = {
+  credenciales: 'El correo o la contraseña no son correctos.',
+  datos: 'Escribe tu correo y tu contraseña.',
+  permiso: 'Esta cuenta no tiene acceso al panel.',
+  enlace: 'El enlace ha caducado. Pide uno nuevo.',
+};
+const message = error ? messages[error] ?? 'No se ha podido entrar. Inténtalo de nuevo.' : '';
 ---
 <!doctype html>
 <html lang="es">
@@ -16,17 +25,18 @@ import '../../styles/global.css';
       <img src="/logos/uv4peace-horizontal-color.svg" alt="United Voices 4 Peace" class="h-10 w-auto" />
       <h1 class="mt-8 text-[28px] font-medium leading-tight">Panel de contenidos</h1>
       <p class="mt-2 text-ink-muted">Entra para editar proyectos, personas y el resto de la web.</p>
-      <form class="mt-8 flex flex-col gap-5" action="/admin/inicio/">
+      {message && <p role="alert" class="mt-6 rounded-lg bg-[#fdecec] px-4 py-3 text-sm text-[#8f2a2a]">{message}</p>}
+      <form class="mt-8 flex flex-col gap-5" method="post" action="/admin/api/login">
         <div>
           <label for="email" class="mb-1.5 block text-sm font-medium">Correo electrónico</label>
-          <input id="email" type="email" value="veronica@uv4peace.org" class="min-h-[48px] w-full rounded-lg border-[1.5px] border-line px-3.5 text-base" />
+          <input id="email" name="email" type="email" autocomplete="username" required class="min-h-[48px] w-full rounded-lg border-[1.5px] border-line px-3.5 text-base" />
         </div>
         <div>
           <label for="pass" class="mb-1.5 block text-sm font-medium">Contraseña</label>
-          <input id="pass" type="password" value="contraseña" class="min-h-[48px] w-full rounded-lg border-[1.5px] border-line px-3.5 text-base" />
+          <input id="pass" name="password" type="password" autocomplete="current-password" required class="min-h-[48px] w-full rounded-lg border-[1.5px] border-line px-3.5 text-base" />
         </div>
         <button class="btn btn-primary mt-2 w-full" type="submit">Entrar</button>
-        <a href="/admin/inicio/" class="text-center text-sm">Prefiero recibir un enlace por correo</a>
+        <a href="/admin/olvide/" class="text-center text-sm">He olvidado mi contraseña</a>
       </form>
     </main>
   </body>

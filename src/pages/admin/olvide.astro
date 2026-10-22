@@ -1,0 +1,33 @@
+---
+import '../../styles/global.css';
+const sent = Astro.url.searchParams.has('enviado');
+---
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Recuperar contraseña · Panel UV4PEACE</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body class="grid min-h-svh place-items-center bg-navy px-4 py-10 font-sans text-ink antialiased">
+    <main class="w-full max-w-[420px] rounded-2xl bg-white p-8 shadow-xl sm:p-10">
+      <img src="/logos/uv4peace-horizontal-color.svg" alt="United Voices 4 Peace" class="h-10 w-auto" />
+      <h1 class="mt-8 text-[28px] font-medium leading-tight">Recuperar contraseña</h1>
+      {sent ? (
+        <p role="status" class="mt-6 rounded-lg bg-[#e1f3ea] px-4 py-3 text-sm text-[#1b6b45]">Si ese correo tiene acceso, te hemos enviado un enlace para elegir una contraseña nueva. Revisa también la carpeta de spam.</p>
+      ) : (
+        <p class="mt-2 text-ink-muted">Escribe tu correo y te enviaremos un enlace para elegir una contraseña nueva.</p>
+      )}
+      <form class="mt-8 flex flex-col gap-5" method="post" action="/admin/api/reset">
+        <div>
+          <label for="email" class="mb-1.5 block text-sm font-medium">Correo electrónico</label>
+          <input id="email" name="email" type="email" autocomplete="username" required class="min-h-[48px] w-full rounded-lg border-[1.5px] border-line px-3.5 text-base" />
+        </div>
+        <button class="btn btn-primary w-full" type="submit">Enviar enlace</button>
+        <a href="/admin/" class="text-center text-sm">Volver a entrar</a>
+      </form>
+    </main>
+  </body>
+</html>
