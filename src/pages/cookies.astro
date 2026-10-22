@@ -2,17 +2,75 @@
 export const prerender = true;
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
-import { site } from '../data/site';
-import { getSettings } from '../lib/content';
-const settings = await getSettings();
+
+const browsers = [
+  ['Mozilla', 'https://support.mozilla.org/en-US/kb/delete-cookies-remove-info-websites-stored'],
+  ['Google Chrome', 'https://support.google.com/chrome/answer/95647?co=GENIE.Platform%3DDesktop&hl=en-GB'],
+  ['Internet Explorer', 'https://support.microsoft.com/en-gb/help/278835/how-to-delete-cookie-files-in-internet-explorer'],
+  ['Safari', 'https://support.apple.com/kb/ph21411?locale=en_US'],
+  ['Opera', 'https://www.opera.com/help/tutorials/security/privacy/'],
+];
 ---
-<Base title="Cookie policy">
-  <PageHeader eyebrow="Legal" title={['Cookie policy']} />
+<Base title="Cookies Policy">
+  <PageHeader eyebrow="Legal" title={['Cookies Policy']} />
   <section class="wrap pb-[clamp(72px,10vw,128px)]">
-    <div class="max-w-[720px]">
-      <h2 class="t-h3">Data controller</h2>
-      <ul class="body mt-3 text-ink-muted">{site.legalEntities.map((l) => <li>{l}</li>)}</ul>
-      <p class="body mt-3 text-ink-muted">Contact: <a href={`mailto:${settings.email}`}>{settings.email}</a></p>
+    <div class="max-w-[720px] [&_h2]:mt-12 [&_h3]:mt-8 [&_p]:mt-4">
+      <p class="body text-ink-muted">We use cookies in order to facilitate the use of our website. Cookies are small data / text files stored by your browser in the hard disk of your computer and are necessary for the use of our website.</p>
+      <p class="body text-ink-muted">We use cookies in order to better understand how our website is used and provide an improved experience in browsing.</p>
+      <p class="body text-ink-muted">They do not damage your devices nor your files kept in them and most of them are deleted once you exit our website.</p>
+      <p class="body text-ink-muted">Cookies help us, for instance, to determine if you have already visited a page of our website.</p>
+      <p class="body text-ink-muted">Cookies may also inform us if you have visited our website in the past or if you are a new visitor.</p>
+      <p class="body text-ink-muted">We use cookies that do not store personal data or personal information that can lead to the identification of the person to which this data/information relates and which have otherwise been collected.</p>
+      <p class="body text-ink-muted">If you do not wish the collection of information through cookies, please set the Internet browser accordingly in order to delete all the current cookies from the hard disk of your computer, block all future cookies and receive a warning before storing a cookie.</p>
+
+      <h2 class="t-h3">Types of cookies we use for improving your experience</h2>
+
+      <h3 class="text-[18px] font-medium italic text-ink">Strictly necessary</h3>
+      <p class="body text-ink-muted">These cookies are necessary for the proper functioning of the website.</p>
+      <p class="body text-ink-muted">Their most typical function may be to enable you to log in an account, a subscription service or to fill out a form.</p>
+
+      <h3 class="text-[18px] font-medium italic text-ink">Performance</h3>
+      <p class="body text-ink-muted">These cookies help count the visits and the traffic of the website in order to optimise its performance. Through them, we can learn how visitors / users move through the web pages, as well as which pages are the most popular. All information collected by cookies is anonymised. If you prohibit the use of such cookies, then we won’t be able to now if you have visited our website and, as a result, we will not be able to monitor its performance.</p>
+
+      <h3 class="text-[18px] font-medium italic text-ink">Functionality</h3>
+      <p class="body text-ink-muted">These cookies allow our website to offer you customization and improved functionality. The services added in the web page are set either by us or by a third party. If the use of these cookies is banned, then part or all of these services may not function properly.</p>
+
+      <h3 class="text-[18px] font-medium italic text-ink">Targeting / Advertising</h3>
+      <p class="body text-ink-muted">In addition, we reserve the right to use, according to the underlying legislation, the information we received through cookies and through the analysis of the visitor’s/user’s usage pattern of our website, in order to display specific advertisements for some of our products or services.</p>
+
+      <h2 class="t-h3">Cookies used by us</h2>
+      <div class="mt-4 overflow-x-auto">
+        <table class="body w-full border-collapse text-left text-ink-muted">
+          <thead>
+            <tr><th scope="col" class="border-b border-line py-3 pr-6 font-medium text-ink">Cookies</th><th scope="col" class="border-b border-line py-3 font-medium text-ink">Why</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row" class="border-b border-line py-3 pr-6 align-top font-normal">Session Cookies</th>
+              <td class="border-b border-line py-3 align-top">We use Session Cookies to offer you customised experience browsing through the subscription services or the e-shop.</td>
+            </tr>
+            <tr>
+              <th scope="row" class="border-b border-line py-3 pr-6 align-top font-normal">Google Analytics</th>
+              <td class="border-b border-line py-3 align-top">Google helps us collect information on how users use our website in order to optimise not only its functioning and content, but also users’/visitors’ experience.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="body text-ink-muted">For more information on the purpose and scope of the collection and the further processing and use of data by third-party companies, as well as, the rights and the available regulations on your privacy protection, you should consult the privacy policy of the third-party company.</p>
+      <p class="body text-ink-muted [overflow-wrap:anywhere]">For Google policy, please see at <a href="http://www.google.com/intl/en/policies/privacy/" target="_blank" rel="noopener">http://www.google.com/intl/en/policies/privacy/</a></p>
+
+      <h2 class="t-h3">How to prevent the storage of cookies in your hard disk and/or how to delete them</h2>
+      <p class="body text-ink-muted">You may select the appropriate setting in your Internet browser to prevent the storage of cookies in your hard disk and/or as to be asked whether you want to decline or accept (enable) any specific cookie in your computer.</p>
+      <p class="body text-ink-muted">Moreover, you may at any time delete re-enabled cookies by following the instructions of each browser.</p>
+      <ul class="body mt-4 space-y-3 text-ink-muted">
+        {browsers.map(([name, url]) => <li class="[overflow-wrap:anywhere]">{name}: <a href={url} target="_blank" rel="noopener">{url}</a></li>)}
+      </ul>
+      <p class="body text-ink-muted [overflow-wrap:anywhere]">Find more about cookies at <a href="http://www.aboutcookies.org" target="_blank" rel="noopener">http://www.aboutcookies.org</a></p>
+
+      <h2 class="t-h3">Note:</h2>
+      <p class="body text-ink-muted">If you do not allow the storage of cookies, this may result in functional limitations on our website.</p>
+
+      <p class="body !mt-12 text-ink-muted">Last Update on Cookies Policy: July 2018</p>
     </div>
   </section>
 </Base>
