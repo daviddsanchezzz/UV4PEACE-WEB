@@ -20,7 +20,8 @@ export default defineConfig({
     ],
   },
   integrations: [sitemap()],
-  vite: { plugins: [tailwindcss()] },
+  // sanitize-html requires an ES-module-only dependency, which Vercel's Node runtime cannot load: bundle it instead.
+  vite: { plugins: [tailwindcss()], ssr: { noExternal: [/^(sanitize-html|htmlparser2|domhandler|domutils|domelementtype|dom-serializer|entities|parse-srcset|launder|is-plain-object|escape-string-regexp)$/] } },
   image: {
     // People photos not yet migrated to local assets point at the current uv4peace.org media library.
     domains: ['uv4peace.org'],
