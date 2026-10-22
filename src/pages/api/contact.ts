@@ -5,6 +5,7 @@
 import type { APIRoute } from 'astro';
 import { getSettings } from '../../lib/content';
 import { createClient, supabaseConfigured } from '../../lib/supabase';
+import { resendBase } from '../../lib/resend';
 
 const topics = ['General', 'Partnership', 'Press', 'Artists', 'Project proposal'];
 const json = (body: object, status = 200) =>
@@ -36,7 +37,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
   if (!apiKey) return json({ ok: false, error: 'not_configured' }, 503);
 
   const { email: to } = await getSettings();
-  const res = await fetch(import.meta.env.RESEND_API_URL ?? 'https://api.resend.com/emails', {
+  const res = await fetch(`${resendBase()}/emails`, {
     method: 'POST',
     headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({

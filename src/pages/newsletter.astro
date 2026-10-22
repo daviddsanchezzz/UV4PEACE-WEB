@@ -1,0 +1,28 @@
+---
+// Landing page for the links in newsletter emails: confirmed, unsubscribed, or "are you sure?".
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Button from '../components/Button.astro';
+
+const status = Astro.url.searchParams.get('status') ?? '';
+const token = Astro.url.searchParams.get('token') ?? '';
+const messages: Record<string, { title: [string, string?]; text: string }> = {
+  confirmed: { title: ['You are', 'subscribed'], text: 'Thank you. You will hear from us about concerts, calls for composers and news from our projects.' },
+  unsubscribed: { title: ['You have', 'unsubscribed'], text: 'You will not receive more emails from us. If this was a mistake, you can subscribe again from the home page.' },
+  leave: { title: ['Unsubscribe', undefined], text: 'Do you want to stop receiving emails from United Voices 4 Peace?' },
+};
+const m = messages[status] ?? { title: ['This link', 'has expired'], text: 'The link is no longer valid. If you need help, write to us and we will sort it out.' };
+---
+<Base title="Newsletter" description="Manage your United Voices 4 Peace newsletter subscription." noindex>
+  <PageHeader eyebrow="Newsletter" title={m.title} lede={m.text} />
+  <section class="wrap pb-[clamp(72px,10vw,128px)]">
+    {status === 'leave' && (
+      <form method="post" action="/api/unsubscribe" class="flex flex-wrap gap-3.5">
+        <input type="hidden" name="token" value={token} />
+        <button type="submit" class="btn btn-navy">Yes, unsubscribe me</button>
+        <Button href="/" variant="tertiary">No, keep me subscribed</Button>
+      </form>
+    )}
+    {status !== 'leave' && <Button href="/" variant="tertiary">Back to the home page</Button>}
+  </section>
+</Base>
