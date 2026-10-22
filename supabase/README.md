@@ -32,3 +32,10 @@
 - Sending goes through Resend (same `RESEND_API_KEY` and `CONTACT_FROM` as the contact form), 100 emails per call. The send button claims the draft first, so a double click cannot send twice, and it refuses if the audience size changed since the screen was loaded.
 - Vercel limits how long a function can run. A list of a few thousand people sends in well under a minute; beyond roughly 5,000 the send should move to a background job.
 - Not done yet: images inside the newsletter, open/click statistics, CSV import of an existing list, scheduled sending.
+
+## Google Analytics and cookies
+
+- Migration `20261022000004_analytics_id.sql` adds `site_settings.analytics_id`. It is edited in the panel (Ajustes) and accepts only `G-XXXXXXXXXX` or empty.
+- Until it is set (here, or with `PUBLIC_GA_ID` in Vercel) the site loads nothing from Google, sets no cookies and shows no banner.
+- Once set, visitors get a cookie banner with Accept all and Reject all with equal weight. Google Analytics is only requested after they accept, with advertising and Google Signals off. The choice is a first-party cookie (`uv4p_consent`) kept for 6 months. "Cookie settings" in the footer and on the Cookies page reopens it, and turning Analytics off deletes the `_ga*` cookies.
+- To do when the ID exists: add the cookie names (`_ga`, `_ga_<ID>`, `uv4p_consent`) to the Cookies Policy table, and in GA4 turn off data sharing, Google signals and set data retention to 2 months.

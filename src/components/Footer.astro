@@ -25,6 +25,7 @@ const settings = await getSettings();
       <div>{site.legalEntities.map((l) => <div>{l}</div>)}</div>
       <div class="flex flex-wrap items-start gap-5">
         {legalPages.map((l) => <a href={`/${l.slug}/`} class="text-line hover:text-white">{l.label}</a>)}
+        {settings.analyticsId && <button type="button" data-cookie-settings class="text-line hover:text-white">Cookie settings</button>}
         <span>© {new Date().getFullYear()} United Voices 4 Peace</span>
       </div>
     </div>

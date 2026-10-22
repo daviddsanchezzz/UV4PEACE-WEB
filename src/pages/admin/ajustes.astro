@@ -7,7 +7,7 @@ const social = ['Instagram', 'LinkedIn', 'YouTube'].map((label) => ({ label, hre
 ---
 <AdminLayout title="Ajustes" current="ajustes">
   <p class="eyebrow text-ink-muted">Ajustes</p>
-  <h1 class="adm-h1 mt-2">Correo, donaciones y redes</h1>
+  <h1 class="adm-h1 mt-2">Correo, donaciones, visitas y redes</h1>
   <p class="mt-3 max-w-[62ch] text-ink-muted">Estos datos aparecen en toda la web. Al guardar, se actualizan en cuanto publiques.</p>
 
   <form class="mt-8 grid items-start gap-6 xl:grid-cols-2" onsubmit="return false">
@@ -30,6 +30,14 @@ const social = ['Instagram', 'LinkedIn', 'YouTube'].map((label) => ({ label, hre
       </div>
       </section>
 
+      <section class="adm-card flex flex-col gap-6 p-6">
+        <h2 class="text-xl font-medium">Estadísticas de visitas</h2>
+        <div>
+          <label class="adm-label" for="ga">ID de Google Analytics</label>
+          <input id="ga" class="adm-input" value={s.analyticsId} placeholder="G-XXXXXXXXXX" pattern="G-[A-Za-z0-9]{4,14}" autocapitalize="characters" spellcheck="false" />
+          <p class="adm-hint">Lo encuentras en Google Analytics, en Administrar, Flujos de datos. Empieza por «G-». <strong>Mientras esté vacío, la web no mide visitas y no muestra el aviso de cookies.</strong> Al rellenarlo, los visitantes verán el aviso y solo se mide a quien lo acepte.</p>
+        </div>
+      </section>
     </div>
 
     <section class="adm-card flex flex-col gap-6 p-6">

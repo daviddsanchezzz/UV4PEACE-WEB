@@ -4,6 +4,7 @@
 interface ImportMetaEnv {
   readonly PUBLIC_SUPABASE_URL?: string;
   readonly PUBLIC_SUPABASE_ANON_KEY?: string;
+  readonly PUBLIC_GA_ID?: string;
   readonly RESEND_API_KEY?: string;
   readonly RESEND_API_URL?: string;
   readonly CONTACT_FROM?: string;

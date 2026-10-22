@@ -2,6 +2,8 @@
 export const prerender = true;
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
+import { getSettings } from '../lib/content';
+const { analyticsId } = await getSettings();
 
 const browsers = [
   ['Mozilla', 'https://support.mozilla.org/en-US/kb/delete-cookies-remove-info-websites-stored'],
@@ -69,6 +71,8 @@ const browsers = [
 
       <h2 class="t-h3">Note:</h2>
       <p class="body text-ink-muted">If you do not allow the storage of cookies, this may result in functional limitations on our website.</p>
+
+      {analyticsId && <p class="mt-8"><button type="button" data-cookie-settings class="btn btn-tertiary btn-sm">Change your cookie settings</button></p>}
 
       <p class="body !mt-12 text-ink-muted">Last Update on Cookies Policy: July 2018</p>
     </div>
