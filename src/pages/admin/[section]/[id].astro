@@ -12,10 +12,10 @@ const v = row?.values ?? {};
 <AdminLayout title={isNew ? `Nuevo ${s.singular}` : row!.title} current={s.slug}>
   <a href={`/admin/${s.slug}/`} class="text-sm">‹ {s.label}</a>
   <h1 class="adm-h1 mt-3">{isNew ? `Añadir ${s.singular}` : row!.title}</h1>
-  <form class="mt-8 max-w-[760px]" onsubmit="return false">
-    <div class="adm-card flex flex-col gap-6 p-6">
+  <form class="mt-8" onsubmit="return false">
+    <div class="adm-card grid gap-6 p-6 lg:grid-cols-2">
       {s.fields.map((f) => (
-        <div>
+        <div class={f.type === 'textarea' ? 'lg:col-span-2' : ''}>
           {f.type === 'toggle' ? (
             <label class="flex items-center gap-3 text-base"><input type="checkbox" class="h-5 w-5" checked={Boolean(v[f.key])} /> {f.label}</label>
           ) : (
@@ -29,7 +29,7 @@ const v = row?.values ?? {};
           {f.hint && <p class="adm-hint">{f.hint}</p>}
         </div>
       ))}
-      {!isNew && <button class="adm-btn self-start !border-transparent !px-0 !text-[#a33] hover:!bg-transparent hover:underline" type="button">Quitar de la web</button>}
+      {!isNew && <button class="adm-btn self-start !border-transparent !px-0 !text-[#a33] hover:!bg-transparent hover:underline lg:col-span-2" type="button">Quitar de la web</button>}
     </div>
     <div class="adm-actions">
       <button class="adm-btn adm-btn-primary" type="button">Guardar cambios</button>
