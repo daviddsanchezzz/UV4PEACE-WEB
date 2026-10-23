@@ -11,9 +11,9 @@ const editionCount = p.editions?.filter((e) => !e.upcoming).length ?? 0;
     {p.cover
       ? <Photo {...p.cover} sizes="(min-width:1024px) 420px, 100vw" />
       : (
-        <div class="placeholder" role="img" aria-label={`Cover photo pending${p.coverHint ? `: ${p.coverHint}` : ''}`}>
-          <span class="text-xs font-semibold">[cover image]</span>
-          {p.coverHint && <span>{p.coverHint}</span>}
+        <div aria-hidden="true" class="absolute inset-0 grid place-items-center bg-[linear-gradient(135deg,#1b4a7a_0%,#14365a_55%,#0d2542_100%)]">
+          <img src="/logos/uv4peace-globo-white.svg" alt="" class="h-[46%] w-auto opacity-[.14]" />
+          {p.yearStart && <span class="absolute bottom-4 right-5 text-[clamp(28px,3vw,40px)] font-light leading-none tracking-[0.04em] text-white/70">{p.yearStart.slice(0, 4)}</span>}
         </div>
       )}
     <div class="absolute left-3.5 top-3.5 flex gap-1.5">

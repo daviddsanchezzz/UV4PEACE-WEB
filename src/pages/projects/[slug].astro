@@ -3,7 +3,6 @@
 // (see src/data/projects.ts) — a minimal project still produces a full card + hero.
 import Base from '../../layouts/Base.astro';
 import Photo from '../../components/Photo.astro';
-import Placeholder from '../../components/Placeholder.astro';
 import Button from '../../components/Button.astro';
 import Gallery from '../../components/Gallery.astro';
 import StatBlock from '../../components/StatBlock.astro';
@@ -26,11 +25,12 @@ const projectQuotes = testimonials.filter((t) => t.published && t.project === p.
 // The most recent non-upcoming edition becomes the highlighted edition on the page.
 const heldEditions = (p.editions ?? []).filter((e) => !e.upcoming);
 const highlight = heldEditions[heldEditions.length - 1];
+const hasAbout = Boolean(p.intro || p.body || p.vision || p.stats?.length);
 ---
 <Base title={p.title} description={p.summary} current="projects">
   <!-- Hero -->
-  <section aria-labelledby="hero-h" class="relative flex min-h-[clamp(560px,86svh,900px)] items-end overflow-hidden bg-navy-deep">
-    {p.hero ? <Photo {...p.hero} loading="eager" /> : <Placeholder dark />}
+  <section aria-labelledby="hero-h" class:list={['relative flex items-end overflow-hidden bg-navy-deep', p.hero ? 'min-h-[clamp(560px,86svh,900px)]' : 'min-h-[clamp(340px,48svh,480px)]']}>
+    {p.hero && <Photo {...p.hero} loading="eager" />}
     <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,22,38,.3)_0%,rgba(10,22,38,.2)_40%,rgba(10,22,38,.8)_100%)]"></div>
     <div class="wrap relative w-full py-[clamp(48px,7vw,96px)] text-white">
       <nav aria-label="Breadcrumb" class="mb-7 text-[13px] text-line"><a href="/projects/" class="text-line">Projects</a> / {p.title}</nav>
@@ -44,13 +44,13 @@ const highlight = heldEditions[heldEditions.length - 1];
   </section>
 
   <!-- Intro + vision + stats -->
-  {p.intro ? (
+  {hasAbout && (
     <section aria-label="About the project" class="wrap py-[clamp(72px,9vw,128px)]">
       <div class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,440px),1fr))] items-start gap-[clamp(40px,6vw,96px)]">
         <div data-reveal>
           <div class="eyebrow text-sky-text">About the project</div>
-          <p class="mt-5 text-[clamp(22px,2vw,26px)] font-light leading-normal [text-wrap:pretty]">{p.intro}</p>
-          {p.body && <p class="body mt-5 text-ink-muted">{p.body}</p>}
+          {p.intro && <p class="mt-5 text-[clamp(22px,2vw,26px)] font-light leading-normal [text-wrap:pretty]">{p.intro}</p>}
+          {p.body && p.body.split(/\n\s*\n/).map((para) => <p class:list={['body text-ink-muted', p.intro ? 'mt-5' : 'mt-5 text-lg']}>{para}</p>)}
         </div>
         {p.vision && (
           <div data-reveal class="rounded-card bg-surface-soft p-[clamp(28px,3vw,44px)]">
@@ -60,12 +60,6 @@ const highlight = heldEditions[heldEditions.length - 1];
         )}
       </div>
       {p.stats?.length && <div data-reveal class="mt-12"><StatBlock variant="compact" items={p.stats} note={p.statsNote} /></div>}
-    </section>
-  ) : (
-    <section class="wrap py-[clamp(72px,9vw,128px)]">
-      <div class="rounded-card border-[1.5px] border-dashed border-placeholder-line bg-surface-soft p-10 text-lg text-ink-muted">
-        Project page in preparation.
-      </div>
     </section>
   )}
 
