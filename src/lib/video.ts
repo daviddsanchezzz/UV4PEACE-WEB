@@ -17,3 +17,9 @@ export function embedUrl(address: string): string | null {
   }
   return null;
 }
+
+/** The 11-character id of a YouTube address, or null (Vimeo and anything else). */
+export function youtubeId(address: string): string | null {
+  const m = embedUrl(address)?.match(/youtube-nocookie\.com\/embed\/([\w-]{11})/);
+  return m?.[1] ?? null;
+}

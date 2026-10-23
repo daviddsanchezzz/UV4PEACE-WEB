@@ -59,7 +59,7 @@ const { analyticsId } = await getSettings();
         <li>Vercel Inc.: hosting of the website.</li>
         <li>Supabase: database and file storage, which holds contact messages and newsletter subscribers.</li>
         <li>Resend: sending of e-mails, such as replies to your messages, subscription confirmations and the newsletter.</li>
-        <li>YouTube (Google) and Vimeo: videos shown on some project pages. They load only when you press play; until then, no data is sent to them.</li>
+        <li>YouTube (Google) and Vimeo: videos shown on some project pages. The player loads only when you press play. Before that, a YouTube video shows its cover picture, which is fetched from YouTube's image server (this reveals your IP address to Google, but sets no cookies).</li>
         <li>PayPal: processing of donations. We do not receive your card or bank details.</li>
         {analyticsId && <li>Google Ireland Limited (Google Analytics): statistics on website use, only if you accept analytics cookies.</li>}
       </ul>
