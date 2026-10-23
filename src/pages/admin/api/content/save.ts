@@ -14,10 +14,20 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
   if (!spec) return redirect('/admin/inicio/', 303);
 
   const here = `/admin/${section}/${id || 'nuevo'}/`;
-  const row: Record<string, string | boolean> = {};
+  const row: Record<string, unknown> = {};
   for (const [key, col] of Object.entries(spec.cols)) {
     row[col] = spec.bool.includes(key) ? form.get(key) !== null : String(form.get(key) ?? '').trim().slice(0, 2000);
   }
+  if (section === 'archivo') {
+    // One link per line: «Text | https://address». The address may be left out while the article is not online yet.
+    const links = String(form.get('links') ?? '').split('\n').map((l) => l.trim()).filter(Boolean).slice(0, 10).map((l) => {
+      const [label, ...rest] = l.split('|');
+      return { label: label.trim().slice(0, 100), url: rest.join('|').trim() };
+    });
+    if (links.some((l) => !l.label || (l.url && !/^https?:\/\/\S+$/i.test(l.url)))) return redirect(back(here, { error: 'enlace' }), 303);
+    row.links = links;
+  }
+  if (section === 'medios' && (!['ar', 'fr', 'it', 'en', 'es'].includes(String(row.language)) || !['spoke_about_us', 'coverage'].includes(String(row.kind)))) return redirect(back(here, { error: 'faltan' }), 303);
   if (spec.required.some((k) => !String(form.get(k) ?? '').trim())) return redirect(back(here, { error: 'faltan' }), 303);
   if (row.url && !/^https?:\/\/\S+$/i.test(String(row.url))) return redirect(back(here, { error: 'enlace' }), 303);
   if (section === 'prensa' && !/^\d{4}-(0[1-9]|1[0-2])$/.test(String(row.date))) return redirect(back(here, { error: 'fecha' }), 303);

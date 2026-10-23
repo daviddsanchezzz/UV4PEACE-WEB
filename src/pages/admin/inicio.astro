@@ -1,16 +1,18 @@
 ---
 import AdminLayout from '../../layouts/AdminLayout.astro';
-import { getPeople, getProjects, getPress, getPartners, getTestimonials, getStats } from '../../lib/content';
+import { getPeople, getProjects, getPress, getPartners, getTestimonials, getStats, getMedia, getPressArchive } from '../../lib/content';
 import { createClient, supabaseConfigured } from '../../lib/supabase';
 
 const db = supabaseConfigured() ? createClient(Astro.request, Astro.cookies) : undefined;
 
-const [people, projects, press, partners, testimonials, stats] = await Promise.all([getPeople(), getProjects(), getPress(db), getPartners(db), getTestimonials(db), getStats(db)]);
+const [people, projects, press, partners, testimonials, stats, media, archive] = await Promise.all([getPeople(), getProjects(), getPress(db), getPartners(db), getTestimonials(db), getStats(db), getMedia(db), getPressArchive(db)]);
 
 const sections = [
   { id: 'proyectos', label: 'Proyectos', n: projects.length, hint: 'Con sus ediciones y line-ups', href: '/admin/proyectos/' },
   { id: 'personas', label: 'Personas', n: people.length, hint: 'Equipo, junta, embajadoras y artistas', href: '/admin/personas/' },
   { id: 'prensa', label: 'Prensa y premios', n: press.length, hint: 'Reconocimientos y menciones', href: '/admin/prensa/' },
+  { id: 'medios', label: 'Medios', n: media.all.length, hint: 'Artículos y menciones por idioma', href: '/admin/medios/' },
+  { id: 'archivo', label: 'Archivo de prensa', n: archive.length, hint: 'Cobertura antigua', href: '/admin/archivo/' },
   { id: 'socios', label: 'Socios', n: partners.length, hint: 'Organizaciones y logos', href: '/admin/socios/' },
   { id: 'testimonios', label: 'Testimonios', n: testimonials.length, hint: 'Citas de artistas y público', href: '/admin/testimonios/' },
   { id: 'cifras', label: 'Cifras', n: stats.length, hint: 'Números de impacto de la home', href: '/admin/cifras/' },
@@ -23,7 +25,7 @@ const recent = (changes ?? []).map((c) => ({ name: c.summary, when: new Date(c.c
   <h1 class="adm-h1 mt-2">¿Qué quieres cambiar hoy?</h1>
 
   <h2 class="mt-10 text-sm font-medium uppercase tracking-[0.14em] text-ink-muted">Secciones</h2>
-  <div class="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
+  <div class="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
     {sections.map((s) => (
       <a id={s.id} href={s.href} class="adm-card card-lift block p-5 hover:no-underline">
         <div class="flex items-baseline justify-between gap-3">

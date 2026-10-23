@@ -11,11 +11,11 @@ import PartnerMarquee from '../components/PartnerMarquee.astro';
 import TestimonialCard from '../components/TestimonialCard.astro';
 import CtaCard from '../components/CtaCard.astro';
 import NewsletterForm from '../components/NewsletterForm.astro';
-import { site, sdgs, founder } from '../data/site';
+import { site, sdgs } from '../data/site';
 import { getProjects, getTestimonials, getSettings } from '../lib/content';
 import { statsNote } from '../data/stats';
-import { featuredIn } from '../data/press';
 const settings = await getSettings();
+const { featuredIn, founder } = settings;
 
 const projects = await getProjects();
 const testimonials = await getTestimonials();

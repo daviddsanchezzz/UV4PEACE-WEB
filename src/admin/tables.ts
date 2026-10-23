@@ -14,6 +14,8 @@ export const tables: Record<string, TableSpec> = {
   prensa: { table: 'press_items', slugFrom: 'title', label: 'reconocimiento', ordered: false, bool: ['featured'], required: ['title', 'kind', 'date'], cols: { title: 'title', by: 'source', kind: 'kind', dateLabel: 'date_label', date: 'date', url: 'url', featured: 'featured' } },
   socios: { table: 'partners', slugFrom: 'name', label: 'socio', ordered: true, bool: ['active'], required: ['name'], cols: { name: 'name', tier: 'tier', url: 'url', active: 'active' } },
   testimonios: { table: 'testimonials', slugFrom: 'who', label: 'testimonio', ordered: true, bool: ['published', 'home'], required: ['text'], cols: { text: 'text', who: 'who', caption: 'caption', published: 'published', home: 'home' } },
+  medios: { table: 'media_mentions', slugFrom: 'outlet', label: 'medio', ordered: true, bool: [], required: ['outlet', 'language', 'kind'], cols: { outlet: 'outlet', url: 'url', language: 'language', kind: 'kind' } },
+  archivo: { table: 'press_archive', slugFrom: 'title', label: 'artículo antiguo', ordered: true, bool: [], required: ['title'], cols: { title: 'title', dateLabel: 'date_label', links: 'links' } },
   cifras: { table: 'stats', slugFrom: 'label', label: 'cifra', ordered: true, bool: [], required: ['n', 'label'], cols: { n: 'n', label: 'label' } },
 };
 

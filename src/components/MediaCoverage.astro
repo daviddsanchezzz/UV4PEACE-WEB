@@ -1,6 +1,10 @@
 ---
 // Full media coverage list, real outlets pulled from the live uv4peace.org Media Room.
-import { spokeAboutUs, mediaCoverage, pressArchive, languageLabel, type Language } from '../data/press';
+import { languageLabel } from '../data/press';
+import { getMedia, getPressArchive, type Language } from '../lib/content';
+
+const { spoke: spokeAboutUs, coverage: mediaCoverage } = await getMedia();
+const pressArchive = await getPressArchive();
 
 const languages: Language[] = ['en', 'es', 'fr', 'it', 'ar'];
 const groups = languages
@@ -9,10 +13,14 @@ const groups = languages
   .sort((a, b) => b.items.length - a.items.length);
 ---
 <div>
-  <div class="eyebrow text-ink-muted">Spoke about us</div>
-  <p class="mt-2 text-base"><a href={spokeAboutUs.url} target="_blank" rel="noopener">{spokeAboutUs.outlet}</a></p>
+  {spokeAboutUs && (
+    <>
+      <div class="eyebrow text-ink-muted">Spoke about us</div>
+      <p class="mt-2 text-base">{spokeAboutUs.url ? <a href={spokeAboutUs.url} target="_blank" rel="noopener">{spokeAboutUs.outlet}</a> : spokeAboutUs.outlet}</p>
+    </>
+  )}
 
-  <div class="eyebrow mt-10 text-ink-muted">Media coverage</div>
+  <div class:list={['eyebrow text-ink-muted', spokeAboutUs && 'mt-10']}>Media coverage</div>
   <div class="mt-5 columns-1 gap-x-10 sm:columns-2 lg:columns-4">
     {groups.map((g) => (
       <div class="mb-8 break-inside-avoid">

@@ -1,10 +1,11 @@
 ---
 import AdminLayout from '../../layouts/AdminLayout.astro';
 import { getSettings } from '../../lib/content';
+import PhotoField from '../../components/admin/PhotoField.astro';
 import { createClient, supabaseConfigured } from '../../lib/supabase';
 
 const s = await getSettings(supabaseConfigured() ? createClient(Astro.request, Astro.cookies) : undefined);
-const errors: Record<string, string> = { correo: 'El correo no parece válido.', paypal: 'El enlace de PayPal debe empezar por https://', ga: 'El ID de Google Analytics debe tener el formato G-XXXXXXXXXX.', redes: 'Los enlaces de redes deben empezar por https://', guardar: 'No se pudo guardar. Inténtalo de nuevo en un momento.' };
+const errors: Record<string, string> = { correo: 'El correo no parece válido.', paypal: 'El enlace de PayPal debe empezar por https://', ga: 'El ID de Google Analytics debe tener el formato G-XXXXXXXXXX.', redes: 'Los enlaces de redes deben empezar por https://', fundadora: 'La fundadora necesita nombre y cargo.', foto: 'La foto de la fundadora no es válida. Súbela de nuevo.', guardar: 'No se pudo guardar. Inténtalo de nuevo en un momento.' };
 const error = errors[Astro.url.searchParams.get('error') ?? ''];
 const saved = Astro.url.searchParams.has('ok');
 const social = ['Instagram', 'LinkedIn', 'YouTube'].map((label) => ({ label, href: s.social.find((x) => x.label === label)?.href ?? '' }));
@@ -56,6 +57,39 @@ const social = ['Instagram', 'LinkedIn', 'YouTube'].map((label) => ({ label, hre
       ))}
       <p class="adm-hint !mt-0">Solo se muestran las redes que tengan enlace. Déjalo vacío para ocultar una.</p>
     </section>
+
+
+    <div class="flex flex-col gap-6 xl:col-span-2">
+      <section class="adm-card flex flex-col gap-6 p-6">
+        <h2 class="text-xl font-medium">«Featured in» (home)</h2>
+        <div>
+          <label class="adm-label" for="featured_in">Medios</label>
+          <textarea id="featured_in" name="featured_in" class="adm-input !min-h-[110px]" placeholder={'Variety\nForbes'}>{s.featuredIn.join('\n')}</textarea>
+          <p class="adm-hint">Un nombre por línea. Salen en la franja «Featured in» de la home y de Press. Para el resto de medios, usa la sección Medios.</p>
+        </div>
+      </section>
+
+      <section class="adm-card grid gap-6 p-6 lg:grid-cols-[1fr_300px]">
+        <div class="flex flex-col gap-6">
+          <h2 class="text-xl font-medium">Fundadora</h2>
+          <p class="adm-hint !mt-0">Sale en la home («Our founder») y en la página People.</p>
+          <div class="grid gap-6 sm:grid-cols-2">
+            <div><label class="adm-label" for="f_name">Nombre</label><input id="f_name" name="f_name" required class="adm-input" value={s.founder.name} /></div>
+            <div><label class="adm-label" for="f_role">Cargo</label><input id="f_role" name="f_role" required class="adm-input" value={s.founder.role} /></div>
+          </div>
+          <div>
+            <label class="adm-label" for="f_quote">Cita</label>
+            <textarea id="f_quote" name="f_quote" class="adm-input">{s.founder.quote}</textarea>
+          </div>
+          <div>
+            <label class="adm-label" for="f_bio">Biografía</label>
+            <textarea id="f_bio" name="f_bio" class="adm-input">{s.founder.bio}</textarea>
+            <p class="adm-hint">Opcional. Sale en la página People bajo la cita.</p>
+          </div>
+        </div>
+        <PhotoField name="f_photo" label="Foto" value={s.founder.photo} ratio="3 / 4" />
+      </section>
+    </div>
 
     <div class="adm-actions xl:col-span-2">
       <button class="adm-btn adm-btn-primary" type="submit">Guardar cambios</button>

@@ -9,6 +9,8 @@ const lists: Record<string, { table: string; list?: string; back: string }> = {
   socios: { table: 'partners', back: '/admin/socios/' },
   testimonios: { table: 'testimonials', back: '/admin/testimonios/' },
   cifras: { table: 'stats', back: '/admin/cifras/' },
+  medios: { table: 'media_mentions', back: '/admin/medios/' },
+  archivo: { table: 'press_archive', back: '/admin/archivo/' },
 };
 const sameList = (a: string, b: string) => a === b || (['team', 'board'].includes(a) && ['team', 'board'].includes(b));
 

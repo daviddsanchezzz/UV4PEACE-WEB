@@ -3,13 +3,15 @@
 // Each getter is async on purpose: the Supabase version will await a query.
 import { people } from '../data/people';
 import type { Person } from '../data/people';
+import type { ImageRef } from '../data/types';
 import { projects } from '../data/projects';
 import type { Project, Edition } from '../data/projects';
 import { press } from '../data/press';
 import { partners } from '../data/partners';
 import { testimonials } from '../data/testimonials';
 import { stats } from '../data/stats';
-import { site } from '../data/site';
+import { site, founder as founderDefault } from '../data/site';
+import { featuredIn as featuredInDefault, spokeAboutUs, mediaCoverage, pressArchive, type MediaMention, type PressArchiveItem, type Language } from '../data/press';
 import { createClient as createPublicClient, type SupabaseClient } from '@supabase/supabase-js';
 
 export type { Person, PersonGroup } from '../data/people';
@@ -19,6 +21,7 @@ import type { Partner } from '../data/partners';
 import type { Testimonial } from '../data/testimonials';
 import type { Stat } from '../data/stats';
 export type { PressItem } from '../data/press';
+export type { MediaMention, PressArchiveItem, Language } from '../data/press';
 export type { Partner } from '../data/partners';
 export type { Testimonial } from '../data/testimonials';
 export type { Stat } from '../data/stats';
@@ -95,6 +98,17 @@ export const getProjects = async (db?: Db): Promise<Project[]> => {
 };
 export const getProject = async (slug: string, db?: Db) => (await getProjects(db)).find((p) => p.slug === slug);
 
+export const getMedia = async (db?: Db): Promise<{ spoke: MediaMention | null; coverage: MediaMention[]; all: (MediaMention & { kind: string })[] }> => {
+  const r = await rows('media_mentions', db);
+  if (!r) return { spoke: spokeAboutUs, coverage: mediaCoverage, all: [{ ...spokeAboutUs, kind: 'spoke_about_us' }, ...mediaCoverage.map((m) => ({ ...m, kind: 'coverage' }))] };
+  const all: (MediaMention & { kind: string })[] = r.map((x) => ({ id: x.slug, outlet: x.outlet, url: x.url, language: x.language as Language, kind: x.kind }));
+  return { spoke: all.find((m) => m.kind === 'spoke_about_us') ?? null, coverage: all.filter((m) => m.kind !== 'spoke_about_us'), all };
+};
+export const getPressArchive = async (db?: Db): Promise<PressArchiveItem[]> => {
+  const r = await rows('press_archive', db);
+  return r ? r.map((x) => ({ id: x.slug, title: x.title, date: x.date_label, links: x.links ?? [] })) : pressArchive;
+};
+
 export const getStats = async (db?: Db): Promise<Stat[]> => {
   const r = await rows('stats', db);
   return r ? r.map((x) => ({ id: x.slug, n: x.n, label: x.label, order: x.sort_order })) : stats;
@@ -110,7 +124,12 @@ export interface SiteSettings {
   analyticsId: string;
   partnerMailto: string;
   proposalMailto: string;
+  /** Outlet names shown as "Featured in" on the home page. */
+  featuredIn: string[];
+  founder: Founder;
 }
+
+export interface Founder { name: string; role: string; quote: string; bio: string; photo: ImageRef }
 
 const gaId = (v?: string) => (/^G-[A-Z0-9]{4,14}$/.test(String(v ?? '').trim()) ? String(v).trim() : '');
 const mailto = (email: string, subject: string) => `mailto:${email}?subject=${encodeURIComponent(subject)}`;
@@ -126,5 +145,7 @@ export const getSettings = async (db?: Db): Promise<SiteSettings> => {
     analyticsId: gaId(x ? x.analytics_id : site.analyticsId || import.meta.env.PUBLIC_GA_ID),
     partnerMailto: mailto(email, 'Partnership'),
     proposalMailto: mailto(email, 'Project proposal'),
+    featuredIn: Array.isArray(x?.featured_in) ? x.featured_in : featuredInDefault,
+    founder: x?.founder ? { ...founderDefault, ...x.founder, photo: x.founder.photo ?? founderDefault.photo } : founderDefault,
   };
 };

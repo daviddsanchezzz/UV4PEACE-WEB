@@ -11,13 +11,15 @@ const nav = [
   { id: 'personas', label: 'Personas', href: '/admin/personas/' },
   { id: 'newsletter', label: 'Newsletter', href: '/admin/newsletter/' },
   { id: 'prensa', label: 'Prensa', href: '/admin/prensa/' },
+  { id: 'medios', label: 'Medios', href: '/admin/medios/' },
+  { id: 'archivo', label: 'Archivo de prensa', href: '/admin/archivo/' },
   { id: 'socios', label: 'Socios', href: '/admin/socios/' },
   { id: 'testimonios', label: 'Testimonios', href: '/admin/testimonios/' },
   { id: 'cifras', label: 'Cifras', href: '/admin/cifras/' },
   { id: 'ajustes', label: 'Ajustes', href: '/admin/ajustes/' },
 ];
 const tabs = [nav[0], nav[1], nav[2], { id: 'mas', label: 'Más', href: '/admin/mas/' }];
-const moreIds = ['mas', 'newsletter', 'prensa', 'socios', 'testimonios', 'cifras', 'ajustes'];
+const moreIds = ['mas', 'newsletter', 'prensa', 'medios', 'archivo', 'socios', 'testimonios', 'cifras', 'ajustes'];
 const tabActive = (id: string) => (id === 'mas' ? moreIds.includes(current) : current === id);
 ---
 <!doctype html>
