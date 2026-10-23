@@ -12,7 +12,8 @@ interface Props { src: string; alt: string; pos?: string; w?: number; h?: number
 const { src, alt, pos = '50% 50%', w, h, class: cls = 'absolute inset-0 h-full w-full object-cover', sizes = '100vw', loading = 'lazy' } = Astro.props;
 const isRemote = /^https?:\/\//.test(src);
 const mod = isRemote ? null : photos[`../assets/fotos/${src}`];
-if (!isRemote && !mod) throw new Error(`Photo not found in src/assets/fotos: ${src}`);
+// A name that is not a bundled file (for example one already moved to storage) must not take the whole page down.
+if (!isRemote && !mod) console.warn(`Photo not found in src/assets/fotos: ${src}`);
 
 const style = `object-position:${pos}`;
 const quality = 85;
@@ -20,7 +21,9 @@ const priority = loading === 'eager' ? 'high' : undefined;
 const widths = [480, 800, 1200, 1600, 2400];
 const remoteOptimised = isRemote && w && h && /^https:\/\/[^/]+\.supabase\.co\//.test(src);
 ---
-{remoteOptimised
+{!isRemote && !mod
+  ? null
+  : remoteOptimised
   ? <Image src={src} width={w} height={h} alt={alt} widths={widths.filter((x) => x < w!).concat(w!)} sizes={sizes} quality={quality} loading={loading} fetchpriority={priority} class={cls} style={style} />
   : isRemote
     ? <img src={src} alt={alt} loading={loading} fetchpriority={priority} class={cls} style={style} />
