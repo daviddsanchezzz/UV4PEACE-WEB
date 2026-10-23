@@ -5,13 +5,17 @@ import Photo from '../components/Photo.astro';
 import PersonCard from '../components/PersonCard.astro';
 import Button from '../components/Button.astro';
 import { founder, site } from '../data/site';
-import { getPeople, getSettings } from '../lib/content';
+import { getPeople, getProjects, getSettings } from '../lib/content';
 const settings = await getSettings();
 
 const people = await getPeople();
 const board = people.filter((p) => p.group === 'team' || p.group === 'board').sort((a, b) => a.order - b.order);
 const ambassadors = people.filter((p) => p.group === 'ambassador').sort((a, b) => a.order - b.order);
-const gwimArtists = people.filter((p) => p.group === 'artist' && p.project === 'global-women-in-music' && p.edition === '2026').sort((a, b) => a.order - b.order);
+// Artists come from the line-up of the latest edition that has taken place, so they are written once, in the project.
+const gwim = (await getProjects()).find((x) => x.slug === 'global-women-in-music');
+const latest = (gwim?.editions ?? []).filter((e) => !e.upcoming && e.lineup.length > 0).at(-1);
+const peopleBySlug = new Map(people.map((x) => [x.slug, x]));
+const gwimArtists = (latest?.lineup ?? []).map((m) => ({ name: m.name, role: m.role, photo: m.person ? peopleBySlug.get(m.person)?.photo ?? null : null }));
 ---
 <Base title="People" current="people" description="The founder, team and artists behind United Voices 4 Peace.">
   <PageHeader eyebrow="People" title={['The voices behind', 'the music']} lede="Artists, diplomats and organisers working together for a universal culture of peace." />
@@ -63,9 +67,9 @@ const gwimArtists = people.filter((p) => p.group === 'artist' && p.project === '
     <section aria-labelledby="artists-h" class="bg-surface-soft">
       <div class="wrap section-y-sm">
         <div data-reveal class="max-w-[720px]">
-          <div class="eyebrow text-sky-text">Artists · Global Women in Music 2026</div>
+          <div class="eyebrow text-sky-text">Artists · Global Women in Music {latest?.year}</div>
           <h2 id="artists-h" class="t-h1 mt-4">On stage with us</h2>
-          <p class="body mt-4 text-ink-muted">Led by Serbian conductor Vesna Šouc, the evening featured eight women composers from eight countries.</p>
+          {latest?.description && <p class="body mt-4 text-ink-muted">{latest.description}</p>}
         </div>
         <ul class="mt-12 grid grid-cols-[repeat(auto-fill,minmax(130px,1fr))] gap-x-5 gap-y-7">
           {gwimArtists.map((m) => <PersonCard name={m.name} role={m.role} photo={m.photo} />)}

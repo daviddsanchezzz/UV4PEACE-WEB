@@ -32,14 +32,15 @@ const lineup = e.lineup ?? [];
     <input class="adm-input" data-e="watch_url" value={e.watchUrl ?? ''} placeholder="https://youtube.com/…" />
   </div>
   <div>
-    <div class="flex items-baseline justify-between"><p class="adm-label !mb-0">Line-up</p><span class="adm-hint !mt-0">Elige de Personas o escribe un nombre nuevo</span></div>
+    <div class="flex items-baseline justify-between"><p class="adm-label !mb-0">Line-up</p><span class="adm-hint !mt-0">Elige a alguien de Personas para que salga con su foto</span></div>
     <div class="mt-3 flex flex-col gap-2" data-lineup>
       {lineup.length === 0 && <p class="adm-hint" data-empty>Nadie añadido todavía.</p>}
       {lineup.map((m) => (
         <div class="grid grid-cols-[1fr_auto] gap-2 sm:flex sm:items-center" data-member>
-          <input class="adm-input" list="people-list" data-m="name" value={m.name} aria-label="Nombre" />
+          <input class="adm-input" list="people-list" data-m="name" data-person={m.person ?? ''} value={m.name} aria-label="Nombre" />
           <input class="adm-input col-span-2 row-start-2 sm:max-w-[200px]" data-m="role" value={m.role} aria-label="Función" />
           <button type="button" class="adm-btn col-start-2 row-start-1 !min-h-[46px] !px-3" data-remove aria-label={`Quitar a ${m.name}`}>✕</button>
+          <p class="adm-hint col-span-2 !mt-0 sm:hidden" data-link></p>
         </div>
       ))}
     </div>

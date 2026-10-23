@@ -1,20 +1,19 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
 import PhotoField from '../../../components/admin/PhotoField.astro';
-import { getPeople, getProjects, type Person } from '../../../lib/content';
+import { getPeople, type Person } from '../../../lib/content';
 import { createClient, supabaseConfigured } from '../../../lib/supabase';
 
 const db = supabaseConfigured() ? createClient(Astro.request, Astro.cookies) : undefined;
-const [people, projects] = await Promise.all([getPeople(db), getProjects(db)]);
+const people = await getPeople(db);
 const { slug } = Astro.params;
 const isNew = slug === 'nueva';
 const found = people.find((p) => p.slug === slug);
 if (!isNew && !found) return Astro.redirect('/admin/personas/');
 const p: Person = found ?? { slug: '', name: '', role: '', city: '', group: 'team', photo: null, bio: '', website: '', order: people.length + 1, published: true };
 const groups = [
-  { v: 'team', l: 'Equipo' }, { v: 'board', l: 'Junta' }, { v: 'ambassador', l: 'Embajadora' }, { v: 'artist', l: 'Artista de un proyecto' },
+  { v: 'team', l: 'Equipo' }, { v: 'board', l: 'Junta' }, { v: 'ambassador', l: 'Embajadora' }, { v: 'artist', l: 'Artista' },
 ];
-const editionOptions = projects.flatMap((x) => (x.editions ?? []).map((e) => ({ v: `${x.slug}|${e.year}`, l: `${x.title} · ${e.year}` })));
 const errors: Record<string, string> = { faltan: 'Faltan el nombre o el grupo.', enlace: 'El sitio web debe empezar por https://', foto: 'La foto no es válida. Súbela de nuevo.', guardar: 'No se pudo guardar. Inténtalo de nuevo en un momento.', quitar: 'No se pudo quitar. Inténtalo de nuevo en un momento.' };
 const error = errors[Astro.url.searchParams.get('error') ?? ''];
 ---
@@ -41,19 +40,12 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
           <select id="group" name="group" class="adm-input">
             {groups.map((g) => <option value={g.v} selected={g.v === p.group}>{g.l}</option>)}
           </select>
+          <p class="adm-hint">Las artistas salen en la página People cuando están en el line-up de la última edición de Global Women in Music (en Proyectos → Ediciones).</p>
         </div>
         <div>
           <label class="adm-label" for="city">Ciudad</label>
           <input id="city" name="city" class="adm-input" value={p.city} />
         </div>
-      </div>
-      <div id="artist-box" hidden={p.group !== 'artist'}>
-        <label class="adm-label" for="proj">Proyecto y edición</label>
-        <select id="proj" name="project" class="adm-input">
-          <option value="">— Ninguno —</option>
-          {editionOptions.map((o) => <option value={o.v} selected={o.v === `${p.project}|${p.edition}`}>{o.l}</option>)}
-        </select>
-        <p class="adm-hint">Las artistas de la edición 2026 de Global Women in Music salen en la página People.</p>
       </div>
       <div>
         <label class="adm-label" for="bio">Biografía</label>
@@ -69,7 +61,7 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
     <div class="adm-actions">
       <button class="adm-btn adm-btn-primary" type="submit">Guardar cambios</button>
       <a class="adm-btn" href="/admin/personas/">Cancelar</a>
-      {!isNew && <button class="adm-btn adm-btn-danger" type="submit" formaction="/admin/api/people/delete" formnovalidate onclick="return confirm('¿Quitar de la web? No se puede deshacer.')">Quitar<span class="hidden sm:inline">&nbsp;de la web</span></button>}
+      {!isNew && <button class="adm-btn adm-btn-danger" type="submit" formaction="/admin/api/people/delete" formnovalidate onclick="return confirm('¿Quitar de la web? No se puede deshacer.')"><span class="sm:hidden">Quitar</span><span class="hidden sm:inline">Quitar de la web</span></button>}
     </div>
     </div>
 
@@ -80,9 +72,4 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
     </aside>
   </form>
 
-  <script>
-    const group = document.getElementById('group') as HTMLSelectElement;
-    const box = document.getElementById('artist-box')!;
-    group.addEventListener('change', () => { box.hidden = group.value !== 'artist'; });
-  </script>
 </AdminLayout>

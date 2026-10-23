@@ -12,4 +12,6 @@ export interface ImageRef {
 export interface PersonRef {
   name: string;
   role: string;
+  /** Slug of the matching entry in People, when the line-up member has one (photo and name come from there). */
+  person?: string;
 }

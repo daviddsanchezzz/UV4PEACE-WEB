@@ -158,6 +158,7 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
       </div>
     </div>
     <datalist id="people-list">{people.map((x) => <option value={x.name}></option>)}</datalist>
+    <script type="application/json" id="people-map" set:html={JSON.stringify(Object.fromEntries(people.map((x) => [x.name.trim().toLowerCase(), { slug: x.slug, name: x.name }])))} />
     <template id="tpl-edition"><EditionForm hidden /></template>
   </section>
 
@@ -222,7 +223,7 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
   <div class="adm-actions">
     <button class="adm-btn adm-btn-primary" type="submit">Guardar cambios</button>
     <a class="adm-btn" href="/admin/proyectos/">Cancelar</a>
-    {!isNew && <button class="adm-btn adm-btn-danger" type="submit" formaction="/admin/api/projects/delete" formnovalidate id="delete" onclick="return confirm('¿Quitar este proyecto de la web con todas sus ediciones? No se puede deshacer.')">Quitar<span class="hidden sm:inline">&nbsp;de la web</span></button>}
+    {!isNew && <button class="adm-btn adm-btn-danger" type="submit" formaction="/admin/api/projects/delete" formnovalidate id="delete" onclick="return confirm('¿Quitar este proyecto de la web con todas sus ediciones? No se puede deshacer.')"><span class="sm:hidden">Quitar</span><span class="hidden sm:inline">Quitar de la web</span></button>}
   </div>
   </form>
 
@@ -231,6 +232,7 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
     .adm-tab[aria-selected="true"] { color: var(--color-navy); font-weight: 500; border-bottom-color: var(--color-orange); }
     .adm-ed { display: flex; flex: none; min-width: 104px; flex-direction: column; gap: 2px; padding: 10px 14px; border: 0; border-radius: 8px; background: none; font: inherit; text-align: left; color: var(--color-ink); cursor: pointer; }
     @media (min-width: 1024px) { .adm-ed { width: 100%; } }
+    .adm-linked { border-color: #2f8f5b; box-shadow: inset 3px 0 0 #2f8f5b; }
     .adm-ed:hover { background: var(--color-surface-soft); }
     .adm-ed[aria-pressed="true"] { background: var(--color-navy); color: #fff; }
     [hidden] { display: none !important; }
@@ -249,6 +251,18 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
       panels.forEach((p) => (p.hidden = p.dataset.panel !== id));
     };
     tabs.forEach((t) => t.addEventListener('click', () => show(t.dataset.tab!)));
+
+    // Line-up members typed with the exact name of someone in Personas are linked to that person.
+    const peopleMap: Record<string, { slug: string; name: string }> = JSON.parse($('#people-map').textContent || '{}');
+    const relink = (input: HTMLInputElement) => {
+      const hit = peopleMap[input.value.trim().toLowerCase()];
+      input.dataset.person = hit?.slug ?? '';
+      input.classList.toggle('adm-linked', Boolean(hit));
+      input.title = hit ? 'Enlazada con su ficha de Personas: sale con su foto' : input.value.trim() ? 'Sin ficha en Personas: sale sin foto' : '';
+      const note = input.closest('[data-member]')?.querySelector<HTMLElement>('[data-link]');
+      if (note) note.textContent = hit ? '✓ Con su ficha de Personas' : input.value.trim() ? 'Sin ficha en Personas: sale sin foto' : '';
+    };
+    all<HTMLInputElement>('[data-m="name"]').forEach(relink);
 
     // Editions
     const forms = $('#ed-forms');
@@ -274,6 +288,7 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
     });
     forms.addEventListener('input', (e) => {
       const t = e.target as HTMLInputElement;
+      if (t.dataset.m === 'name') { relink(t); return; }
       if (t.dataset.e !== 'year') return;
       const f = t.closest<HTMLElement>('[data-edform]')!;
       $('[data-ed-title]', f).textContent = t.value;
@@ -289,7 +304,7 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
         const row = document.createElement('div');
         row.className = 'grid grid-cols-[1fr_auto] gap-2 sm:flex sm:items-center';
         row.setAttribute('data-member', '');
-        row.innerHTML = '<input class="adm-input" list="people-list" data-m="name" placeholder="Nombre" aria-label="Nombre" /><input class="adm-input col-span-2 row-start-2 sm:max-w-[200px]" data-m="role" placeholder="Función" aria-label="Función" /><button type="button" class="adm-btn col-start-2 row-start-1 !min-h-[46px] !px-3" data-remove aria-label="Quitar">✕</button>';
+        row.innerHTML = '<input class="adm-input" list="people-list" data-m="name" data-person="" placeholder="Nombre" aria-label="Nombre" /><input class="adm-input col-span-2 row-start-2 sm:max-w-[200px]" data-m="role" placeholder="Función" aria-label="Función" /><button type="button" class="adm-btn col-start-2 row-start-1 !min-h-[46px] !px-3" data-remove aria-label="Quitar">✕</button><p class="adm-hint col-span-2 !mt-0 sm:hidden" data-link></p>';
         l.appendChild(row);
         row.querySelector('input')?.focus();
       }
@@ -362,7 +377,7 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
       f.editions = all('[data-edform]', forms).map((ef) => {
         const o: Record<string, unknown> = {};
         all<HTMLInputElement>('[data-e]', ef).forEach((el) => { o[el.dataset.e!] = el.type === 'checkbox' ? el.checked : el.value; });
-        o.lineup = all('[data-member]', ef).map((m) => ({ name: $<HTMLInputElement>('[data-m="name"]', m).value, role: $<HTMLInputElement>('[data-m="role"]', m).value }));
+        o.lineup = all('[data-member]', ef).map((m) => { const n = $<HTMLInputElement>('[data-m="name"]', m); return { person: n.dataset.person ?? '', name: n.value, role: $<HTMLInputElement>('[data-m="role"]', m).value }; });
         return o;
       });
       $<HTMLInputElement>('#payload').value = JSON.stringify(f);

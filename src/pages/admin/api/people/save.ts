@@ -23,18 +23,7 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
 
   const supabase = createClient(request, cookies);
   const { data: auth } = await supabase.auth.getUser();
-
-  let project_id: string | null = null;
-  let edition: string | null = null;
-  if (group === 'artist') {
-    const [pslug, year] = text('project').split('|');
-    if (pslug) {
-      const { data: p } = await supabase.from('projects').select('id').eq('slug', pslug).maybeSingle();
-      project_id = p?.id ?? null;
-      edition = project_id && year ? year : null;
-    }
-  }
-  const row = { name, role: text('role', 300), city: text('city', 120), group, project_id, edition, photo, bio: text('bio', 4000), website, published: form.get('published') !== null };
+  const row = { name, role: text('role', 300), city: text('city', 120), group, photo, bio: text('bio', 4000), website, published: form.get('published') !== null };
 
   let slug = id;
   if (id) {
