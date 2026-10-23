@@ -132,31 +132,36 @@ const hasAbout = Boolean(p.intro || p.body || p.vision || p.stats?.length || p.l
     <div data-edition-panels>
       {p.editions.map((e) => (
         <section aria-label={`Edition ${e.year}`} data-edition-panel={e.year} hidden={e.year !== highlight?.year} class="wrap pb-[clamp(72px,9vw,128px)] pt-[clamp(48px,6vw,80px)]">
-          <div class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,440px),1fr))] items-start gap-[clamp(40px,5vw,80px)]">
+          <!-- 1. Text and the featured photo (shown whole: they are often posters) -->
+          <div class:list={['grid items-start gap-[clamp(32px,5vw,80px)]', e.photo ? 'lg:grid-cols-2' : 'max-w-[860px]']}>
             <div data-reveal>
               <div class="eyebrow text-sky-text">{[e.date, e.venue, e.event].filter(Boolean).join(' · ')}</div>
               <h2 class="t-h1 mt-4">Edition {e.year}</h2>
               <div class="rich body mt-5 text-ink-muted" set:html={cleanRich(e.description) || `<p>Details for the ${e.year} edition will be announced soon.</p>`} />
               {e.credits && <p class="mt-5 text-base">{e.credits}</p>}
-              {e.watchUrl && (embedUrl(e.watchUrl)
-                ? <div class="mt-8"><VideoEmbed url={e.watchUrl} title={`${p.title} · Edition ${e.year}`} /></div>
-                : <Button href={e.watchUrl} variant="secondary" external class="mt-7">Watch the {e.year} performance</Button>)}
+              {e.watchUrl && !embedUrl(e.watchUrl) && <Button href={e.watchUrl} variant="secondary" external class="mt-7">Watch the {e.year} performance</Button>}
             </div>
-            {(e.photo || e.lineup.length > 0) && (
-              <div class="flex flex-col gap-10">
-                {e.photo && (
-                  <figure data-reveal class="relative m-0 aspect-[4/3] overflow-hidden rounded-card bg-placeholder">
-                    <Photo {...e.photo} sizes="(min-width:1024px) 600px, 100vw" />
-                  </figure>
-                )}
-                {e.lineup.length > 0 && (
-                  <ul class="grid grid-cols-[repeat(auto-fill,minmax(130px,1fr))] gap-x-5 gap-y-7">
-                    {e.lineup.map((m) => <PersonCard name={m.name} role={m.role} photo={m.person ? peopleBySlug.get(m.person)?.photo : null} />)}
-                  </ul>
-                )}
-              </div>
+            {e.photo && (
+              <figure data-reveal class="m-0 overflow-hidden rounded-card bg-placeholder">
+                <Photo {...e.photo} sizes="(min-width:1024px) 600px, 100vw" class="block h-auto w-full" />
+              </figure>
             )}
           </div>
+
+          <!-- 2. The performance video, full width -->
+          {e.watchUrl && embedUrl(e.watchUrl) && (
+            <div class="mt-[clamp(40px,5vw,64px)]"><VideoEmbed url={e.watchUrl} title={`${p.title} · Edition ${e.year}`} /></div>
+          )}
+
+          <!-- 3. Line-up -->
+          {e.lineup.length > 0 && (
+            <div class="mt-[clamp(48px,6vw,80px)]">
+              <div class="eyebrow text-sky-text">Line-up</div>
+              <ul class="mt-6 grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-x-5 gap-y-8">
+                {e.lineup.map((m) => <PersonCard name={m.name} role={m.role} photo={m.person ? peopleBySlug.get(m.person)?.photo : null} />)}
+              </ul>
+            </div>
+          )}
         </section>
       ))}
     </div>

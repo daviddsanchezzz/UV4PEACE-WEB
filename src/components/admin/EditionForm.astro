@@ -31,8 +31,8 @@ const lineup = e.lineup ?? [];
     <RichEditor name={`desc-${e.year ?? 'new'}`} dataE="description" labelId={`desc-${e.year ?? 'new'}-label`} variant="mini" value={toRichHtml(e.description ?? '')} placeholder="Qué pasó en esta edición…" />
   </div>
   <div class="max-w-[420px]" data-ed-photo>
-    <PhotoField label="Foto destacada de la edición" value={e.photo ?? null} ratio="4 / 3" />
-    <p class="adm-hint">Sale junto al texto de la edición, a la derecha. Opcional.</p>
+    <PhotoField label="Foto destacada de la edición" value={e.photo ?? null} ratio="4 / 3" focus={false} />
+    <p class="adm-hint">Sale a la derecha del texto de la edición, entera y sin recortar: sirve para un cartel o un flyer. Opcional.</p>
   </div>
   <div>
     <label class="adm-label">Enlace al vídeo</label>
