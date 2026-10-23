@@ -6,9 +6,9 @@ interface Props { current?: string }
 const { current } = Astro.props;
 ---
 <header class="sticky top-0 z-50 border-b border-line bg-white">
-  <div class="wrap flex items-center justify-between gap-6 py-3 lg:py-3.5">
+  <div class="wrap flex items-center justify-between gap-6 py-2 lg:py-3">
     <a href="/" aria-label="United Voices 4 Peace, home" class="flex-none">
-      <img src="/logos/uv4peace-horizontal-compact-color.svg" alt="United Voices 4 Peace" class="h-9 w-auto lg:h-11" width="183" height="44" />
+      <img src="/logos/uv4peace-horizontal-compact-color.svg" alt="United Voices 4 Peace" class="h-7 w-auto lg:h-10" width="183" height="44" />
     </a>
     <nav aria-label="Main" class="hidden items-center gap-8 text-sm font-medium uppercase tracking-[0.14em] lg:flex">
       {nav.map((n) => (
@@ -20,7 +20,7 @@ const { current } = Astro.props;
       <a href="/donate/" class="btn btn-navy btn-sm">Donate</a>
       <a href={settings.partnerMailto} class="btn btn-tertiary btn-sm">Partner with us</a>
     </div>
-    <button type="button" data-menu-open aria-controls="menu" class="btn btn-tertiary btn-sm min-h-10 bg-white px-4 lg:hidden">Menu</button>
+    <button type="button" data-menu-open aria-controls="menu" class="btn btn-tertiary btn-sm min-h-9 bg-white px-3.5 text-[13px] lg:hidden">Menu</button>
   </div>
 </header>
 
