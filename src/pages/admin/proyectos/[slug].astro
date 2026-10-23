@@ -3,6 +3,7 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 import PhotoField from '../../../components/admin/PhotoField.astro';
 import RichEditor from '../../../components/admin/RichEditor.astro';
 import { toRichHtml } from '../../../lib/richtext';
+import GalleryTile from '../../../components/admin/GalleryTile.astro';
 import EditionForm from '../../../components/admin/EditionForm.astro';
 import { getPeople, getProjects, type Project } from '../../../lib/content';
 import { createClient, supabaseConfigured } from '../../../lib/supabase';
@@ -204,28 +205,15 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
     <div class="adm-card p-6">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <h2 class="text-xl font-medium">Galería</h2>
-        <button class="adm-btn" type="button" id="gal-add">+ Añadir foto</button>
+        <button class="adm-btn" type="button" id="gal-add">+ Añadir fotos</button>
       </div>
-      <p class="adm-hint mt-2">Todas las fotos se muestran con el mismo tamaño en la web.</p>
+      <p class="adm-hint mt-2">Puedes elegir varias fotos a la vez. Se muestran todas con el mismo tamaño y no necesitan pie de foto. Usa las flechas para cambiar el orden.</p>
+      <input type="file" id="gal-files" multiple accept="image/jpeg,image/png,image/webp" class="sr-only" tabindex="-1" aria-hidden="true" />
+      <p class="adm-hint mt-3" id="gal-msg" role="status"></p>
       <p class="adm-hint mt-3" id="gal-empty" hidden={gallery.length > 0}>Este proyecto no tiene galería.</p>
-      <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" id="gal">
-        {gallery.map((g) => (
-          <div class="rounded-lg border border-line p-3" data-gal>
-            <PhotoField value={g} ratio="4 / 3" focus={false} />
-            <div class="mt-3 flex justify-end">
-              <button type="button" class="adm-btn !min-h-[40px]" data-gal-remove aria-label="Quitar foto">✕</button>
-            </div>
-          </div>
-        ))}
+      <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5" id="gal">
+        {gallery.map((g) => <GalleryTile value={g} />)}
       </div>
-      <template id="tpl-gal">
-        <div class="rounded-lg border border-line p-3" data-gal>
-          <PhotoField ratio="4 / 3" focus={false} />
-          <div class="mt-3 flex justify-end">
-            <button type="button" class="adm-btn !min-h-[40px]" data-gal-remove aria-label="Quitar foto">✕</button>
-          </div>
-        </div>
-      </template>
     </div>
     <div class="adm-card flex flex-col gap-6 p-6" id="doc">
       <h2 class="text-xl font-medium">Documental</h2>
@@ -270,6 +258,8 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
   </style>
 
   <script>
+    import { uploadPhoto } from '../../../admin/upload';
+
     const form = document.getElementById('project-form') as HTMLFormElement;
     const $ = <T extends HTMLElement>(sel: string, root: ParentNode = document) => root.querySelector<T>(sel)!;
     const all = <T extends HTMLElement>(sel: string, root: ParentNode = document) => [...root.querySelectorAll<T>(sel)];
@@ -349,17 +339,53 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
       }
     });
 
-    // Gallery
+    // Gallery: several photos at once, three uploads at a time
     const gal = $('#gal');
+    const galFiles = $<HTMLInputElement>('#gal-files');
+    const galMsg = $('#gal-msg');
     const galEmpty = () => { $('#gal-empty').hidden = all('[data-gal]', gal).length > 0; };
-    $('#gal-add').addEventListener('click', () => {
-      const n = ($('#tpl-gal') as HTMLTemplateElement).content.firstElementChild!.cloneNode(true) as HTMLElement;
-      gal.appendChild(n); (window as any).uvPhotos(n); galEmpty();
-      $<HTMLElement>('[data-photo-file]', n).click();
+    const tile = () => {
+      const t = document.createElement('div');
+      t.className = 'rounded-lg border border-line p-2'; t.setAttribute('data-gal', '');
+      t.innerHTML = '<input type="hidden" data-photo-value /><div class="relative aspect-[4/3] overflow-hidden rounded bg-placeholder" data-gal-preview><span class="absolute inset-0 grid place-items-center text-xs text-placeholder-line" data-gal-state>Subiendo…</span></div><div class="mt-2 flex items-center justify-between gap-1"><span class="flex gap-1"><button type="button" class="adm-btn !min-h-[36px] !px-3" data-gal-left aria-label="Mover antes">←</button><button type="button" class="adm-btn !min-h-[36px] !px-3" data-gal-right aria-label="Mover después">→</button></span><button type="button" class="adm-btn !min-h-[36px] !px-3" data-gal-remove aria-label="Quitar foto">✕</button></div>';
+      return t;
+    };
+    $('#gal-add').addEventListener('click', () => galFiles.click());
+    galFiles.addEventListener('change', async () => {
+      const files = [...(galFiles.files ?? [])];
+      galFiles.value = '';
+      if (!files.length) return;
+      const queue = files.map((f) => ({ f, el: tile() }));
+      queue.forEach(({ el }) => gal.appendChild(el));
+      galEmpty();
+      let done = 0, failed = 0;
+      const status = () => { galMsg.textContent = `Subiendo ${Math.min(done + failed + 1, files.length)} de ${files.length}…`; };
+      status();
+      const worker = async () => {
+        for (let job = queue.shift(); job; job = queue.shift()) {
+          try {
+            const { url, w, h } = await uploadPhoto(job.f);
+            $<HTMLInputElement>('[data-photo-value]', job.el).value = JSON.stringify({ src: url, alt: '', pos: '50% 50%', w, h });
+            const img = document.createElement('img');
+            img.src = url; img.alt = ''; img.className = 'absolute inset-0 h-full w-full object-cover';
+            $('[data-gal-preview]', job.el).replaceChildren(img);
+            done++;
+          } catch {
+            failed++; job.el.remove(); galEmpty();
+          }
+          status();
+        }
+      };
+      await Promise.all([worker(), worker(), worker()]);
+      galMsg.textContent = failed ? `${done} subidas, ${failed} no se han podido subir. Inténtalo de nuevo con esas.` : `${done} ${done === 1 ? 'foto subida' : 'fotos subidas'}. Recuerda guardar los cambios.`;
     });
     gal.addEventListener('click', (e) => {
-      const b = (e.target as HTMLElement).closest('[data-gal-remove]');
-      if (b) { b.closest('[data-gal]')!.remove(); galEmpty(); }
+      const t = e.target as HTMLElement;
+      const item = t.closest<HTMLElement>('[data-gal]');
+      if (!item) return;
+      if (t.closest('[data-gal-remove]')) { item.remove(); galEmpty(); }
+      if (t.closest('[data-gal-left]') && item.previousElementSibling) gal.insertBefore(item, item.previousElementSibling);
+      if (t.closest('[data-gal-right]') && item.nextElementSibling) gal.insertBefore(item.nextElementSibling, item);
     });
 
     // Videos
@@ -411,6 +437,7 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
     form.addEventListener('submit', (e) => {
       const submitter = (e as SubmitEvent).submitter as HTMLElement | null;
       if (submitter?.id === 'delete') return;
+      if (document.querySelector('[data-gal-state]')) { e.preventDefault(); alert('Hay fotos que todavía se están subiendo. Espera a que terminen y vuelve a guardar.'); return; }
       const f: Record<string, unknown> = {};
       all<HTMLInputElement>('[data-f]').forEach((el) => { f[el.dataset.f!] = el.type === 'checkbox' ? el.checked : el.value; });
       const photos = all('[data-panel="fotos"] > .adm-card:first-child [data-photo]');

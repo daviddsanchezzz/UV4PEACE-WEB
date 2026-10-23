@@ -1,0 +1,21 @@
+---
+// One photo of a project gallery: thumbnail, arrows to move it and a button to remove it. No caption to fill in.
+import Photo from '../Photo.astro';
+import type { ImageRef } from '../../data/types';
+
+interface Props { value?: ImageRef }
+const { value } = Astro.props;
+---
+<div data-gal class="rounded-lg border border-line p-2">
+  <input type="hidden" data-photo-value value={value ? JSON.stringify(value) : ''} />
+  <div class="relative aspect-[4/3] overflow-hidden rounded bg-placeholder" data-gal-preview>
+    {value && <Photo {...value} sizes="240px" />}
+  </div>
+  <div class="mt-2 flex items-center justify-between gap-1">
+    <span class="flex gap-1">
+      <button type="button" class="adm-btn !min-h-[36px] !px-3" data-gal-left aria-label="Mover antes">←</button>
+      <button type="button" class="adm-btn !min-h-[36px] !px-3" data-gal-right aria-label="Mover después">→</button>
+    </span>
+    <button type="button" class="adm-btn !min-h-[36px] !px-3" data-gal-remove aria-label="Quitar foto">✕</button>
+  </div>
+</div>
