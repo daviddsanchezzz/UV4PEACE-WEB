@@ -91,14 +91,17 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
       </div>
       <div class="lg:col-span-2">
         <p class="adm-label" id="intro-label">Texto de introducción</p>
+        <p class="adm-hint !mt-0 mb-2">Va primero, en letra grande y ligera, bajo el título «About the project». Mejor corto: 2 o 3 frases que resuman el proyecto.</p>
         <RichEditor name="intro" dataKey="intro" labelId="intro-label" variant="mini" value={toRichHtml(p.intro ?? '')} placeholder="Escribe aquí…" />
       </div>
       <div class="lg:col-span-2">
         <p class="adm-label" id="body-label">Texto principal</p>
+        <p class="adm-hint !mt-0 mb-2">Va justo debajo de la introducción, en letra normal. Aquí va el relato completo, con todos los párrafos y listas que quieras. Si no hay introducción, este texto sale en letra grande.</p>
         <RichEditor name="body" dataKey="body" labelId="body-label" variant="mini" value={toRichHtml(p.body ?? '')} placeholder="Escribe aquí…" />
       </div>
       <div class="lg:col-span-2">
         <p class="adm-label" id="vision-label">Visión</p>
+        <p class="adm-hint !mt-0 mb-2">Sale aparte, en un recuadro de color claro a la derecha del texto, con el título «Our vision». Pensado para una frase o un párrafo corto con la idea de fondo del proyecto.</p>
         <RichEditor name="vision" dataKey="vision" labelId="vision-label" variant="mini" value={toRichHtml(p.vision ?? '')} placeholder="Escribe aquí…" />
       </div>
     </div>
