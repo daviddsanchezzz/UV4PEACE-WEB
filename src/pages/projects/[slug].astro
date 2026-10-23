@@ -135,7 +135,7 @@ const hasAbout = Boolean(p.intro || p.body || p.vision || p.stats?.length || p.l
             <div data-reveal>
               <div class="eyebrow text-sky-text">{[e.date, e.venue, e.event].filter(Boolean).join(' · ')}</div>
               <h2 class="t-h1 mt-4">Edition {e.year}</h2>
-              <p class="body mt-5 text-ink-muted">{e.description || `Details for the ${e.year} edition will be announced soon.`}</p>
+              <div class="rich body mt-5 text-ink-muted" set:html={cleanRich(e.description) || `<p>Details for the ${e.year} edition will be announced soon.</p>`} />
               {e.credits && <p class="mt-5 text-base">{e.credits}</p>}
               {e.watchUrl && <Button href={e.watchUrl} variant="secondary" external class="mt-7">Watch the {e.year} performance</Button>}
             </div>

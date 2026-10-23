@@ -2,6 +2,8 @@
 // One edition of a project: date, venue, director, description, video and line-up.
 // Fields carry data-e / data-m attributes that the project page script reads when saving.
 import type { Edition } from '../../data/projects';
+import RichEditor from './RichEditor.astro';
+import { toRichHtml } from '../../lib/richtext';
 
 interface Props { e?: Partial<Edition>; hidden?: boolean }
 const { e = {}, hidden = false } = Astro.props;
@@ -24,8 +26,8 @@ const lineup = e.lineup ?? [];
     <div><label class="adm-label">Dirección musical</label><input class="adm-input" data-e="conductor" value={e.conductor ?? ''} /></div>
   </div>
   <div>
-    <label class="adm-label">Descripción</label>
-    <textarea class="adm-input !min-h-[100px]" data-e="description">{e.description ?? ''}</textarea>
+    <p class="adm-label" id={`desc-${e.year ?? 'new'}-label`}>Descripción</p>
+    <RichEditor name={`desc-${e.year ?? 'new'}`} dataE="description" labelId={`desc-${e.year ?? 'new'}-label`} variant="mini" value={toRichHtml(e.description ?? '')} placeholder="Qué pasó en esta edición…" />
   </div>
   <div>
     <label class="adm-label">Enlace al vídeo</label>

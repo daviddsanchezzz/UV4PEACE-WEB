@@ -302,8 +302,12 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
     });
     $('#ed-new').addEventListener('click', () => {
       const key = 'new-' + Date.now();
-      const f = ($('#tpl-edition') as HTMLTemplateElement).content.firstElementChild!.cloneNode(true) as HTMLElement;
+      // The editor inside the template needs ids of its own, and has to be started once it is on the page.
+      const holder = document.createElement('div');
+      holder.innerHTML = ($('#tpl-edition') as HTMLTemplateElement).innerHTML.replaceAll('desc-new', `desc-${key}`);
+      const f = holder.firstElementChild as HTMLElement;
       f.dataset.edform = key; forms.appendChild(f);
+      (window as unknown as { uvRte: (c: ParentNode) => void }).uvRte(f);
       const b = document.createElement('button');
       b.type = 'button'; b.className = 'adm-ed'; b.dataset.ed = key;
       b.innerHTML = '<span class="font-medium" data-ed-label>Nueva</span><span class="text-sm opacity-80">Edición nueva</span>';

@@ -34,7 +34,7 @@ function clean(raw: Obj) {
     if (!/^\d{4}$/.test(year)) throw new Invalid('anio');
     if (!okUrl(watch)) throw new Invalid('enlace');
     const lineup = (Array.isArray(x.lineup) ? x.lineup : []).slice(0, 200).map((m: Obj) => ({ person: str(m.person, 80), name: str(m.name, 200), role: str(m.role, 200) })).filter((m) => m.name || m.person);
-    return { year, date_label: str(x.date_label, 100), venue: str(x.venue, 200), event: str(x.event, 200), conductor: str(x.conductor, 200), description: str(x.description, 4000), watch_url: watch, upcoming: Boolean(x.upcoming), lineup };
+    return { year, date_label: str(x.date_label, 100), venue: str(x.venue, 200), event: str(x.event, 200), conductor: str(x.conductor, 200), description: cleanRich(str(x.description, 20000)), watch_url: watch, upcoming: Boolean(x.upcoming), lineup };
   });
   if (new Set(editions.map((e) => e.year)).size !== editions.length) throw new Invalid('anio');
 

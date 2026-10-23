@@ -5,6 +5,7 @@ import Photo from '../components/Photo.astro';
 import PersonCard from '../components/PersonCard.astro';
 import Button from '../components/Button.astro';
 import { getPeople, getProjects, getSettings } from '../lib/content';
+import { cleanRich } from '../lib/richtext';
 const settings = await getSettings();
 const { founder } = settings;
 
@@ -69,7 +70,7 @@ const gwimArtists = (latest?.lineup ?? []).map((m) => ({ name: m.name, role: m.r
         <div data-reveal class="max-w-[720px]">
           <div class="eyebrow text-sky-text">Artists · Global Women in Music {latest?.year}</div>
           <h2 id="artists-h" class="t-h1 mt-4">On stage with us</h2>
-          {latest?.description && <p class="body mt-4 text-ink-muted">{latest.description}</p>}
+          {latest?.description && <div class="rich body mt-4 text-ink-muted" set:html={cleanRich(latest.description)} />}
         </div>
         <ul class="mt-12 grid grid-cols-[repeat(auto-fill,minmax(130px,1fr))] gap-x-5 gap-y-7">
           {gwimArtists.map((m) => <PersonCard name={m.name} role={m.role} photo={m.photo} />)}
