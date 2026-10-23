@@ -1,6 +1,8 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
 import PhotoField from '../../../components/admin/PhotoField.astro';
+import RichEditor from '../../../components/admin/RichEditor.astro';
+import { toRichHtml } from '../../../lib/richtext';
 import EditionForm from '../../../components/admin/EditionForm.astro';
 import { getPeople, getProjects, type Project } from '../../../lib/content';
 import { createClient, supabaseConfigured } from '../../../lib/supabase';
@@ -87,17 +89,16 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
         <p class="adm-hint">Una o dos frases. Aparece en la tarjeta del proyecto.</p>
       </div>
       <div class="lg:col-span-2">
-        <label class="adm-label" for="intro">Texto de introducción</label>
-        <textarea id="intro" data-f="intro" class="adm-input">{p.intro ?? ''}</textarea>
+        <p class="adm-label" id="intro-label">Texto de introducción</p>
+        <RichEditor name="intro" dataKey="intro" labelId="intro-label" variant="mini" value={toRichHtml(p.intro ?? '')} placeholder="Escribe aquí…" />
       </div>
       <div class="lg:col-span-2">
-        <label class="adm-label" for="body">Texto principal</label>
-        <textarea id="body" data-f="body" class="adm-input !min-h-[140px]">{p.body ?? ''}</textarea>
-        <p class="adm-hint">Separa los párrafos con una línea en blanco.</p>
+        <p class="adm-label" id="body-label">Texto principal</p>
+        <RichEditor name="body" dataKey="body" labelId="body-label" variant="mini" value={toRichHtml(p.body ?? '')} placeholder="Escribe aquí…" />
       </div>
       <div class="lg:col-span-2">
-        <label class="adm-label" for="vision">Visión</label>
-        <textarea id="vision" data-f="vision" class="adm-input">{p.vision ?? ''}</textarea>
+        <p class="adm-label" id="vision-label">Visión</p>
+        <RichEditor name="vision" dataKey="vision" labelId="vision-label" variant="mini" value={toRichHtml(p.vision ?? '')} placeholder="Escribe aquí…" />
       </div>
     </div>
 

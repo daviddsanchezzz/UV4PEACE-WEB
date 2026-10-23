@@ -5,6 +5,7 @@ import { createClient } from '../../../../lib/supabase';
 import { slugify } from '../../../../admin/tables';
 import { parsePhoto } from '../../../../admin/photo';
 import { embedUrl } from '../../../../lib/video';
+import { cleanRich } from '../../../../lib/richtext';
 
 type Obj = Record<string, unknown>;
 const str = (v: unknown, max = 2000) => String(v ?? '').trim().slice(0, max);
@@ -75,7 +76,7 @@ function clean(raw: Obj) {
   return {
     videos, links, stats, stats_note: str(raw.stats_note, 200), partner_block,
     title, title_accent: str(raw.title_accent, 200), status: str(raw.status), year_start: yearStart, date_label: str(raw.date_label, 100), city: str(raw.city, 120), summary: str(raw.summary, 600),
-    featured: Boolean(raw.featured), published: Boolean(raw.published), intro: str(raw.intro, 4000), body: str(raw.body, 8000), vision: str(raw.vision, 4000),
+    featured: Boolean(raw.featured), published: Boolean(raw.published), intro: cleanRich(str(raw.intro, 20000)), body: cleanRich(str(raw.body, 30000)), vision: cleanRich(str(raw.vision, 20000)),
     cover: photo(raw.cover), hero: photo(raw.hero), gallery, documentary, editions,
   };
 }

@@ -4,6 +4,7 @@
 import Base from '../../layouts/Base.astro';
 import Photo from '../../components/Photo.astro';
 import Button from '../../components/Button.astro';
+import { cleanRich } from '../../lib/richtext';
 import VideoEmbed from '../../components/VideoEmbed.astro';
 import Gallery from '../../components/Gallery.astro';
 import StatBlock from '../../components/StatBlock.astro';
@@ -50,8 +51,8 @@ const hasAbout = Boolean(p.intro || p.body || p.vision || p.stats?.length || p.l
       <div class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,440px),1fr))] items-start gap-[clamp(40px,6vw,96px)]">
         <div data-reveal>
           <div class="eyebrow text-sky-text">About the project</div>
-          {p.intro && <p class="mt-5 text-[clamp(22px,2vw,26px)] font-light leading-normal [text-wrap:pretty]">{p.intro}</p>}
-          {p.body && p.body.split(/\n\s*\n/).map((para) => <p class:list={['body text-ink-muted', p.intro ? 'mt-5' : 'mt-5 text-lg']}>{para}</p>)}
+          {p.intro && <div class="rich rich-lead mt-5 text-[clamp(22px,2vw,26px)] font-light leading-normal [text-wrap:pretty]" set:html={cleanRich(p.intro)} />}
+          {p.body && <div class:list={['rich body text-ink-muted', p.intro ? 'mt-5' : 'mt-5 text-lg']} set:html={cleanRich(p.body)} />}
           {p.links?.length && (
             <div class="mt-8 flex flex-wrap gap-3">
               {p.links.map((l) => <Button href={l.url} variant="secondary" external>{l.label}</Button>)}
@@ -61,7 +62,7 @@ const hasAbout = Boolean(p.intro || p.body || p.vision || p.stats?.length || p.l
         {p.vision && (
           <div data-reveal class="rounded-card bg-surface-soft p-[clamp(28px,3vw,44px)]">
             <div class="eyebrow text-sky-text">Our vision</div>
-            <p class="mt-4 text-[clamp(20px,1.8vw,24px)] leading-[1.45]">{p.vision}</p>
+            <div class="rich mt-4 text-[clamp(20px,1.8vw,24px)] leading-[1.45]" set:html={cleanRich(p.vision)} />
           </div>
         )}
       </div>
