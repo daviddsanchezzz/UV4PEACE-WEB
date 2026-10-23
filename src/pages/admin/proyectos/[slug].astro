@@ -362,7 +362,7 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
       all<HTMLInputElement>('[data-f]').forEach((el) => { f[el.dataset.f!] = el.type === 'checkbox' ? el.checked : el.value; });
       const photos = all('[data-panel="fotos"] > .adm-card:first-child [data-photo]');
       f.cover = photo(photos[0]); f.hero = photo(photos[1]);
-      f.gallery = all('[data-gal]', gal).map((g) => photo(g)).filter((g) => g && g.src).map(({ src, alt, pos }) => ({ src, alt, pos }));
+      f.gallery = all('[data-gal]', gal).map((g) => photo(g)).filter((g) => g && g.src).map(({ src, alt, pos, w, h }) => ({ src, alt, pos, w, h }));
       const d: Record<string, unknown> = {};
       all<HTMLInputElement>('[data-d]').forEach((el) => { d[el.dataset.d!] = el.value; });
       d.poster = photo($('#doc'));

@@ -7,6 +7,9 @@ export interface ImageRef {
   alt: string;
   /** CSS object-position, e.g. "50% 50%". */
   pos?: string;
+  /** Pixel size of an uploaded photo; lets the site serve it in several optimised sizes. */
+  w?: number;
+  h?: number;
 }
 
 export interface PersonRef {

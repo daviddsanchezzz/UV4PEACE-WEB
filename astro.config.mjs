@@ -23,5 +23,7 @@ export default defineConfig({
   image: {
     // People photos not yet migrated to local assets point at the current uv4peace.org media library.
     domains: ['uv4peace.org'],
+    // Photos uploaded from the panel live in Supabase storage.
+    remotePatterns: [{ protocol: 'https', hostname: '**.supabase.co' }],
   },
 });

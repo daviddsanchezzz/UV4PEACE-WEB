@@ -1,17 +1,27 @@
 ---
-// Optimised photo (webp, srcset) from src/assets/fotos/<name>, or a plain <img> for a full
-// https:// URL (board portraits still hosted on the current uv4peace.org site).
+// Optimised photo. Local files in src/assets/fotos/<name> become WebP at several widths. (AVIF was tried: it took up to 20 s to encode on
+// first request and came out larger than WebP at the same quality, so it is not used.)
+// Photos uploaded from the panel (https address in Supabase) are served the same way when their size is known (w/h);
+// any other https address (board portraits still on the old site) is shown as it is.
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 
 const photos = import.meta.glob<{ default: ImageMetadata }>('../assets/fotos/*.{jpg,jpeg,png}', { eager: true });
 
-interface Props { src: string; alt: string; pos?: string; class?: string; sizes?: string; loading?: 'eager' | 'lazy' }
-const { src, alt, pos = '50% 50%', class: cls = 'absolute inset-0 h-full w-full object-cover', sizes = '100vw', loading = 'lazy' } = Astro.props;
+interface Props { src: string; alt: string; pos?: string; w?: number; h?: number; class?: string; sizes?: string; loading?: 'eager' | 'lazy' }
+const { src, alt, pos = '50% 50%', w, h, class: cls = 'absolute inset-0 h-full w-full object-cover', sizes = '100vw', loading = 'lazy' } = Astro.props;
 const isRemote = /^https?:\/\//.test(src);
 const mod = isRemote ? null : photos[`../assets/fotos/${src}`];
 if (!isRemote && !mod) throw new Error(`Photo not found in src/assets/fotos: ${src}`);
+
+const style = `object-position:${pos}`;
+const quality = 85;
+const priority = loading === 'eager' ? 'high' : undefined;
+const widths = [480, 800, 1200, 1600, 2400];
+const remoteOptimised = isRemote && w && h && /^https:\/\/[^/]+\.supabase\.co\//.test(src);
 ---
-{isRemote
-  ? <img src={src} alt={alt} loading={loading} class={cls} style={`object-position:${pos}`} />
-  : <Image src={mod!.default} alt={alt} widths={[480, 800, 1200, 1600, 2400]} sizes={sizes} loading={loading} class={cls} style={`object-position:${pos}`} />}
+{remoteOptimised
+  ? <Image src={src} width={w} height={h} alt={alt} widths={widths.filter((x) => x < w!).concat(w!)} sizes={sizes} quality={quality} loading={loading} fetchpriority={priority} class={cls} style={style} />
+  : isRemote
+    ? <img src={src} alt={alt} loading={loading} fetchpriority={priority} class={cls} style={style} />
+    : <Image src={mod!.default} alt={alt} format="webp" widths={widths} sizes={sizes} quality={quality} loading={loading} fetchpriority={priority} class={cls} style={style} />}

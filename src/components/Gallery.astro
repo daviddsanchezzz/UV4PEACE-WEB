@@ -15,8 +15,9 @@ const slides = await Promise.all(items.map(async (g) => {
   const remote = /^https?:\/\//.test(g.src);
   const mod = remote ? null : photos[`../assets/fotos/${g.src}`];
   if (!remote && !mod) return null;
-  const full = remote ? g.src : (await getImage({ src: mod!.default, width: 2000, format: 'webp' })).src;
-  return { ...g, remote, mod, full };
+  const full = remote ? g.src : (await getImage({ src: mod!.default, width: 2400, format: 'webp', quality: 90 })).src;
+  const optimised = remote && g.w && g.h && /^https:\/\/[^/]+\.supabase\.co\//.test(g.src);
+  return { ...g, remote, mod, full, optimised };
 }));
 const list = slides.filter((s): s is NonNullable<typeof s> => s !== null);
 ---
@@ -25,9 +26,11 @@ const list = slides.filter((s): s is NonNullable<typeof s> => s !== null);
     <div data-track class="flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {list.map((g, i) => (
         <button type="button" data-slide data-index={i} data-full={g.full} data-alt={g.alt} aria-label={`Open photo ${i + 1} of ${list.length}: ${g.alt}`} class="group relative aspect-[4/3] w-[82%] flex-none snap-start overflow-hidden rounded-card bg-placeholder p-0 sm:w-[46%] lg:w-[calc(25%-9px)]">
-          {g.remote
-            ? <img src={g.src} alt={g.alt} loading="lazy" class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]" style={`object-position:${g.pos ?? '50% 50%'}`} />
-            : <Image src={g.mod!.default} alt={g.alt} widths={[480, 800, 1200]} sizes="(min-width:1024px) 320px, (min-width:640px) 46vw, 82vw" loading="lazy" class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]" style={`object-position:${g.pos ?? '50% 50%'}`} />}
+          {g.optimised
+            ? <Image src={g.src} width={g.w!} height={g.h!} alt={g.alt} widths={[480, 800, 1200].filter((x) => x < g.w!)} sizes="(min-width:1024px) 320px, (min-width:640px) 46vw, 82vw" quality={85} loading="lazy" class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]" style={`object-position:${g.pos ?? '50% 50%'}`} />
+            : g.remote
+              ? <img src={g.src} alt={g.alt} loading="lazy" class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]" style={`object-position:${g.pos ?? '50% 50%'}`} />
+              : <Image src={g.mod!.default} alt={g.alt} widths={[480, 800, 1200]} sizes="(min-width:1024px) 320px, (min-width:640px) 46vw, 82vw" quality={85} loading="lazy" class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]" style={`object-position:${g.pos ?? '50% 50%'}`} />}
         </button>
       ))}
     </div>

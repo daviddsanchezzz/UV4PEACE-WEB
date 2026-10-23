@@ -26,15 +26,22 @@ const [x, y] = (value?.pos ?? '50% 25%').split(' ');
 </div>
 
 <script>
-  // Photos are shrunk before upload: phone photos are often 5 MB or more and the site never shows them that large.
-  const MAX_SIDE = 2000;
-  async function shrink(file: File): Promise<Blob> {
+  // A photo that is already a reasonable size is uploaded untouched. A bigger one (phone and camera photos are often
+  // 4000 px and 5 MB or more) is shrunk to 2560 px on the long side and saved as high quality JPEG: the site never shows more.
+  const MAX_SIDE = 2560;
+  const KEEP_BELOW = 3 * 1024 * 1024;
+  async function prepare(file: File): Promise<{ blob: Blob; w: number; h: number }> {
     const bmp = await createImageBitmap(file);
-    const k = Math.min(1, MAX_SIDE / Math.max(bmp.width, bmp.height));
+    const long = Math.max(bmp.width, bmp.height);
+    if (long <= MAX_SIDE && file.size <= KEEP_BELOW) return { blob: file, w: bmp.width, h: bmp.height };
+    const k = Math.min(1, MAX_SIDE / long);
     const c = document.createElement('canvas');
     c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
-    c.getContext('2d')!.drawImage(bmp, 0, 0, c.width, c.height);
-    return new Promise((ok, no) => c.toBlob((b) => (b ? ok(b) : no(new Error('toBlob'))), 'image/jpeg', 0.86));
+    const ctx = c.getContext('2d')!;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(bmp, 0, 0, c.width, c.height);
+    const blob = await new Promise<Blob>((ok, no) => c.toBlob((b) => (b ? ok(b) : no(new Error('toBlob'))), 'image/jpeg', 0.92));
+    return { blob, w: c.width, h: c.height };
   }
 
   function mount(root: HTMLElement) {
@@ -50,7 +57,7 @@ const [x, y] = (value?.pos ?? '50% 25%').split(' ');
     const msg = q('[data-photo-msg]');
     const remove = q<HTMLButtonElement>('[data-photo-remove]');
     const btn = q('[data-photo-btn]');
-    let state: { src: string; alt: string; pos: string } | null = value.value ? JSON.parse(value.value) : null;
+    let state: { src: string; alt: string; pos: string; w?: number; h?: number } | null = value.value ? JSON.parse(value.value) : null;
 
     const sync = () => {
       value.value = state ? JSON.stringify({ ...state, alt: alt.value.trim() }) : '';
@@ -72,12 +79,12 @@ const [x, y] = (value?.pos ?? '50% 25%').split(' ');
       if (!file) return;
       msg.textContent = 'Subiendo…';
       try {
-        const blob = await shrink(file);
-        const fd = new FormData(); fd.append('file', blob, 'foto.jpg');
+        const { blob, w, h } = await prepare(file);
+        const fd = new FormData(); fd.append('file', blob, file.name);
         const res = await fetch('/admin/api/media/upload', { method: 'POST', body: fd });
         const out = await res.json().catch(() => ({}));
         if (!res.ok || !out.url) throw new Error(out.error || 'No se ha podido subir la foto.');
-        state = { src: out.url, alt: alt.value.trim(), pos: state?.pos ?? '50% 25%' };
+        state = { src: out.url, alt: alt.value.trim(), pos: state?.pos ?? '50% 25%', w, h };
         if (dot) { const [x, y] = state.pos.split(' '); dot.style.left = x; dot.style.top = y; }
         msg.textContent = 'Foto subida.';
         draw(); sync();
