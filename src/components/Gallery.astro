@@ -22,7 +22,7 @@ const list = slides.filter((s): s is NonNullable<typeof s> => s !== null);
 ---
 {list.length > 0 && (
   <div data-gallery class="relative">
-    <div data-track tabindex="0" aria-label="Photo gallery" class="flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <div data-track class="flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {list.map((g, i) => (
         <button type="button" data-slide data-index={i} data-full={g.full} data-alt={g.alt} aria-label={`Open photo ${i + 1} of ${list.length}: ${g.alt}`} class="group relative aspect-[4/3] w-[82%] flex-none snap-start overflow-hidden rounded-card bg-placeholder p-0 sm:w-[46%] lg:w-[calc(25%-9px)]">
           {g.remote
@@ -36,13 +36,13 @@ const list = slides.filter((s): s is NonNullable<typeof s> => s !== null);
       <button type="button" data-next aria-label="Next photos" class="grid h-11 w-11 place-items-center rounded-full border border-navy text-navy hover:bg-navy hover:text-white">→</button>
     </div>
 
-    <dialog data-lightbox aria-label="Photo viewer" class="m-0 h-full max-h-none w-full max-w-none bg-transparent p-0 backdrop:bg-[rgba(8,18,32,.97)]">
+    <dialog data-lightbox aria-label="Photo viewer" tabindex="-1" class="outline-none m-0 h-full max-h-none w-full max-w-none bg-transparent p-0 backdrop:bg-[rgba(8,18,32,.97)]">
       <div data-lb-backdrop class="relative grid h-full w-full place-items-center p-4 sm:p-10">
         <img data-lb-img alt="" class="max-h-full max-w-full select-none rounded-md object-contain" />
         <p data-lb-caption class="absolute inset-x-0 bottom-3 px-16 text-center text-sm text-white/80"></p>
-        <button type="button" data-lb-close aria-label="Close" class="absolute right-3 top-3 grid h-11 w-11 place-items-center rounded-full bg-white/15 text-2xl text-white hover:bg-white/30 sm:right-6 sm:top-6">✕</button>
-        <button type="button" data-lb-prev aria-label="Previous photo" class="absolute left-2 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/15 text-xl text-white hover:bg-white/30 sm:left-6">←</button>
-        <button type="button" data-lb-next aria-label="Next photo" class="absolute right-2 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/15 text-xl text-white hover:bg-white/30 sm:right-6">→</button>
+        <button type="button" data-lb-close aria-label="Close" class="absolute right-3 top-3 focus-visible:!outline-white grid h-11 w-11 place-items-center rounded-full bg-white/15 text-2xl text-white hover:bg-white/30 sm:right-6 sm:top-6">✕</button>
+        <button type="button" data-lb-prev aria-label="Previous photo" class="absolute left-2 top-1/2 focus-visible:!outline-white grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/15 text-xl text-white hover:bg-white/30 sm:left-6">←</button>
+        <button type="button" data-lb-next aria-label="Next photo" class="absolute right-2 top-1/2 focus-visible:!outline-white grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/15 text-xl text-white hover:bg-white/30 sm:right-6">→</button>
       </div>
     </dialog>
   </div>
@@ -87,7 +87,7 @@ const list = slides.filter((s): s is NonNullable<typeof s> => s !== null);
       lbImg.alt = s.dataset.alt ?? '';
       caption.textContent = s.dataset.alt ?? '';
     };
-    slides.forEach((s, i) => s.addEventListener('click', () => { show(i); dlg.showModal(); }));
+    slides.forEach((s, i) => s.addEventListener('click', () => { show(i); dlg.showModal(); dlg.focus(); }));
     root.querySelector('[data-lb-close]')!.addEventListener('click', () => dlg.close());
     root.querySelector('[data-lb-next]')!.addEventListener('click', () => show(current + 1));
     root.querySelector('[data-lb-prev]')!.addEventListener('click', () => show(current - 1));
