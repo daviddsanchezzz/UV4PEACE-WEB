@@ -82,7 +82,7 @@ const hasAbout = Boolean(p.intro || p.body || p.vision || p.stats?.length || p.l
   <!-- Editions timeline -->
   {p.editions && (
     <section aria-labelledby="tl-h" class="bg-surface-soft">
-      <div class="wrap section-y-sm pb-28 lg:pb-[clamp(64px,8vw,104px)]">
+      <div class="wrap section-y-sm pb-28 lg:pb-[clamp(36px,4vw,56px)]">
         <h2 id="tl-h" class="t-h2">Editions</h2>
 
         <!-- Mobile: a continuous vertical line with a dot per edition, text to the right. -->
@@ -131,7 +131,7 @@ const hasAbout = Boolean(p.intro || p.body || p.vision || p.stats?.length || p.l
   {p.editions && p.editions.length > 0 && (
     <div data-edition-panels>
       {p.editions.map((e) => (
-        <section aria-label={`Edition ${e.year}`} data-edition-panel={e.year} hidden={e.year !== highlight?.year} class="wrap py-[clamp(72px,9vw,128px)]">
+        <section aria-label={`Edition ${e.year}`} data-edition-panel={e.year} hidden={e.year !== highlight?.year} class="wrap pb-[clamp(72px,9vw,128px)] pt-[clamp(48px,6vw,80px)]">
           <div class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,440px),1fr))] items-start gap-[clamp(40px,5vw,80px)]">
             <div data-reveal>
               <div class="eyebrow text-sky-text">{[e.date, e.venue, e.event].filter(Boolean).join(' · ')}</div>
@@ -167,8 +167,14 @@ const hasAbout = Boolean(p.intro || p.body || p.vision || p.stats?.length || p.l
         buttons.forEach((b) => b.removeAttribute('aria-current'));
         btn.setAttribute('aria-current', 'true');
         panels.forEach((p) => { p.hidden = p.dataset.editionPanel !== year; });
-        const panel = document.querySelector<HTMLElement>(`[data-edition-panel="${year}"]`);
-        panel?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+        const behavior = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+        if (matchMedia('(min-width: 1024px)').matches) {
+          // On a wide screen the year selector stays in view: scroll just far enough to show it with the edition below it.
+          const header = document.querySelector<HTMLElement>('header.sticky')?.offsetHeight ?? 0;
+          window.scrollTo({ top: root.getBoundingClientRect().top + window.scrollY - header - 120, behavior });
+        } else {
+          document.querySelector<HTMLElement>(`[data-edition-panel="${year}"]`)?.scrollIntoView({ behavior, block: 'start' });
+        }
       }));
     });
   </script>
