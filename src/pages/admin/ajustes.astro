@@ -96,42 +96,4 @@ const social = ['Instagram', 'LinkedIn', 'YouTube'].map((label) => ({ label, hre
       <a class="adm-btn" href="/admin/inicio/">Cancelar</a>
     </div>
   </form>
-
-  <section class="adm-card mt-8 flex flex-col gap-4 p-6" id="mover">
-    <h2 class="text-xl font-medium">Mover fotos al almacén</h2>
-    <p class="adm-hint !mt-0">Pasa al almacén de fotos de la web (Supabase) las que todavía están guardadas dentro del código de la web o cargan desde la web antigua, como las de la junta, y actualiza las direcciones. Es seguro repetirlo: si no queda nada por mover, no hace nada.</p>
-    <div class="flex flex-wrap items-center gap-3"><button type="button" id="mover-btn" class="adm-btn">Mover fotos ahora</button></div>
-    <ul id="mover-log" class="adm-hint !mt-0 flex flex-col gap-1" role="status" aria-live="polite"></ul>
-  </section>
-
-  <script>
-    const btn = document.getElementById('mover-btn') as HTMLButtonElement;
-    const log = document.getElementById('mover-log')!;
-    const say = (t: string) => { const li = document.createElement('li'); li.textContent = t; log.appendChild(li); };
-    const call = async (payload: object) => {
-      const res = await fetch('/admin/api/migrar-fotos', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-      const out = await res.json().catch(() => ({ ok: false, error: 'Respuesta no válida.' }));
-      if (!out.ok) throw new Error(out.error || 'Error');
-      return out;
-    };
-    btn.addEventListener('click', async () => {
-      btn.disabled = true; log.replaceChildren();
-      try {
-        const { files } = await call({ action: 'plan' });
-        if (!files.length) { say('No queda ninguna foto por mover.'); return; }
-        say(`${files.length} fotos por mover.`);
-        const map: Record<string, unknown> = {};
-        let n = 0;
-        for (const src of files as string[]) {
-          const r = await call({ action: 'upload', src });
-          map[src] = { url: r.url, w: r.w, h: r.h };
-          say(`${++n} de ${files.length}: ${src.split('/').pop()}`);
-        }
-        const done = await call({ action: 'apply', map });
-        say(`Listo. ${done.changed} registros actualizados.`);
-      } catch (e) {
-        say(`Se ha parado: ${e instanceof Error ? e.message : 'error'}. Puedes volver a pulsar el botón; continuará donde se quedó.`);
-      } finally { btn.disabled = false; }
-    });
-  </script>
 </AdminLayout>
