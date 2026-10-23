@@ -71,7 +71,8 @@
   .card-lift { transition: transform .3s ease, box-shadow .3s ease; }
   /* A whole card can be the <a>; keep only the lift/shadow on hover, not the global link underline. */
   a.card-lift:hover, a.card-lift:hover * { color: inherit; text-decoration: none; }
-  .tabs [aria-selected="true"] { background: var(--color-navy); color: #fff; }
+  .tabs [role="tab"] { color: var(--color-navy); }
+  .tabs [role="tab"][aria-selected="true"] { background: var(--color-navy); color: #fff; }
 
   .menu-dialog { position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; border: 0; padding: 20px 24px 32px; background: var(--color-navy); color: #fff; }
   .menu-dialog[open] { display: flex; flex-direction: column; }

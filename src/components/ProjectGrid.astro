@@ -12,7 +12,7 @@ const tabs = [{ f: 'all', label: 'All' }, { f: 'ongoing', label: 'Ongoing' }, { 
     <div><slot name="heading" /></div>
     <div role="tablist" aria-label="Filter projects" class="tabs flex gap-1.5 rounded-full border border-line p-1.5">
       {tabs.map((t, i) => (
-        <button type="button" role="tab" data-filter={t.f} aria-selected={i === 0 ? 'true' : 'false'} class="cursor-pointer rounded-full px-[18px] py-2.5 text-[13px] font-medium uppercase tracking-[0.14em] text-navy">{t.label}</button>
+        <button type="button" role="tab" data-filter={t.f} aria-selected={i === 0 ? 'true' : 'false'} class="cursor-pointer rounded-full px-[18px] py-2.5 text-[13px] font-medium uppercase tracking-[0.14em]">{t.label}</button>
       ))}
     </div>
   </div>
