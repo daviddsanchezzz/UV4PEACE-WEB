@@ -5,6 +5,7 @@ import Base from '../../layouts/Base.astro';
 import Photo from '../../components/Photo.astro';
 import Button from '../../components/Button.astro';
 import { cleanRich } from '../../lib/richtext';
+import { embedUrl } from '../../lib/video';
 import VideoEmbed from '../../components/VideoEmbed.astro';
 import Gallery from '../../components/Gallery.astro';
 import StatBlock from '../../components/StatBlock.astro';
@@ -137,7 +138,9 @@ const hasAbout = Boolean(p.intro || p.body || p.vision || p.stats?.length || p.l
               <h2 class="t-h1 mt-4">Edition {e.year}</h2>
               <div class="rich body mt-5 text-ink-muted" set:html={cleanRich(e.description) || `<p>Details for the ${e.year} edition will be announced soon.</p>`} />
               {e.credits && <p class="mt-5 text-base">{e.credits}</p>}
-              {e.watchUrl && <Button href={e.watchUrl} variant="secondary" external class="mt-7">Watch the {e.year} performance</Button>}
+              {e.watchUrl && (embedUrl(e.watchUrl)
+                ? <div class="mt-8"><VideoEmbed url={e.watchUrl} title={`${p.title} · Edition ${e.year}`} /></div>
+                : <Button href={e.watchUrl} variant="secondary" external class="mt-7">Watch the {e.year} performance</Button>)}
             </div>
             {e.lineup.length > 0 && (
               <ul class="grid grid-cols-[repeat(auto-fill,minmax(130px,1fr))] gap-x-5 gap-y-7">
