@@ -5,16 +5,47 @@ import { statusLabel, type Project } from '../data/projects';
 interface Props { project: Project }
 const { project: p } = Astro.props;
 const editionCount = p.editions?.filter((e) => !e.upcoming).length ?? 0;
+
+// Without a cover photo the card gets a drawn one: sound waves over staff lines. Each project gets its own
+// wave and shade (taken from its slug), so a grid of them does not look like the same tile repeated.
+let seed = 0;
+for (const ch of p.slug) seed = (seed * 31 + ch.charCodeAt(0)) >>> 0;
+const rnd = (n: number) => ((seed >>> (n * 3)) % 1000) / 1000;
+const shades = [['#1b4a7a', '#0d2542'], ['#1f6aa5', '#12365c'], ['#14365a', '#0a1a2e'], ['#235d8f', '#10294a']];
+const [c1, c2] = shades[seed % shades.length];
+const wave = (base: number, amp: number, period: number, phase: number, amp2 = 0) => {
+  let d = '';
+  for (let x = 0; x <= 400; x += 8) {
+    const y = base + amp * Math.sin((x / period) * Math.PI * 2 + phase) + amp2 * Math.sin((x / (period * 0.43)) * Math.PI * 2 + phase * 1.7);
+    d += `${x === 0 ? 'M' : 'L'}${x} ${y.toFixed(1)} `;
+  }
+  return d;
+};
+const phase = rnd(1) * Math.PI * 2;
+const waves = [
+  { d: wave(190, 16 + rnd(2) * 14, 150 + rnd(3) * 90, phase, 5), stroke: '#E5A236', w: 2, o: 0.95 },
+  { d: wave(190, 22 + rnd(4) * 12, 180 + rnd(5) * 80, phase + 0.9, 7), stroke: '#ffffff', w: 1.4, o: 0.5 },
+  { d: wave(190, 30 + rnd(6) * 12, 210 + rnd(7) * 70, phase + 1.9, 9), stroke: '#8cc4f2', w: 1.2, o: 0.4 },
+];
+const year = p.yearStart?.slice(0, 4);
 ---
 <a href={`/projects/${p.slug}/`} data-reveal data-status={p.status} class="card-lift flex flex-col rounded-card bg-white text-ink hover:text-ink hover:no-underline">
   <div class="relative aspect-[4/3] overflow-hidden rounded-card bg-placeholder">
     {p.cover
       ? <Photo {...p.cover} sizes="(min-width:1024px) 420px, 100vw" />
       : (
-        <div aria-hidden="true" class="absolute inset-0 grid place-items-center bg-[linear-gradient(135deg,#1b4a7a_0%,#14365a_55%,#0d2542_100%)]">
-          <img src="/logos/uv4peace-globo-white.svg" alt="" class="h-[46%] w-auto opacity-[.14]" />
-          {p.yearStart && <span class="absolute bottom-4 right-5 text-[clamp(28px,3vw,40px)] font-light leading-none tracking-[0.04em] text-white/70">{p.yearStart.slice(0, 4)}</span>}
-        </div>
+        <svg aria-hidden="true" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" class="absolute inset-0 h-full w-full">
+          <defs>
+            <linearGradient id={`g-${p.slug}`} x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color={c1} /><stop offset="1" stop-color={c2} /></linearGradient>
+            <radialGradient id={`r-${p.slug}`} cx=".82" cy=".1" r=".7"><stop offset="0" stop-color="#55adef" stop-opacity=".35" /><stop offset="1" stop-color="#55adef" stop-opacity="0" /></radialGradient>
+          </defs>
+          <rect width="400" height="300" fill={`url(#g-${p.slug})`} />
+          <rect width="400" height="300" fill={`url(#r-${p.slug})`} />
+          {[0, 1, 2, 3, 4].map((n) => <line x1="0" x2="400" y1={170 + n * 10} y2={170 + n * 10} stroke="#fff" stroke-opacity=".13" />)}
+          {waves.map((wv) => <path d={wv.d} fill="none" stroke={wv.stroke} stroke-width={wv.w} stroke-opacity={wv.o} stroke-linecap="round" stroke-linejoin="round" />)}
+          <image href="/logos/uv4peace-globo-white.svg" x="318" y="-22" width="120" height="120" opacity=".09" />
+          {year && <text x="22" y="272" fill="#fff" fill-opacity=".92" font-size="46" font-weight="300" letter-spacing="2" font-family="Jost, sans-serif">{year}</text>}
+        </svg>
       )}
     <div class="absolute left-3.5 top-3.5 flex gap-1.5">
       <span class:list={['chip', p.status === 'ongoing' ? 'bg-orange' : 'bg-white']}>{statusLabel[p.status]}</span>
