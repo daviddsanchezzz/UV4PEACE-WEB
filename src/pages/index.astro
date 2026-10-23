@@ -156,9 +156,11 @@ const involve = [
   <!-- Founder -->
   <section aria-labelledby="founder-h" class="bg-navy text-white">
     <div class="mx-auto grid max-w-[1320px] grid-cols-[repeat(auto-fit,minmax(min(100%,440px),1fr))]">
-      <figure class="relative m-0 min-h-[clamp(420px,46vw,680px)] overflow-hidden">
-        <Photo {...founder.photo} sizes="(min-width:1024px) 660px, 100vw" />
-      </figure>
+      {founder.photo && (
+        <figure class="relative m-0 min-h-[clamp(420px,46vw,680px)] overflow-hidden">
+          <Photo {...founder.photo} sizes="(min-width:1024px) 660px, 100vw" />
+        </figure>
+      )}
       <div data-reveal class="flex flex-col justify-center px-[clamp(24px,5vw,88px)] py-[clamp(48px,7vw,104px)]">
         <div id="founder-h" class="eyebrow text-sky">Our founder</div>
         {founder.quote && <blockquote class="mt-6 text-[clamp(26px,2.6vw,36px)] font-light leading-[1.35]">“{founder.quote}”</blockquote>}

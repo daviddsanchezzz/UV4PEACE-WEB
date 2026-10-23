@@ -1,3 +1,5 @@
+import type { ImageRef } from './types';
+
 // Organisation-wide copy and settings. Maps to Phase 2's `profiles`-adjacent config and
 // to env vars (PAYPAL link, newsletter provider) once Supabase is wired up.
 // Empty strings are confirmed-pending fields (never rendered as literal placeholder text).
@@ -50,14 +52,9 @@ export const sdgs = [
 ];
 
 /** Founder bio for the Home and People pages. */
-export const founder = {
+export const founder: { name: string; role: string; quote: string; bio: string; photo?: ImageRef } = {
   name: 'Verónica Sabbag',
   role: 'Founder, United Voices 4 Peace',
   quote: 'By uniting our voices, we spread respect for diversity, mutual understanding and dialogue through the universal language of music and the arts.',
   bio: '',
-  photo: {
-    src: '07-founder-candidata_IMG_5336.jpg',
-    alt: 'Verónica Sabbag presenting Global Women in Music 2026 on stage',
-    pos: '52% 30%',
-  },
 };

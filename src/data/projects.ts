@@ -25,7 +25,7 @@ export interface Documentary {
   title: string;
   text: string;
   trailerUrl: string;
-  poster: ImageRef;
+  poster?: ImageRef;
   festivals: { date: string; name: string; result: string }[];
 }
 
@@ -35,7 +35,7 @@ export interface ProjectPartnerBlock {
   titleAccent: string;
   text: string;
   benefits: string[];
-  photo: ImageRef;
+  photo?: ImageRef;
 }
 
 export interface Project {
@@ -79,16 +79,7 @@ const gwim: Project = {
   city: 'New York',
   summary: 'Celebrating women composers, conductors and the power of music to connect cultures.',
   featured: true,
-  cover: {
-    src: '04-tarjeta-gwim_IMG_5340.jpg',
-    alt: 'Composer Tanyaradzwa Tawengwa performing with the orchestra',
-    pos: '50% 50%',
-  },
-  hero: {
-    src: '12-ficha-gwim-hero_IMG_5429.jpg',
-    alt: 'Global Women in Music 2026 composers and performers on stage at Symphony Space',
-    pos: '50% 70%',
-  },
+  cover: null,
   intro: "Since 2023, United Voices 4 Peace has partnered with the United Nations Symphony Orchestra to bring Global Women in Music to New York in celebration of International Women's Day.",
   body: 'Across the 2023, 2024, 2025 and 2026 editions, the initiative has spotlighted women conductors and composers from around the world, using live orchestral music to advance visibility, representation, peace and cultural dialogue.',
   vision: 'GWIM is a unique platform for peace and empowerment, where women composers and conductors from around the globe can showcase their talent annually, on the global decision-makers stage.',
@@ -148,7 +139,6 @@ const gwim: Project = {
     title: 'Composers Rewriting the Score',
     text: 'Produced during the 2024 edition, the film captures the artists and advocacy behind Global Women in Music. After a March 2025 premiere at Roosevelt House, it continued on the festival circuit.',
     trailerUrl: 'https://bit.ly/4bm7IO7',
-    poster: { src: '19-galeria-escenario_IMG_5325.jpg', alt: 'Wide view of the orchestra on the Symphony Space stage', pos: '50% 60%' },
     festivals: [
       { date: 'Aug 2025', name: 'NY Tri-State International Film Festival', result: 'Award winner' },
       { date: 'Oct 2025', name: 'LA Femme International Film Festival', result: 'Official selection' },
@@ -157,15 +147,6 @@ const gwim: Project = {
       { date: 'May 2026', name: 'Palermo International Film Festival', result: 'Semifinalist' },
     ],
   },
-  gallery: [
-    { src: '13-galeria-ensayo_IMG_5266.jpg', alt: 'Flutist reading the score during the concert', pos: '50% 40%', span: 'big' },
-    { src: '14-galeria-violin_IMG_5269.jpg', alt: 'Violist playing with the orchestra', pos: '55% 40%' },
-    { src: '15-galeria-solista_IMG_5418.jpg', alt: 'Soloist bowing at the front of the stage', pos: '50% 30%', span: 'tall' },
-    { src: '16-galeria-soprano_IMG_5357.jpg', alt: 'Soprano receiving applause from the orchestra', pos: '50% 35%' },
-    { src: '17-galeria-arpa_IMG_5268.jpg', alt: 'Harpist and violinists in the string section', pos: '60% 40%', span: 'wide' },
-    { src: '18-galeria-chelos_IMG_5274.jpg', alt: 'Cellists and double bassists performing', pos: '50% 40%', span: 'wide' },
-    { src: '19-galeria-escenario_IMG_5325.jpg', alt: 'The full orchestra on the Symphony Space stage', pos: '50% 60%' },
-  ],
   partner: {
     eyebrow: 'Partner with us for 2027',
     title: 'Every day is',
@@ -179,7 +160,6 @@ const gwim: Project = {
       '4 VIP seats',
       'VIP treatment with a hospitality desk and a private reception the night before',
     ],
-    photo: { src: '20-partner-backdrop-logos_IMG_5495.jpg', alt: 'Guests at the photocall in front of the GWIM 2026 backdrop with partner logos', pos: '40% 30%' },
   },
 };
 

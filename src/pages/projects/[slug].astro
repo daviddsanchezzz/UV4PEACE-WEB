@@ -247,7 +247,7 @@ const hasAbout = Boolean(p.intro || p.body || p.vision || p.stats?.length || p.l
   {p.partner && (
     <section id="partner" aria-labelledby="p-h" class="bg-navy text-white">
       <div class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,480px),1fr))]">
-        <div data-reveal class="max-w-[680px] justify-self-end px-[clamp(24px,5vw,88px)] py-[clamp(56px,7vw,112px)]">
+        <div data-reveal class:list={['max-w-[680px] px-[clamp(24px,5vw,88px)] py-[clamp(56px,7vw,112px)]', p.partner.photo ? 'justify-self-end' : 'justify-self-center']}>
           <div class="eyebrow text-sky">{p.partner.eyebrow}</div>
           <h2 id="p-h" class="mt-4 text-[clamp(34px,4vw,56px)] font-medium uppercase leading-[1.05] tracking-[0.015em]">{p.partner.title} <span class="text-orange">{p.partner.titleAccent}</span></h2>
           <p class="mt-5 text-xl font-light leading-normal">{p.partner.text}</p>
@@ -259,7 +259,7 @@ const hasAbout = Boolean(p.intro || p.body || p.vision || p.stats?.length || p.l
             <Button href="/donate/" variant="light">Make a donation</Button>
           </div>
         </div>
-        <div class="relative min-h-[clamp(420px,50vw,780px)]"><Photo {...p.partner.photo} sizes="(min-width:1024px) 50vw, 100vw" /></div>
+        {p.partner.photo && <div class="relative min-h-[clamp(420px,50vw,780px)]"><Photo {...p.partner.photo} sizes="(min-width:1024px) 50vw, 100vw" /></div>}
       </div>
     </section>
   )}

@@ -5,7 +5,6 @@ import type { APIRoute } from 'astro';
 import type { ImageMetadata } from 'astro';
 import { createClient } from '../../../lib/supabase';
 import { imageSize } from '../../../lib/imagesize';
-import { founder as founderDefault } from '../../../data/site';
 
 const local = import.meta.glob<{ default: ImageMetadata }>('../../../assets/fotos/*.{jpg,jpeg,png}', { eager: true });
 const byName = new Map(Object.entries(local).map(([k, v]) => [k.split('/').pop()!, v.default]));
@@ -35,7 +34,7 @@ export const POST: APIRoute = async ({ request, cookies, url }) => {
     for (const p of projects.data ?? []) { add(p.cover); add(p.hero); (p.gallery ?? []).forEach(add); add(p.documentary?.poster); add(p.partner_block?.photo); }
     testimonials.data?.forEach((t) => add(t.photo));
     people.data?.forEach((x) => add(x.photo));
-    if (settings.data?.founder) add(settings.data.founder.photo); else if (needsMove(founderDefault.photo.src)) out.push(founderDefault.photo.src);
+    if (settings.data?.founder) add(settings.data.founder.photo);
     return [...new Set(out)];
   };
 
@@ -85,9 +84,9 @@ export const POST: APIRoute = async ({ request, cookies, url }) => {
         changed++;
       }
     }
-    const f = settings.data?.founder ?? { ...founderDefault };
-    const nextFounder = { ...f, photo: swap(f.photo) };
-    if (!same(nextFounder, settings.data?.founder)) {
+    const f = settings.data?.founder;
+    const nextFounder = f ? { ...f, photo: swap(f.photo) } : f;
+    if (f && !same(nextFounder, f)) {
       const { error } = await supabase.from('site_settings').update({ founder: nextFounder }).eq('id', true);
       if (error) return json({ ok: false, error: error.message }, 502);
       changed++;

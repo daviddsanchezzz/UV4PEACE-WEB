@@ -129,7 +129,7 @@ export interface SiteSettings {
   founder: Founder;
 }
 
-export interface Founder { name: string; role: string; quote: string; bio: string; photo: ImageRef }
+export interface Founder { name: string; role: string; quote: string; bio: string; photo?: ImageRef }
 
 const gaId = (v?: string) => (/^G-[A-Z0-9]{4,14}$/.test(String(v ?? '').trim()) ? String(v).trim() : '');
 const mailto = (email: string, subject: string) => `mailto:${email}?subject=${encodeURIComponent(subject)}`;
@@ -146,6 +146,6 @@ export const getSettings = async (db?: Db): Promise<SiteSettings> => {
     partnerMailto: mailto(email, 'Partnership'),
     proposalMailto: mailto(email, 'Project proposal'),
     featuredIn: Array.isArray(x?.featured_in) ? x.featured_in : featuredInDefault,
-    founder: x?.founder ? { ...founderDefault, ...x.founder, photo: x.founder.photo ?? founderDefault.photo } : founderDefault,
+    founder: x?.founder ? { ...founderDefault, ...x.founder } : founderDefault,
   };
 };
