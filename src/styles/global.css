@@ -71,6 +71,9 @@
   .card-lift { transition: transform .3s ease, box-shadow .3s ease; }
   /* A whole card can be the <a>; keep only the lift/shadow on hover, not the global link underline. */
   a.card-lift:hover, a.card-lift:hover * { color: inherit; text-decoration: none; }
+  /* While a photo viewer is open the page behind must not scroll. */
+  html:has(dialog[data-lightbox][open]) { overflow: hidden; }
+
   /* Formatted text from the panel */
   .rich > * + * { margin-top: 1em; }
   .rich h2 { font-size: 1.35em; font-weight: 500; line-height: 1.25; color: var(--color-ink); }
