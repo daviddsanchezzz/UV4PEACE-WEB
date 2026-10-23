@@ -65,8 +65,11 @@ function clean(raw: Obj) {
   }
   const stats = (Array.isArray(raw.stats) ? raw.stats : []).slice(0, 12).map((x: Obj) => ({ n: str(x.n, 40), label: str(x.label, 120) })).filter((x) => x.n && x.label);
 
+  const links = (Array.isArray(raw.links) ? raw.links : []).slice(0, 10).map((x: Obj) => ({ label: str(x.label, 80) || 'Read more', url: url(x.url) })).filter((x) => x.url);
+  if (links.some((x) => !/^https?:\/\/\S+$/i.test(x.url))) throw new Invalid('enlace');
+
   return {
-    stats, stats_note: str(raw.stats_note, 200), partner_block,
+    links, stats, stats_note: str(raw.stats_note, 200), partner_block,
     title, title_accent: str(raw.title_accent, 200), status: str(raw.status), year_start: yearStart, date_label: str(raw.date_label, 100), city: str(raw.city, 120), summary: str(raw.summary, 600),
     featured: Boolean(raw.featured), published: Boolean(raw.published), intro: str(raw.intro, 4000), body: str(raw.body, 8000), vision: str(raw.vision, 4000),
     cover: photo(raw.cover), hero: photo(raw.hero), gallery, documentary, editions,
@@ -97,11 +100,11 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
     for (let n = 2; used.has(target); n++) target = `${base}-${n}`;
   }
   // The partner block is written with a plain update; save_project handles everything else in one transaction.
-  const { partner_block, ...forFunction } = payload;
+  const { partner_block, links, ...forFunction } = payload;
   const { error } = await supabase.rpc('save_project', { p_slug: slug, p: { ...forFunction, slug: target } });
   if (error) { console.error('project save failed', error.message); return err(error.message.includes('save_project') ? 'funcion' : 'guardar'); }
 
-  const { error: pbError } = await supabase.from('projects').update({ partner_block }).eq('slug', target);
+  const { error: pbError } = await supabase.from('projects').update({ partner_block, links }).eq('slug', target);
   if (pbError) { console.error('project partner block failed', pbError.message); return err('guardar'); }
   await supabase.from('content_changes').insert({ table_name: 'projects', row_slug: target, summary: `${slug ? 'Editado' : 'Añadido'} proyecto «${payload.title}»`, user_id: auth.user?.id ?? null, published_at: new Date().toISOString() });
   return redirect(`/admin/proyectos/?ok=${slug ? 'guardado' : 'creado'}`, 303);

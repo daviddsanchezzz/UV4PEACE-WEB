@@ -101,6 +101,21 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
       </div>
     </div>
 
+    <div class="adm-card mt-6 flex flex-col gap-4 p-6" id="links-card">
+      <h2 class="text-xl font-medium">Enlaces para saber más</h2>
+      <p class="adm-hint !mt-0">Artículos, páginas de prensa o vídeos del proyecto. Salen como botones en la página del proyecto. Por ejemplo: «Read more» con la dirección del artículo.</p>
+      <div class="flex flex-col gap-2" id="link-rows">
+        {(p.links ?? []).map((x) => (
+          <div class="grid grid-cols-[1fr_auto] gap-2 sm:grid-cols-[200px_1fr_auto]" data-link-row>
+            <input class="adm-input col-span-2 sm:col-span-1" data-ll value={x.label} aria-label="Texto del botón" placeholder="Read more" />
+            <input class="adm-input" data-lu value={x.url} aria-label="Enlace" placeholder="https://" />
+            <button type="button" class="adm-btn !min-h-[46px] !px-3" data-link-remove aria-label="Quitar enlace">✕</button>
+          </div>
+        ))}
+      </div>
+      <button type="button" class="adm-btn self-start" id="link-add">+ Añadir enlace</button>
+    </div>
+
     <div class="adm-card mt-6 flex flex-col gap-4 p-6" id="stats-card">
       <h2 class="text-xl font-medium">Cifras del proyecto</h2>
       <p class="adm-hint !mt-0">Los números que aparecen en la página del proyecto. Escribe el valor como debe verse, por ejemplo «2,400» o «200+». Si no añades ninguna, el bloque no se muestra.</p>
@@ -331,6 +346,17 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
       if (b) { b.closest('[data-gal]')!.remove(); galEmpty(); }
     });
 
+    // Links to read more
+    const linkRows = $('#link-rows');
+    $('#link-add').addEventListener('click', () => {
+      const row = document.createElement('div');
+      row.className = 'grid grid-cols-[1fr_auto] gap-2 sm:grid-cols-[200px_1fr_auto]';
+      row.setAttribute('data-link-row', '');
+      row.innerHTML = '<input class="adm-input col-span-2 sm:col-span-1" data-ll value="Read more" aria-label="Texto del botón" placeholder="Read more" /><input class="adm-input" data-lu aria-label="Enlace" placeholder="https://" /><button type="button" class="adm-btn !min-h-[46px] !px-3" data-link-remove aria-label="Quitar enlace">✕</button>';
+      linkRows.appendChild(row); row.querySelector<HTMLInputElement>('[data-lu]')?.focus();
+    });
+    linkRows.addEventListener('click', (e) => { (e.target as HTMLElement).closest('[data-link-remove]')?.closest('[data-link-row]')?.remove(); });
+
     // Project figures
     const statRows = $('#stat-rows');
     $('#stat-add').addEventListener('click', () => {
@@ -368,6 +394,7 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
       d.poster = photo($('#doc'));
       d.festivals = all('[data-fest]', fests).map((r) => ({ date: $<HTMLInputElement>('[data-ft="date"]', r).value, name: $<HTMLInputElement>('[data-ft="name"]', r).value, result: $<HTMLInputElement>('[data-ft="result"]', r).value }));
       f.documentary = d;
+      f.links = all('[data-link-row]', linkRows).map((r) => ({ label: $<HTMLInputElement>('[data-ll]', r).value, url: $<HTMLInputElement>('[data-lu]', r).value }));
       f.stats = all('[data-stat]', statRows).map((r) => ({ n: $<HTMLInputElement>('[data-sn]', r).value, label: $<HTMLInputElement>('[data-sl]', r).value }));
       const pbo: Record<string, unknown> = {};
       all<HTMLInputElement>('[data-pb]').forEach((el) => { pbo[el.dataset.pb!] = el.value; });

@@ -25,7 +25,7 @@ const projectQuotes = testimonials.filter((t) => t.published && t.project === p.
 // The most recent non-upcoming edition becomes the highlighted edition on the page.
 const heldEditions = (p.editions ?? []).filter((e) => !e.upcoming);
 const highlight = heldEditions[heldEditions.length - 1];
-const hasAbout = Boolean(p.intro || p.body || p.vision || p.stats?.length);
+const hasAbout = Boolean(p.intro || p.body || p.vision || p.stats?.length || p.links?.length);
 ---
 <Base title={p.title} description={p.summary} current="projects">
   <!-- Hero -->
@@ -51,6 +51,11 @@ const hasAbout = Boolean(p.intro || p.body || p.vision || p.stats?.length);
           <div class="eyebrow text-sky-text">About the project</div>
           {p.intro && <p class="mt-5 text-[clamp(22px,2vw,26px)] font-light leading-normal [text-wrap:pretty]">{p.intro}</p>}
           {p.body && p.body.split(/\n\s*\n/).map((para) => <p class:list={['body text-ink-muted', p.intro ? 'mt-5' : 'mt-5 text-lg']}>{para}</p>)}
+          {p.links?.length && (
+            <div class="mt-8 flex flex-wrap gap-3">
+              {p.links.map((l) => <Button href={l.url} variant="secondary" external>{l.label}</Button>)}
+            </div>
+          )}
         </div>
         {p.vision && (
           <div data-reveal class="rounded-card bg-surface-soft p-[clamp(28px,3vw,44px)]">
