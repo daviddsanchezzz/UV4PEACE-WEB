@@ -1,0 +1,107 @@
+---
+// Photo gallery: a strip that moves by itself, a few photos visible at a time (one big on phones).
+// Click or tap opens the whole photo; arrows, swipe and Esc work there. Motion stops on hover, touch, focus
+// and for people who ask their system to reduce motion.
+import { Image, getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import type { ImageRef } from '../data/types';
+
+const photos = import.meta.glob<{ default: ImageMetadata }>('../assets/fotos/*.{jpg,jpeg,png}', { eager: true });
+
+interface Props { items: ImageRef[] }
+const { items } = Astro.props;
+
+const slides = await Promise.all(items.map(async (g) => {
+  const remote = /^https?:\/\//.test(g.src);
+  const mod = remote ? null : photos[`../assets/fotos/${g.src}`];
+  if (!remote && !mod) return null;
+  const full = remote ? g.src : (await getImage({ src: mod!.default, width: 2000, format: 'webp' })).src;
+  return { ...g, remote, mod, full };
+}));
+const list = slides.filter((s): s is NonNullable<typeof s> => s !== null);
+---
+{list.length > 0 && (
+  <div data-gallery class="relative">
+    <div data-track tabindex="0" aria-label="Photo gallery" class="flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      {list.map((g, i) => (
+        <button type="button" data-slide data-index={i} data-full={g.full} data-alt={g.alt} aria-label={`Open photo ${i + 1} of ${list.length}: ${g.alt}`} class="group relative aspect-[4/3] w-[82%] flex-none snap-start overflow-hidden rounded-card bg-placeholder p-0 sm:w-[46%] lg:w-[calc(25%-9px)]">
+          {g.remote
+            ? <img src={g.src} alt={g.alt} loading="lazy" class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]" style={`object-position:${g.pos ?? '50% 50%'}`} />
+            : <Image src={g.mod!.default} alt={g.alt} widths={[480, 800, 1200]} sizes="(min-width:1024px) 320px, (min-width:640px) 46vw, 82vw" loading="lazy" class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]" style={`object-position:${g.pos ?? '50% 50%'}`} />}
+        </button>
+      ))}
+    </div>
+    <div class="mt-4 hidden justify-end gap-2 sm:flex">
+      <button type="button" data-prev aria-label="Previous photos" class="grid h-11 w-11 place-items-center rounded-full border border-navy text-navy hover:bg-navy hover:text-white">←</button>
+      <button type="button" data-next aria-label="Next photos" class="grid h-11 w-11 place-items-center rounded-full border border-navy text-navy hover:bg-navy hover:text-white">→</button>
+    </div>
+
+    <dialog data-lightbox aria-label="Photo viewer" class="m-0 h-full max-h-none w-full max-w-none bg-transparent p-0 backdrop:bg-[rgba(8,18,32,.97)]">
+      <div data-lb-backdrop class="relative grid h-full w-full place-items-center p-4 sm:p-10">
+        <img data-lb-img alt="" class="max-h-full max-w-full select-none rounded-md object-contain" />
+        <p data-lb-caption class="absolute inset-x-0 bottom-3 px-16 text-center text-sm text-white/80"></p>
+        <button type="button" data-lb-close aria-label="Close" class="absolute right-3 top-3 grid h-11 w-11 place-items-center rounded-full bg-white/15 text-2xl text-white hover:bg-white/30 sm:right-6 sm:top-6">✕</button>
+        <button type="button" data-lb-prev aria-label="Previous photo" class="absolute left-2 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/15 text-xl text-white hover:bg-white/30 sm:left-6">←</button>
+        <button type="button" data-lb-next aria-label="Next photo" class="absolute right-2 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/15 text-xl text-white hover:bg-white/30 sm:right-6">→</button>
+      </div>
+    </dialog>
+  </div>
+)}
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-gallery]').forEach((root) => {
+    const track = root.querySelector<HTMLElement>('[data-track]')!;
+    const slides = [...root.querySelectorAll<HTMLElement>('[data-slide]')];
+    const dlg = root.querySelector<HTMLDialogElement>('[data-lightbox]')!;
+    const lbImg = root.querySelector<HTMLImageElement>('[data-lb-img]')!;
+    const caption = root.querySelector<HTMLElement>('[data-lb-caption]')!;
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // --- strip: move by one photo, wrap around at the end
+    const step = () => (slides[1] ? slides[1].offsetLeft - slides[0].offsetLeft : track.clientWidth);
+    const atEnd = () => track.scrollLeft + track.clientWidth >= track.scrollWidth - 4;
+    const move = (dir: 1 | -1) => {
+      if (dir === 1 && atEnd()) track.scrollTo({ left: 0 });
+      else if (dir === -1 && track.scrollLeft <= 4) track.scrollTo({ left: track.scrollWidth });
+      else track.scrollBy({ left: dir * step() });
+    };
+    root.querySelector('[data-next]')?.addEventListener('click', () => move(1));
+    root.querySelector('[data-prev]')?.addEventListener('click', () => move(-1));
+
+    let paused = false;
+    let visible = true;
+    const hold = () => { paused = true; };
+    const release = () => { paused = false; };
+    ['pointerenter', 'focusin', 'touchstart'].forEach((e) => track.addEventListener(e, hold, { passive: true }));
+    ['pointerleave', 'focusout'].forEach((e) => track.addEventListener(e, release));
+    track.addEventListener('touchend', () => setTimeout(release, 4000), { passive: true });
+    new IntersectionObserver(([en]) => { visible = en.isIntersecting; }).observe(root);
+    if (!reduce) setInterval(() => { if (!paused && visible && !dlg.open && !document.hidden) move(1); }, 3500);
+
+    // --- full-size viewer
+    let current = 0;
+    const show = (i: number) => {
+      current = (i + slides.length) % slides.length;
+      const s = slides[current];
+      lbImg.src = s.dataset.full!;
+      lbImg.alt = s.dataset.alt ?? '';
+      caption.textContent = s.dataset.alt ?? '';
+    };
+    slides.forEach((s, i) => s.addEventListener('click', () => { show(i); dlg.showModal(); }));
+    root.querySelector('[data-lb-close]')!.addEventListener('click', () => dlg.close());
+    root.querySelector('[data-lb-next]')!.addEventListener('click', () => show(current + 1));
+    root.querySelector('[data-lb-prev]')!.addEventListener('click', () => show(current - 1));
+    dlg.addEventListener('click', (e) => { if ((e.target as HTMLElement).matches('[data-lb-backdrop]')) dlg.close(); });
+    dlg.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') show(current + 1);
+      if (e.key === 'ArrowLeft') show(current - 1);
+    });
+    dlg.addEventListener('close', () => { track.scrollTo({ left: slides[current].offsetLeft - track.offsetLeft, behavior: 'auto' }); });
+    let x0 = 0;
+    dlg.addEventListener('pointerdown', (e) => { x0 = e.clientX; });
+    dlg.addEventListener('pointerup', (e) => {
+      const d = e.clientX - x0;
+      if (Math.abs(d) > 50 && (e.target as HTMLElement).matches('[data-lb-img], [data-lb-backdrop]')) show(current + (d < 0 ? 1 : -1));
+    });
+  });
+</script>

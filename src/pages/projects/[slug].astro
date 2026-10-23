@@ -5,6 +5,7 @@ import Base from '../../layouts/Base.astro';
 import Photo from '../../components/Photo.astro';
 import Placeholder from '../../components/Placeholder.astro';
 import Button from '../../components/Button.astro';
+import Gallery from '../../components/Gallery.astro';
 import StatBlock from '../../components/StatBlock.astro';
 import TestimonialCard from '../../components/TestimonialCard.astro';
 import PersonCard from '../../components/PersonCard.astro';
@@ -193,13 +194,7 @@ const highlight = heldEditions[heldEditions.length - 1];
   {p.gallery && (
     <section aria-labelledby="gal-h" class="wrap py-[clamp(72px,9vw,128px)]">
       <h2 id="gal-h" class="t-h2">Gallery</h2>
-      <div class="mt-9 grid grid-flow-dense auto-rows-[clamp(200px,20vw,280px)] grid-cols-[repeat(auto-fit,minmax(min(100%,260px),1fr))] gap-3">
-        {p.gallery.map((g) => (
-          <figure data-reveal class="group relative m-0 overflow-hidden rounded-card bg-placeholder">
-            <Photo src={g.src} alt={g.alt} pos={g.pos} sizes="(min-width:1024px) 640px, 100vw" class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
-          </figure>
-        ))}
-      </div>
+      <div class="mt-9"><Gallery items={p.gallery} /></div>
     </section>
   )}
 
