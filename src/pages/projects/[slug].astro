@@ -142,10 +142,19 @@ const hasAbout = Boolean(p.intro || p.body || p.vision || p.stats?.length || p.l
                 ? <div class="mt-8"><VideoEmbed url={e.watchUrl} title={`${p.title} · Edition ${e.year}`} /></div>
                 : <Button href={e.watchUrl} variant="secondary" external class="mt-7">Watch the {e.year} performance</Button>)}
             </div>
-            {e.lineup.length > 0 && (
-              <ul class="grid grid-cols-[repeat(auto-fill,minmax(130px,1fr))] gap-x-5 gap-y-7">
-                {e.lineup.map((m) => <PersonCard name={m.name} role={m.role} photo={m.person ? peopleBySlug.get(m.person)?.photo : null} />)}
-              </ul>
+            {(e.photo || e.lineup.length > 0) && (
+              <div class="flex flex-col gap-10">
+                {e.photo && (
+                  <figure data-reveal class="relative m-0 aspect-[4/3] overflow-hidden rounded-card bg-placeholder">
+                    <Photo {...e.photo} sizes="(min-width:1024px) 600px, 100vw" />
+                  </figure>
+                )}
+                {e.lineup.length > 0 && (
+                  <ul class="grid grid-cols-[repeat(auto-fill,minmax(130px,1fr))] gap-x-5 gap-y-7">
+                    {e.lineup.map((m) => <PersonCard name={m.name} role={m.role} photo={m.person ? peopleBySlug.get(m.person)?.photo : null} />)}
+                  </ul>
+                )}
+              </div>
             )}
           </div>
         </section>

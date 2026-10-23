@@ -34,7 +34,7 @@ function clean(raw: Obj) {
     if (!/^\d{4}$/.test(year)) throw new Invalid('anio');
     if (!okUrl(watch)) throw new Invalid('enlace');
     const lineup = (Array.isArray(x.lineup) ? x.lineup : []).slice(0, 200).map((m: Obj) => ({ person: str(m.person, 80), name: str(m.name, 200), role: str(m.role, 200) })).filter((m) => m.name || m.person);
-    return { year, date_label: str(x.date_label, 100), venue: str(x.venue, 200), event: str(x.event, 200), conductor: str(x.conductor, 200), description: cleanRich(str(x.description, 20000)), watch_url: watch, upcoming: Boolean(x.upcoming), lineup };
+    return { year, photo: photo(x.photo), date_label: str(x.date_label, 100), venue: str(x.venue, 200), event: str(x.event, 200), conductor: str(x.conductor, 200), description: cleanRich(str(x.description, 20000)), watch_url: watch, upcoming: Boolean(x.upcoming), lineup };
   });
   if (new Set(editions.map((e) => e.year)).size !== editions.length) throw new Invalid('anio');
 
@@ -109,6 +109,14 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
   const { error } = await supabase.rpc('save_project', { p_slug: slug, p: { ...forFunction, slug: target } });
   if (error) { console.error('project save failed', error.message); return err(error.message.includes('save_project') ? 'funcion' : 'guardar'); }
 
+  // The edition photos are written with plain updates (save_project does not know that column).
+  const { data: saved } = await supabase.from('projects').select('id').eq('slug', target).maybeSingle();
+  if (saved) {
+    for (const ed of payload.editions) {
+      const { error: phError } = await supabase.from('editions').update({ photo: ed.photo }).eq('project_id', saved.id).eq('year', ed.year);
+      if (phError) { console.error('edition photo failed', phError.message); return err('guardar'); }
+    }
+  }
   const { error: pbError } = await supabase.from('projects').update({ partner_block, links, videos }).eq('slug', target);
   if (pbError) { console.error('project partner block failed', pbError.message); return err('guardar'); }
   await supabase.from('content_changes').insert({ table_name: 'projects', row_slug: target, summary: `${slug ? 'Editado' : 'Añadido'} proyecto «${payload.title}»`, user_id: auth.user?.id ?? null, published_at: new Date().toISOString() });

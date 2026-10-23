@@ -17,6 +17,8 @@ export interface Edition {
   lineup: PersonRef[];
   watchUrl: string;
   upcoming?: boolean;
+  /** Featured photo of the edition, shown beside its text. */
+  photo?: ImageRef;
 }
 
 export interface Documentary {

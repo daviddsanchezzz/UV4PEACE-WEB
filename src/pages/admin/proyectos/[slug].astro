@@ -307,7 +307,8 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
       holder.innerHTML = ($('#tpl-edition') as HTMLTemplateElement).innerHTML.replaceAll('desc-new', `desc-${key}`);
       const f = holder.firstElementChild as HTMLElement;
       f.dataset.edform = key; forms.appendChild(f);
-      (window as unknown as { uvRte: (c: ParentNode) => void }).uvRte(f);
+      (window as unknown as { uvRte: (c: ParentNode) => void; uvPhotos: (c: ParentNode) => void }).uvRte(f);
+      (window as unknown as { uvPhotos: (c: ParentNode) => void }).uvPhotos(f);
       const b = document.createElement('button');
       b.type = 'button'; b.className = 'adm-ed'; b.dataset.ed = key;
       b.innerHTML = '<span class="font-medium" data-ed-label>Nueva</span><span class="text-sm opacity-80">Edición nueva</span>';
@@ -466,6 +467,7 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
       f.editions = all('[data-edform]', forms).map((ef) => {
         const o: Record<string, unknown> = {};
         all<HTMLInputElement>('[data-e]', ef).forEach((el) => { o[el.dataset.e!] = el.type === 'checkbox' ? el.checked : el.value; });
+        o.photo = photo($('[data-ed-photo]', ef));
         o.lineup = all('[data-member]', ef).map((m) => { const n = $<HTMLInputElement>('[data-m="name"]', m); return { person: n.dataset.person ?? '', name: n.value, role: $<HTMLInputElement>('[data-m="role"]', m).value }; });
         return o;
       });

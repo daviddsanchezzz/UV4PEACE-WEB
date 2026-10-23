@@ -88,7 +88,7 @@ export const getProjects = async (db?: Db): Promise<Project[]> => {
     lineupOf.set(l.edition_id, [...(lineupOf.get(l.edition_id) ?? []), { name: who?.name ?? l.name, role: l.role, person: who?.slug, order: l.sort_order }]);
   }
   return pr.map((x): Project => {
-    const editions: Edition[] = ed.filter((e) => e.project_id === x.id).map((e) => ({ year: e.year, number: e.number, date: e.date_label, venue: e.venue, event: e.event, conductor: e.conductor, description: e.description, credits: e.credits ?? undefined, lineup: (lineupOf.get(e.id) ?? []).sort((a, b) => a.order - b.order).map(({ order, ...m }) => m), watchUrl: e.watch_url, upcoming: e.upcoming || undefined }));
+    const editions: Edition[] = ed.filter((e) => e.project_id === x.id).map((e) => ({ year: e.year, number: e.number, date: e.date_label, venue: e.venue, event: e.event, conductor: e.conductor, description: e.description, credits: e.credits ?? undefined, lineup: (lineupOf.get(e.id) ?? []).sort((a, b) => a.order - b.order).map(({ order, ...m }) => m), watchUrl: e.watch_url, upcoming: e.upcoming || undefined, photo: e.photo ?? undefined }));
     return {
       slug: x.slug, title: x.title, titleAccent: x.title_accent ?? undefined, status: x.status, yearStart: x.year_start, dateLabel: x.date_label, city: x.city, summary: x.summary,
       featured: x.featured, cover: x.cover, coverHint: x.cover_hint ?? undefined, hero: x.hero ?? undefined, intro: x.intro ?? undefined, body: x.body ?? undefined, vision: x.vision ?? undefined,
