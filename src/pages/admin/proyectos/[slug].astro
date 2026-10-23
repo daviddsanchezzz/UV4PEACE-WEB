@@ -21,7 +21,7 @@ const doc = p.documentary;
 const pb = p.partner;
 const errors: Record<string, string> = {
   faltan: 'Faltan el título o el estado.', mes: 'El mes de inicio debe tener el formato AAAA-MM, por ejemplo 2027-03.', anio: 'Cada edición necesita un año de 4 cifras, sin repetir.',
-  enlace: 'Los enlaces deben empezar por https://', foto: 'Alguna foto no es válida. Súbela de nuevo.', guardar: 'No se pudo guardar. Inténtalo de nuevo en un momento.',
+  enlace: 'Los enlaces deben empezar por https://', video: 'Los vídeos deben ser enlaces de YouTube o Vimeo.', foto: 'Alguna foto no es válida. Súbela de nuevo.', guardar: 'No se pudo guardar. Inténtalo de nuevo en un momento.',
   funcion: 'La base de datos aún no tiene activada la función de guardado de proyectos. Avisa a quien mantiene la web.', quitar: 'No se pudo quitar. Inténtalo de nuevo en un momento.',
 };
 const error = errors[Astro.url.searchParams.get('error') ?? ''];
@@ -99,6 +99,21 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
         <label class="adm-label" for="vision">Visión</label>
         <textarea id="vision" data-f="vision" class="adm-input">{p.vision ?? ''}</textarea>
       </div>
+    </div>
+
+    <div class="adm-card mt-6 flex flex-col gap-4 p-6" id="videos-card">
+      <h2 class="text-xl font-medium">Vídeos</h2>
+      <p class="adm-hint !mt-0">Pega la dirección de un vídeo de YouTube o Vimeo. Saldrá en la página del proyecto como un reproductor, que solo se carga cuando la persona pulsa play.</p>
+      <div class="flex flex-col gap-2" id="video-rows">
+        {(p.videos ?? []).map((x) => (
+          <div class="grid grid-cols-[1fr_auto] gap-2 sm:grid-cols-[240px_1fr_auto]" data-video-row>
+            <input class="adm-input col-span-2 sm:col-span-1" data-vt value={x.title} aria-label="Título del vídeo" placeholder="Título (opcional)" />
+            <input class="adm-input" data-vu value={x.url} aria-label="Dirección del vídeo" placeholder="https://www.youtube.com/watch?v=…" />
+            <button type="button" class="adm-btn !min-h-[46px] !px-3" data-video-remove aria-label="Quitar vídeo">✕</button>
+          </div>
+        ))}
+      </div>
+      <button type="button" class="adm-btn self-start" id="video-add">+ Añadir vídeo</button>
     </div>
 
     <div class="adm-card mt-6 flex flex-col gap-4 p-6" id="links-card">
@@ -346,6 +361,17 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
       if (b) { b.closest('[data-gal]')!.remove(); galEmpty(); }
     });
 
+    // Videos
+    const videoRows = $('#video-rows');
+    $('#video-add').addEventListener('click', () => {
+      const row = document.createElement('div');
+      row.className = 'grid grid-cols-[1fr_auto] gap-2 sm:grid-cols-[240px_1fr_auto]';
+      row.setAttribute('data-video-row', '');
+      row.innerHTML = '<input class="adm-input col-span-2 sm:col-span-1" data-vt aria-label="Título del vídeo" placeholder="Título (opcional)" /><input class="adm-input" data-vu aria-label="Dirección del vídeo" placeholder="https://www.youtube.com/watch?v=…" /><button type="button" class="adm-btn !min-h-[46px] !px-3" data-video-remove aria-label="Quitar vídeo">✕</button>';
+      videoRows.appendChild(row); row.querySelector<HTMLInputElement>('[data-vu]')?.focus();
+    });
+    videoRows.addEventListener('click', (e) => { (e.target as HTMLElement).closest('[data-video-remove]')?.closest('[data-video-row]')?.remove(); });
+
     // Links to read more
     const linkRows = $('#link-rows');
     $('#link-add').addEventListener('click', () => {
@@ -394,6 +420,7 @@ const error = errors[Astro.url.searchParams.get('error') ?? ''];
       d.poster = photo($('#doc'));
       d.festivals = all('[data-fest]', fests).map((r) => ({ date: $<HTMLInputElement>('[data-ft="date"]', r).value, name: $<HTMLInputElement>('[data-ft="name"]', r).value, result: $<HTMLInputElement>('[data-ft="result"]', r).value }));
       f.documentary = d;
+      f.videos = all('[data-video-row]', videoRows).map((r) => ({ title: $<HTMLInputElement>('[data-vt]', r).value, url: $<HTMLInputElement>('[data-vu]', r).value }));
       f.links = all('[data-link-row]', linkRows).map((r) => ({ label: $<HTMLInputElement>('[data-ll]', r).value, url: $<HTMLInputElement>('[data-lu]', r).value }));
       f.stats = all('[data-stat]', statRows).map((r) => ({ n: $<HTMLInputElement>('[data-sn]', r).value, label: $<HTMLInputElement>('[data-sl]', r).value }));
       const pbo: Record<string, unknown> = {};

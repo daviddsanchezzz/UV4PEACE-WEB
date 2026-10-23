@@ -1,0 +1,36 @@
+---
+// Video player that loads only after a click, so YouTube or Vimeo get no visit data before the visitor asks for it.
+import { embedUrl } from '../lib/video';
+
+interface Props { url: string; title?: string }
+const { url, title = '' } = Astro.props;
+const src = embedUrl(url);
+---
+{src && (
+  <div data-video data-src={src} class="relative aspect-video w-full overflow-hidden rounded-card bg-navy-deep">
+    <button type="button" data-video-play aria-label={`Play video${title ? `: ${title}` : ''}`} class="group absolute inset-0 grid place-items-center bg-[linear-gradient(135deg,#1b4a7a_0%,#14365a_55%,#0d2542_100%)] p-6 text-center text-white">
+      <span class="flex flex-col items-center gap-5">
+        <span class="grid h-[72px] w-[72px] place-items-center rounded-full bg-white shadow-[0_10px_30px_rgba(0,0,0,.25)] transition-transform group-hover:scale-105">
+          <span class="ml-1 h-0 w-0 border-y-[11px] border-l-[17px] border-y-transparent border-l-orange"></span>
+        </span>
+        {title && <span class="max-w-[520px] text-lg font-medium leading-snug">{title}</span>}
+        <span class="text-xs uppercase tracking-[0.14em] text-white/70">Plays on YouTube or Vimeo</span>
+      </span>
+    </button>
+  </div>
+)}
+
+<script>
+  document.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLElement>('[data-video-play]');
+    if (!btn) return;
+    const box = btn.closest<HTMLElement>('[data-video]')!;
+    const frame = document.createElement('iframe');
+    frame.src = box.dataset.src!;
+    frame.title = btn.getAttribute('aria-label')?.replace('Play video', 'Video') ?? 'Video';
+    frame.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    frame.allowFullscreen = true;
+    frame.className = 'absolute inset-0 h-full w-full border-0';
+    box.replaceChildren(frame);
+  });
+</script>

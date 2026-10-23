@@ -61,6 +61,8 @@ export interface Project {
   partner?: ProjectPartnerBlock;
   /** Links to read more (article, press page, video): shown as buttons on the project page. */
   links?: { label: string; url: string }[];
+  /** YouTube or Vimeo videos, shown as players on the project page. */
+  videos?: { title: string; url: string }[];
   /** Set by the database; hidden rows only reach the admin. */
   published?: boolean;
 }

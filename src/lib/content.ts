@@ -92,7 +92,7 @@ export const getProjects = async (db?: Db): Promise<Project[]> => {
     return {
       slug: x.slug, title: x.title, titleAccent: x.title_accent ?? undefined, status: x.status, yearStart: x.year_start, dateLabel: x.date_label, city: x.city, summary: x.summary,
       featured: x.featured, cover: x.cover, coverHint: x.cover_hint ?? undefined, hero: x.hero ?? undefined, intro: x.intro ?? undefined, body: x.body ?? undefined, vision: x.vision ?? undefined,
-      stats: x.stats ?? undefined, statsNote: x.stats_note ?? undefined, editions: editions.length ? editions : undefined, documentary: x.documentary ?? undefined, gallery: x.gallery ?? undefined, partner: x.partner_block ?? undefined, links: x.links?.length ? x.links : undefined, published: x.published,
+      stats: x.stats ?? undefined, statsNote: x.stats_note ?? undefined, editions: editions.length ? editions : undefined, documentary: x.documentary ?? undefined, gallery: x.gallery ?? undefined, partner: x.partner_block ?? undefined, links: x.links?.length ? x.links : undefined, videos: x.videos?.length ? x.videos : undefined, published: x.published,
     };
   });
 };
