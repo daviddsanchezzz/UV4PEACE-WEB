@@ -34,10 +34,24 @@ export const projectsPageCurrent: ClassicProject[] = [
     id: 'create-summit', title: 'Create!Summit – 2022', video: `${WP}/2022/11/UPD-Veronica_1920x1080.mp4`,
     paragraphs: [
       '**UV4PEACE** is proud to have co-hosted the pilot virtual Create!Summit – 2022, held online on October 22nd on an initiative of Artists&Angels.',
-      'The impactful results in numbers: **18 speakers | 8 timezones | 800 guests | 7 hours of quality content | 3 panels | 2 workshops | 1 keynote | 1111 Hz of great vibes | 1 Arts Manifesto | 1 ArtTech Council**',
       'We discussed important topics such as the healing power of arts, boosting mental health through the art, how arts, artists and art forms drive creative thinking, human innovation and influence social change, as well as the amalgamation of arts and the New Age tech: metaverse, NFTs, DeFi and other.Stay tuned for the upcoming Arts Manifesto of the New Age, the formation of the ArtTech Council and all the wisdom of the amazing Create!Summit hero speakers: scholars, scientists, business executives, film and opera directors, actors, creatives and innovators working on the intersection of arts and technology.',
       '**[Read more](https://www.createsummit.art/)**',
     ],
+    stats: {
+      title: 'The impactful results in numbers', after: 0,
+      items: [
+        { value: '18', label: 'speakers' },
+        { value: '8', label: 'timezones' },
+        { value: '800', label: 'guests' },
+        { value: '7', label: 'hours of quality content' },
+        { value: '3', label: 'panels' },
+        { value: '2', label: 'workshops' },
+        { value: '1', label: 'keynote' },
+        { value: '1111 Hz', label: 'of great vibes' },
+        { value: '1', label: 'Arts Manifesto' },
+        { value: '1', label: 'ArtTech Council' },
+      ],
+    },
   },
   {
     id: 'afghan-women', title: '“Afghan Women, Human Rights & the transformative power of the Arts”',

@@ -42,8 +42,8 @@ export interface ClassicProject {
   image?: string;
   images?: string[];
   photo?: 'gwim-2026' | 'gwim-2025' | 'gwim-2023' | 'doc';
-  /** Figures shown as a small grid under the paragraphs. Inserted before the last paragraph. */
-  stats?: { title: string; items: { value: string; label: string }[] };
+  /** Figures shown as a small grid, inserted after paragraph number `after` (from 0). */
+  stats?: { title: string; after: number; items: { value: string; label: string }[] };
 }
 
 export const currentProjects: ClassicProject[] = [
@@ -81,7 +81,7 @@ export const currentProjects: ClassicProject[] = [
       '**In order to raise awareness on this initiative, a related documentary was produced following the 2024 concert. WATCH THE TRAILER HERE** [https://bit.ly/3YwgV0i](https://bit.ly/3YwgV0i)',
     ],
     stats: {
-      title: 'Our success in numbers',
+      title: 'Our success in numbers', after: 2,
       items: [
         { value: '1200', label: 'attendees' },
         { value: '90 × 2', label: 'musicians' },
@@ -96,9 +96,23 @@ export const currentProjects: ClassicProject[] = [
     id: 'create-summit', title: 'Create!Summit – 2022', video: `${WP}/2022/11/UPD-Veronica_1920x1080.mp4`,
     paragraphs: [
       '**UV4PEACE** is proud to have co-hosted the pilot virtual Create!Summit – 2022, held on October 22nd on an initiative of Artists&Angels.',
-      'The impactful results in numbers: **18 speakers | 8 timezones | 800 guests | 7 hours of quality content | 3 panels | 2 workshops | 1 keynote | 1111 Hz of great vibes | 1 Arts Manifesto | 1 ArtTech Council**',
       'We discussed important topics such as the healing power of arts, enhancing mental health through arts, how arts, artists and art forms drive creative thinking, human innovation and influence social change, as well as the amalgamation of arts and the New Age tech: metaverse, NFTs, DeFi and other.',
     ],
+    stats: {
+      title: 'The impactful results in numbers', after: 0,
+      items: [
+        { value: '18', label: 'speakers' },
+        { value: '8', label: 'timezones' },
+        { value: '800', label: 'guests' },
+        { value: '7', label: 'hours of quality content' },
+        { value: '3', label: 'panels' },
+        { value: '2', label: 'workshops' },
+        { value: '1', label: 'keynote' },
+        { value: '1111 Hz', label: 'of great vibes' },
+        { value: '1', label: 'Arts Manifesto' },
+        { value: '1', label: 'ArtTech Council' },
+      ],
+    },
   },
   {
     id: 'afghan-women', title: 'Afghan Women, Human Rights & the Transformative Power of the Arts',
