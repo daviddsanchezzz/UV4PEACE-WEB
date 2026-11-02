@@ -8,18 +8,22 @@ import { homeIntro, currentProjects } from '../data/classic';
 ---
 <Base current="home" bigHeader>
   <ClassicPage title="Home">
-    <h2 class="text-[clamp(22px,2.3vw,30px)] font-medium uppercase leading-[1.2] tracking-[0.03em] text-navy text-balance">{homeIntro.heading}</h2>
-    <div class="body mt-8 flex flex-col gap-4">
-      {homeIntro.paragraphs.map((t) => <Rich text={t} />)}
+    <div class="grid gap-8 lg:grid-cols-[1fr_1.15fr] lg:gap-16">
+      <h2 class="text-[clamp(24px,2.8vw,38px)] font-medium uppercase leading-[1.15] tracking-[0.02em] text-navy text-balance">{homeIntro.heading}</h2>
+      <div>
+        <div class="body flex flex-col gap-4">
+          {homeIntro.paragraphs.map((t) => <Rich text={t} />)}
+        </div>
+        <a href="/add-your-voice/" class="btn btn-primary mt-8">Be a Change Maker and Add Your Voice!</a>
+      </div>
     </div>
-    <a href="/add-your-voice/" class="btn btn-primary mt-8">Be a Change Maker and Add Your Voice!</a>
 
     <h2 class="t-h2 mt-20 text-navy">Partners</h2>
     <div class="mt-6"><LogoCarousel /></div>
 
-    <h2 class="t-h1 mt-20 text-navy">Our Current Projects</h2>
+    <h2 class="t-h1 mt-24 text-navy">Our Current Projects</h2>
     <div class="mt-10 flex flex-col gap-14">
-      {currentProjects.map((p) => <ProjectBlock project={p} level="h3" />)}
+      {currentProjects.map((p, i) => <ProjectBlock project={p} level="h3" flip={i % 2 === 1} />)}
     </div>
     <a href="/current-projects/" class="btn btn-tertiary mt-12">Find out more on Current Projects</a>
   </ClassicPage>

@@ -6,10 +6,12 @@ import { addYourVoice as a } from '../data/classic';
 ---
 <Base title="Add your Voice" current="voice">
   <ClassicPage title="Add your Voice">
-    <h2 class="text-[clamp(22px,2.3vw,30px)] font-medium uppercase leading-[1.2] tracking-[0.03em] text-navy text-balance">{a.heading}</h2>
-    <p class="body mt-8 text-ink">{a.intro}</p>
-    <Rich text={a.lead} class="lede mt-10 text-navy" />
-    <div class="mt-8 grid gap-5 sm:grid-cols-2">
+    <div class="grid gap-8 lg:grid-cols-[1fr_1.15fr] lg:gap-16">
+      <h2 class="text-[clamp(24px,2.8vw,38px)] font-medium uppercase leading-[1.15] tracking-[0.02em] text-navy text-balance">{a.heading}</h2>
+      <p class="body text-ink">{a.intro}</p>
+    </div>
+    <Rich text={a.lead} class="lede mt-16 text-navy" />
+    <div class="mt-8 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
       {a.roles.map((r, i) => (
         <div class="rounded-card border border-line bg-white p-7">
           <div class="text-sm font-semibold text-orange">0{i + 1}</div>

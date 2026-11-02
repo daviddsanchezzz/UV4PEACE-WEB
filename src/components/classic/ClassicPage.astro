@@ -1,11 +1,9 @@
 ---
-// The old site's page layout: small spaced page title on the left, content on the right.
+// Page shell: the page title on top, then the content across the full width.
 interface Props { title: string; class?: string }
 const { title, class: cls } = Astro.props;
 ---
-<div class:list={['wrap grid gap-6 py-[clamp(48px,7vw,96px)] lg:grid-cols-[minmax(200px,1fr)_minmax(0,2.2fr)] lg:gap-16', cls]}>
-  <div>
-    <h1 class="eyebrow flex items-center gap-3 font-semibold text-navy lg:sticky lg:top-24"><span class="h-0.5 w-8 bg-orange"></span>{title}</h1>
-  </div>
-  <div class="min-w-0"><slot /></div>
+<div class:list={['wrap py-[clamp(40px,6vw,80px)]', cls]}>
+  <h1 class="eyebrow mb-[clamp(28px,4vw,48px)] flex items-center gap-3 font-semibold text-navy"><span class="h-0.5 w-8 bg-orange"></span>{title}</h1>
+  <slot />
 </div>

@@ -8,7 +8,7 @@ import { foreword, board, partnerNetwork, partnerNetworkClosing } from '../data/
   <ClassicPage title="About Us">
     <section class="rounded-card bg-surface-soft p-[clamp(24px,4vw,48px)]">
       <h2 class="t-h2 text-navy">Foreword from our Founder</h2>
-      <div class="lede mt-6 flex flex-col gap-4 text-ink">
+      <div class="lede mt-6 flex max-w-[1040px] flex-col gap-4 text-ink">
         {foreword.paragraphs.map((t) => <Rich text={t} />)}
       </div>
     </section>
@@ -16,16 +16,18 @@ import { foreword, board, partnerNetwork, partnerNetworkClosing } from '../data/
     <div class="mt-16 flex flex-col gap-14">
       {board.map((m) => (
         <article class="border-t border-line pt-10 first:border-t-0 first:pt-0">
-          <h2 class="t-h3 text-navy">{m.name} <span class="font-normal text-sky-text">– {m.role}</span></h2>
-          <div class="body mt-5 text-ink after:block after:clear-both after:content-['']">
-            <img src={m.photo} alt={m.name} loading="lazy" class="mb-4 aspect-[4/5] w-full max-w-[260px] rounded-card bg-placeholder object-cover sm:float-left sm:mr-8 sm:w-[38%]" />
-            <div class="flex flex-col gap-4">{m.paragraphs.map((t) => <Rich text={t} />)}</div>
+          <div class="grid gap-6 md:grid-cols-[240px_minmax(0,1fr)] md:gap-12 lg:grid-cols-[300px_minmax(0,1fr)]">
+            <img src={m.photo} alt={m.name} loading="lazy" class="aspect-[4/5] w-full max-w-[300px] rounded-card bg-placeholder object-cover" />
+            <div>
+              <h2 class="t-h3 text-navy">{m.name} <span class="font-normal text-sky-text">– {m.role}</span></h2>
+              <div class="body mt-4 flex flex-col gap-4 text-ink">{m.paragraphs.map((t) => <Rich text={t} />)}</div>
+            </div>
           </div>
         </article>
       ))}
     </div>
 
-    <Rich text={partnerNetwork} class="body mt-16 text-ink" />
+    <Rich text={partnerNetwork} class="body mt-16 max-w-[980px] text-ink" />
     <p class="t-h3 mt-10 text-navy">{partnerNetworkClosing}</p>
   </ClassicPage>
 </Base>

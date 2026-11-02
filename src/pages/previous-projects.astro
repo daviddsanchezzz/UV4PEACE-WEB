@@ -7,7 +7,7 @@ import { previousProjects } from '../data/classic';
 <Base title="Previous projects" current="previous">
   <ClassicPage title="Previous projects">
     <div class="flex flex-col gap-14">
-      {previousProjects.map((p) => <ProjectBlock project={p} />)}
+      {previousProjects.map((p, i) => <ProjectBlock project={p} flip={i % 2 === 1} />)}
     </div>
   </ClassicPage>
 </Base>
