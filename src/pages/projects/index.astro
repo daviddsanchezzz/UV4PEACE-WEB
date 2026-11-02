@@ -1,29 +1,22 @@
 ---
 import Base from '../../layouts/Base.astro';
-import PageHeader from '../../components/PageHeader.astro';
-import ProjectGrid from '../../components/ProjectGrid.astro';
-import NewsletterForm from '../../components/NewsletterForm.astro';
-import Button from '../../components/Button.astro';
-import { getProjects, getSettings } from '../../lib/content';
-const settings = await getSettings();
-const projects = await getProjects();
+import ClassicPage from '../../components/classic/ClassicPage.astro';
+import ProjectBlock from '../../components/classic/ProjectBlock.astro';
+import { currentProjects, previousProjects } from '../../data/classic';
 ---
-<Base title="Projects" current="projects" description="Concerts, cultural exchanges and projects with women composers, under-represented artists, refugees and human rights.">
-  <PageHeader eyebrow="Projects" title={['Where music meets', 'diplomacy']} lede="Concerts, cultural exchanges and long-term projects with women composers, under-represented artists, refugees and human-rights advocates." />
-  <section class="wrap pb-[clamp(72px,10vw,140px)]">
-    <ProjectGrid projects={projects}>
-      <Fragment slot="heading"><h2 class="t-h2">All projects</h2></Fragment>
-    </ProjectGrid>
-  </section>
-  <section class="bg-navy text-white">
-    <div class="wrap section-y-sm flex flex-wrap items-center justify-between gap-8">
-      <div class="max-w-[640px]">
-        <div class="eyebrow text-sky">Have an idea?</div>
-        <h2 class="t-h1 mt-4">Propose a project</h2>
-        <p class="body mt-4">Bring us an idea that uses music or the arts to build bridges.</p>
-      </div>
-      <Button href={settings.proposalMailto}>Send a proposal</Button>
+<Base title="Projects" current="projects">
+  <ClassicPage title="Projects">
+    <nav aria-label="Sections" class="mb-12 flex flex-wrap gap-2">
+      <a href="#current" class="btn btn-tertiary btn-sm">Current projects</a>
+      <a href="#previous" class="btn btn-tertiary btn-sm">Previous projects</a>
+    </nav>
+    <h2 id="current" class="t-h1 scroll-mt-24 text-navy">Current projects</h2>
+    <div class="mt-10 flex flex-col gap-14">
+      {currentProjects.map((p, i) => <ProjectBlock project={p} level="h3" flip={i % 2 === 1} />)}
     </div>
-  </section>
-  <NewsletterForm />
+    <h2 id="previous" class="t-h1 mt-24 scroll-mt-24 border-t border-line pt-16 text-navy">Previous projects</h2>
+    <div class="mt-10 flex flex-col gap-14">
+      {previousProjects.map((p) => <ProjectBlock project={p} level="h3" />)}
+    </div>
+  </ClassicPage>
 </Base>
