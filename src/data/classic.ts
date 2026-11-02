@@ -59,7 +59,7 @@ export const currentProjects: ClassicProject[] = [
     id: 'gwim-2026', title: 'Global Women in Music 2026', photo: 'gwim-2026',
     paragraphs: [
       'In celebration of International Women’s Day 2026 and on the 250th Anniversary of the USA, UV4P in partnership with the United Nations Symphony Orchestra presents our “Global Women in Music” concert featuring works by female composers from around the world, to advance gender equality.',
-      'The fourth edition was held as an official side event to the UN Commission on the Status of Women on March 13th at Symphony Space in New York. Watch here : [https://youtu.be/rQ9jOhX0cVw](https://youtu.be/rQ9jOhX0cVw)',
+      'The fourth edition was held as an official side event to the UN Commission on the Status of Women on March 13th at Symphony Space in New York. Watch here : [https://www.youtube.com/live/kMsEQOIbGoQ](https://www.youtube.com/live/kMsEQOIbGoQ)',
     ],
   },
   {
