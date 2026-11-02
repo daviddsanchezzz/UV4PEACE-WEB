@@ -27,7 +27,7 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
     if (links.some((l) => !l.label || (l.url && !/^https?:\/\/\S+$/i.test(l.url)))) return redirect(back(here, { error: 'enlace' }), 303);
     row.links = links;
   }
-  if (section === 'medios' && (!['ar', 'fr', 'it', 'en', 'es'].includes(String(row.language)) || !['spoke_about_us', 'coverage'].includes(String(row.kind)))) return redirect(back(here, { error: 'faltan' }), 303);
+  if (section === 'medios' && (!['ar', 'fr', 'it', 'en', 'es', 'sr'].includes(String(row.language)) || !['spoke_about_us', 'coverage'].includes(String(row.kind)))) return redirect(back(here, { error: 'faltan' }), 303);
   if (spec.required.some((k) => !String(form.get(k) ?? '').trim())) return redirect(back(here, { error: 'faltan' }), 303);
   if (row.url && !/^https?:\/\/\S+$/i.test(String(row.url))) return redirect(back(here, { error: 'enlace' }), 303);
   if (section === 'prensa' && !/^\d{4}-(0[1-9]|1[0-2])$/.test(String(row.date))) return redirect(back(here, { error: 'fecha' }), 303);

@@ -26,8 +26,8 @@ export const featuredIn = ['Variety', 'Forbes', 'La Vanguardia', 'French Morning
 
 // Media coverage, pulled from the live uv4peace.org Media Room (real outlets and links, not
 // invented) — maps to Phase 2 `press_items` with kind: 'mention'.
-export type Language = 'ar' | 'fr' | 'it' | 'en' | 'es';
-export const languageLabel: Record<Language, string> = { ar: 'Arabic', fr: 'French', it: 'Italian', en: 'English', es: 'Spanish' };
+export type Language = 'ar' | 'fr' | 'it' | 'en' | 'es' | 'sr';
+export const languageLabel: Record<Language, string> = { ar: 'Arabic', fr: 'French', it: 'Italian', en: 'English', es: 'Spanish', sr: 'Serbian' };
 
 export interface MediaMention {
   id: string;
@@ -52,8 +52,11 @@ export const mediaCoverage: MediaMention[] = [
 
   { id: 'french-morning', outlet: 'French Morning', url: 'https://frenchmorning.com/lorchestre-de-lonu-rend-hommage-a-la-compositrice-louise-farrenc-a-new-york/', language: 'fr' },
 
+  { id: 'la-voce-2026-it', outlet: 'La Voce di New York — La musica come antidoto alla guerra (2026)', url: 'https://lavocedinewyork.com/onu/2026/10/01/la-musica-come-antidoto-alla-guerra-veronica-sabbag-e-la-united-voices-4-peace/', language: 'it' },
   { id: 'radio-norba', outlet: 'Radio Norba', url: 'https://radionorba.it/giornata-della-donna-l8-marzo-un-concerto-speciale-a-new-york/', language: 'it' },
 
+  { id: 'la-voce-2026-en', outlet: 'La Voce di New York — Music as an Antidote to War (2026)', url: 'https://lavocedinewyork.com/en/un/2026/10/01/music-as-an-antidote-to-war-veronica-sabbag-and-united-voices-4-peace/', language: 'en' },
+  { id: 'italy-now-podcast-2026', outlet: 'The Italy Now Podcast — Music, peace & diplomacy (2026)', url: 'https://podcasts.apple.com/gb/podcast/music-peace-diplomacy-putting-female-composers-back/id1883405492?i=1000768244127', language: 'en' },
   { id: 'forbes', outlet: 'Forbes', url: 'https://www.forbes.com/sites/ninasophiamiralles/2024/07/31/how-female-film-club-is-empowering-women-to-stay-in-the-film-industry/', language: 'en' },
   { id: 'loisaida-center', outlet: 'The LOISAIDA Center', url: 'https://loisaida.org/event/global-women-in-music-by-unsrc-symphony-orchestra/', language: 'en' },
   { id: 'do-nyc', outlet: 'do NYC', url: 'https://donyc.com/events/2023/3/8/global-women-in-music-tickets', language: 'en' },
@@ -63,6 +66,9 @@ export const mediaCoverage: MediaMention[] = [
   { id: 'latin-american-post', outlet: 'Latin American Post', url: 'https://latinamericanpost.com/43688-8m-women-in-music-continue-to-fight-for-equality/amp', language: 'en' },
   { id: 'wqxr', outlet: 'WQXR radio', url: '', language: 'en' },
 
+  { id: 'el-correo-gallego-2026', outlet: 'El Correo Gallego — Aida Saco y la Orquesta Sinfónica de la ONU (2026)', url: 'https://www.elcorreogallego.es/barbanza-muros-noia/2026/03/11/orquesta-sinfonica-onu-interpretara-obra-127835213.html', language: 'es' },
+  { id: 'perfil-2026', outlet: 'Perfil — Morena Galán (2026)', url: 'https://noticias.perfil.com/noticias/personajes/morena-galan-estoy-cumpliendo-un-sueno-ahora-pero-siempre-hay-mas.phtml', language: 'es' },
+  { id: 'un-news-2025', outlet: 'Noticias ONU — Entrevista (2025)', url: 'https://news.un.org/es/interview/2025/03/1537056', language: 'es' },
   { id: 'un-media', outlet: 'UN Media', url: 'https://news.un.org/es/interview/2023/03/1519077', language: 'es' },
   { id: 'la-vanguardia', outlet: 'La Vanguardia', url: 'https://www.lavanguardia.com/vida/20230309/8811724/orquesta-sinfonica-onu-celebra-concierto-excepcional-compositoras.amp.html', language: 'es' },
   { id: 'msn', outlet: 'MSN', url: 'https://www.msn.com/es-es/noticias/internacional/la-orquesta-sinf%C3%B3nica-de-la-onu-celebra-un-concierto-excepcional-de-compositoras/ar-AA18oHv1', language: 'es' },
@@ -72,6 +78,8 @@ export const mediaCoverage: MediaMention[] = [
   { id: 'telam', outlet: 'Télam', url: 'https://www.telam.com.ar/notas/202303/621822-compositora-caruso-pianista-onu-concierto.html', language: 'es' },
   { id: 'los-andes', outlet: 'Los Andes', url: 'https://www.losandes.com.ar/por-las-redes/lucia-caruso-sueno-con-hacer-la-musica-para-la-fiesta-de-la-vendimia/', language: 'es' },
   { id: 'sitio-andino', outlet: 'Sitio Andino', url: 'https://www.sitioandino.com.ar/cultura/lucia-caruso-la-mendocina-que-mostrara-su-arte-la-onu-n5647767', language: 'es' },
+
+  { id: 'politika-2026', outlet: 'Politika — Interview with conductor Vesna Šoucs (2026)', url: 'https://www.politika.rs/scc/clanak/735527/velika-je-cast-dirigovati-u-njujorku', language: 'sr' },
 ];
 
 export interface PressArchiveItem {
