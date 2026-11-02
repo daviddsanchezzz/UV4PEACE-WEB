@@ -3,20 +3,40 @@ import Base from '../../layouts/Base.astro';
 import ClassicPage from '../../components/classic/ClassicPage.astro';
 import ProjectBlock from '../../components/classic/ProjectBlock.astro';
 import { currentProjects, previousProjects } from '../../data/classic';
+const tabs = [
+  { id: 'current', label: 'Current', count: currentProjects.length, items: currentProjects },
+  { id: 'previous', label: 'Previous', count: previousProjects.length, items: previousProjects },
+];
 ---
 <Base title="Projects" current="projects">
   <ClassicPage title="Projects">
-    <nav aria-label="Sections" class="mb-12 flex flex-wrap gap-2">
-      <a href="#current" class="btn btn-tertiary btn-sm">Current projects</a>
-      <a href="#previous" class="btn btn-tertiary btn-sm">Previous projects</a>
-    </nav>
-    <h2 id="current" class="t-h1 scroll-mt-24 text-navy">Current projects</h2>
-    <div class="mt-10 flex flex-col gap-14">
-      {currentProjects.map((p, i) => <ProjectBlock project={p} level="h3" flip={i % 2 === 1} />)}
+    <div role="tablist" aria-label="Projects" class="flex gap-8 border-b border-line">
+      {tabs.map((t, i) => (
+        <button type="button" role="tab" id={`tab-${t.id}`} aria-controls={`panel-${t.id}`} aria-selected={i === 0 ? 'true' : 'false'} data-tab={t.id}
+          class="group relative -mb-px flex items-baseline gap-2 border-b-2 border-transparent pb-4 text-[clamp(22px,2.4vw,30px)] font-medium uppercase tracking-[0.02em] text-ink-muted transition-colors hover:text-navy aria-selected:border-orange aria-selected:text-navy">
+          {t.label}
+          <span class="text-sm font-semibold text-sky-text">{t.count}</span>
+        </button>
+      ))}
     </div>
-    <h2 id="previous" class="t-h1 mt-24 scroll-mt-24 border-t border-line pt-16 text-navy">Previous projects</h2>
-    <div class="mt-10 flex flex-col gap-14">
-      {previousProjects.map((p) => <ProjectBlock project={p} level="h3" />)}
-    </div>
+    {tabs.map((t, i) => (
+      <div role="tabpanel" id={`panel-${t.id}`} aria-labelledby={`tab-${t.id}`} hidden={i !== 0} class="mt-12 flex flex-col gap-14">
+        {t.items.map((p, j) => <ProjectBlock project={p} level="h2" flip={j % 2 === 1} />)}
+      </div>
+    ))}
   </ClassicPage>
 </Base>
+
+<script>
+  const tabs = document.querySelectorAll<HTMLButtonElement>('[data-tab]');
+  const show = (id: string) => {
+    tabs.forEach((t) => {
+      const on = t.dataset.tab === id;
+      t.setAttribute('aria-selected', String(on));
+      const panel = document.getElementById(`panel-${t.dataset.tab}`);
+      if (panel) panel.hidden = !on;
+    });
+  };
+  tabs.forEach((t) => t.addEventListener('click', () => { show(t.dataset.tab!); history.replaceState(null, '', `#${t.dataset.tab}`); }));
+  if (location.hash === '#previous') show('previous');
+</script>
