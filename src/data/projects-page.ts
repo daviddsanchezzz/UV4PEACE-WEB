@@ -107,7 +107,97 @@ export const projectsPageCurrent: ClassicProject[] = [
     paragraphs: [
       'The Coronavirus (COVID-19) global crisis is an unprecedented world-wide health and human emergency with yet-to-be-seen impacts on communities across the globe.\nAs our human community is confronted with this immense challenge, **UV4Peace** recognizes how it risks to exacerbate and worsen existing social inequalities, threatening peace at all levels.',
       '**UV4Peace** is more than ever committed to act to forge ahead, with empathy and solidarity, our vision of a just and peaceful world, addressing rising concerns expressed by the most vulnerable members of our community and preventing the possible effects of this crisis.',
+      'As advocated by our previous initiatives, arts and culture – through the artists and arts and organizations bringing them to communities- have a vital role to play in responding to these disasters and their possible consequences. More than ever, UV4Peace is adhering new avenues to acclimate to the new environment and the unavoidable cultural shift, by finding ways to facilitate collaborative engagement, mostly online, and in future live encounters.',
+      'In this context, we will be promoting initiatives helping to adapt to this shared new environment, as we are all in this together. We will make use of our global platform to bring hope and happiness to individuals but to also send a socially conscious messages to assist everyone, in particular the most vulnerable ones, such as ethnic minorities, women, children and refugees, get through these challenging times, contributing to strengthening social cohesion during our global community’s recovery.',
+      'Further updates will be posted on our social media. See review by the UN Global Communications Department [here](https://mailchi.mp/un/civilsocietycovid-19)',
+      'We wish everyone to stay healthy and safe during this trying times!',
     ],
   },
-  byId('together-in-solidarity'),
+  {
+    id: 'women-arts-climate', title: 'Women & Arts in times of Climate Emergency', video: `${WP}/2020/05/VID-20200506-WA0000.mp4`,
+    paragraphs: [
+      'On International Women’s Day 2020, and ahead of the 64th session of the UN Commission on the Status of Women (CSW), UV4Peace in partnership with Women in Music, marked this day with a global celebration uniting efforts for humanitarian and environmental justice in front of the current climate emergency.',
+      'On this occasion, the crucial role of the arts to respond to global emergencies was debated as well as the instrumental role played by artists to raise awareness and build societal resilience to overcome adversity.',
+      'Following the panel discussion, this celebration shed light on the impactful stories of those affected by environmental degradation and disasters, amplifying the diverse voices of artists from Australia (Jennifer Reed), Puerto Rico (Girasoles Creative Studio & Edwin Garcia “Coqui”), Italy (Nicola Lo Calzo & Valentina Volpe Andreazza) and Japan (Yuko Kudo & Taiko Masala) through their different forms of artistic expression.',
+      'See [more HERE](https://uv4peace.org/wp-content/uploads/2020/03/20200310_154212-1.jpg)',
+    ],
+  },
+  {
+    id: 'dance-or-die', title: 'Dance or Die : from Syria to New York',
+    images: [`${WP}/2019/12/20191126_090718.jpg`, `${WP}/2019/12/IMG_20191126_030049_215.jpg`],
+    paragraphs: [
+      'United Voices 4 Peace and the NY City Mayor’s Office, successfully supported Ahmad’s Joudeh journey to the United States.',
+      'On 25 November at Primeproduce, in New York City, Joudeh performed his choreography “Sacrifice” followed by a Q&A session.',
+      'Hours later, the documentary ‘Dance or Die’ about his remarkable life, won an international Emmy at the ceremony held in the context of the 47th International Emmy Awards. Watch the Trailer here: [http://bit.ly/2WOPnDf](http://bit.ly/2WOPnDf)',
+      'Ahmad, UV4P Peace Ambassador, has used the art of dance to raise awareness on the humanitarian crisis in Syria.',
+      '[read more HERE](https://uv4peace.org/wp-content/uploads/2019/11/AJPRESSRELEASE3_compressed.pdf)',
+    ],
+  },
+  {
+    id: 'liberty-meets-beauty', title: 'Liberty meets Beauty, La Voce di NY',
+    images: [`${WP}/2019/05/fb-k8442414_1199056476938315_5690378105768640512_n.jpg`],
+    paragraphs: [
+      'On the Anniversary of Italy’s Liberation from Nazi occupation, UV4Peace supported and took part to the second edition of the ceremony ‘LIBERTY MEETS BEAUTY’- VNY MEDIA AWARD 2019.',
+      'This year the event is in honour of the work of Gaia Pianigiani, reporter for the New York Times.\nThe event,  was opened with an adress by Bill de Blasio, Mayor of NYC, and feature pianist Rosa Antonelli performing Piazzolla’s famous “libertango” to celebrate free press, women in media & women in music.',
+    ],
+  },
+  {
+    id: 'death-penalty-congress', title: '7th World Congress Against Death Penalty',
+    images: [`${WP}/2019/05/DSC_0656.jpg`, `${WP}/2019/05/DSC_0616.jpg`],
+    paragraphs: [
+      'At the invitation of the Association “Together Against Death Penalty/Ensemble Contre la Peine de Mort” (#ECPM), organizer of the 7th World Congress of abolitionists -with a special focus on Africa- #UnitedVoices4Peace was part of the “Civil Society Village” during the event.',
+      'UV4Peace had an exhibition stand during the Congress’ duration featuring multitalented artist Georges Miankiri Bens Gamthety, born in N’Djamena, Chad.',
+      'Through his paintings and sketches, witnessing his great sensitivity to social issues, George advocated for human rights, the right to life and dignity for all: « My objective through my art is above all to share a shadow  state of mind that will each time be enlighted by a positive and reassuring message » .',
+      'The Congress, was organised with the support of 12 diplomatic services (Argentina, Australia, Belgium, Benin, France, Mexico, Monaco, Mongolia, Norway, Rwanda, Spain and Switzerland), sponsored by the EU and UN major institutions and gathered more than 3.000 participants from 115 different countries.',
+    ],
+  },
+  {
+    id: 'women-professionals-music', title: 'Women Professionals in the Music Industry',
+    images: [`${WP}/2019/01/50245440_10156952173523210_5725972496910385152_n.jpg`],
+    paragraphs: [
+      'January 16th, at the invitation of the [United Nations Women’s International Forum](https://www.facebook.com/womensinternationalforum/), UV4Peace co-chaired and hold a workshop at the UN Headquarters in New York on “Women Professionals in the Music Industry” sponsored by the Permanent Mission of Peru to the United Nations. The discussion focused on the music industry’s challenges and possible changes regarding gender equality, pluralism and diversity.',
+      'The panel was composed by three women working tirelessly to promote gender equality, pluralism and diversity in music:',
+      '• Neeta Ragoowansi, former President of the “Women In Music” association,\n• Veronica Sabbag, Founder and CEO of our “United Voices 4 Peace” organisation\n• Jane Meryll, Founder of the StageFright SolutionsTM, Grammy nominee pianist & composer, winner of the “Global Women in Music 4 Women Rights” award.',
+      'You can watch the event HERE\n[http://webtv.un.org/watch/women-professionals-in-the-music-industry-mission-of-peru/5990228972001](http://webtv.un.org/watch/women-professionals-in-the-music-industry-mission-of-peru/5990228972001)',
+    ],
+  },
+  {
+    id: 'diversity-makes-music', title: 'Diversity makes Music',
+    images: [`${WP}/2018/11/IMG-20181122-WA0008.jpg`, `${WP}/2018/11/IMG-20181122-WA0014.jpg`],
+    paragraphs: [
+      'Another joint event with the [International Yehudi Menuhin Foundation.](http://www.menuhin-foundation.com/)',
+      'UV4Peace supported the organisation of their Annual Gala that took place at the Flagey Theatre in Brussels on Wednesday, November 21st.',
+      'A musical route featuring Syrian dancer Ahmad Joudeh, percussionist Burhan Oçal and his Istanbul ensemble (Turkey),multi-istrumentalist Dimitri Psonis (Greece), violinist Gilles Apap (France), and the Brussels Chamber Orchestra,directed by the Spanish Mario Villuendas.',
+      'UV4Peace facilitated this journey, blending classical and world music, to be a reality fostering an inspiring cross-cultural exchange. See more on [HERE](https://www.flagey.be/en/activity/4964-diversity-makes-music?fbclid=IwAR3n6DfZmZtoQLFt2ZQ6L6AWERYSEdeClSpBJZ7Ti9lQ1OMYTjDg329T04Y).',
+    ],
+  },
+  {
+    id: 'gwim-4-human-rights', title: 'Global Women in Music 4 Human Rights',
+    images: [`${WP}/2018/11/received_269959953721213.jpeg`],
+    paragraphs: [
+      '• UV4Peace partnered with [Fondazione Adkins Chiti: Donne in Musica](http://www.donneinmusica.org/) for the commemoration of the 70th Anniversary of the Universal Declaration of Human Rights. The project “Global Women in Music 4 Human Rights” is part of the world-wide campaign commemorating this 70th anniversary.A Gala concert featuring the 10 winning works of a global call for scores, took place in Rome on November 5th at Teatro Argentina under the auspices of the UN High Commissioner for Human Rights\n• #GWIM4HumanRights.',
+      'Here the [Program](https://uv4peace.org/wp-content/uploads/2018/10/Program.pdf)',
+    ],
+  },
+  {
+    id: 'together-in-solidarity', title: 'Together in Solidarity',
+    images: [`${WP}/2018/10/36454493_990629927780972_1717369989297602560_n.jpg`],
+    paragraphs: [
+      'Syrian Ahmad Joudeh dancing in Brussels.',
+      'On the occasion of the World Refugee Day, June 20th, UV4Peace, in collaboration with the European Parliament, organized the event ‘Together in Solidarity’.',
+      'Charmed by the Syrian dancer and choreographer Ahmad Joudeh’s performance on the Esplanade Simone Veil, in front of the European Parliament, hundreds of people participated, including decisions makers and media. Watch the video, [LINK](https://m.facebook.com/story.php?story_fbid=1151891604953415&id=284077591734825).',
+      'From the ruins of Palmyra to the streets of Paris, Amsterdam and Madrid, Ahmad Joudeh expresses his remarkable art to spread hope and resilience for all those who had flee war and persecution.',
+      'The initiative aimed to showcasing the successful integration of refugees throughout the European Union.',
+      'Sponsored by the UNESCO Brussels Liaison Office, “Together in Solidarity” was also part of the celebrations of the European Year of Cultural Heritage and granted with the EYCH Label #EuropeForCulture.',
+      '– [Read More](https://uv4peace.org/wp-content/uploads/2018/06/PR-TSolidarityweb-final.pdf) about Together in Solidarity\n– [Read More](https://uv4peace.org/wp-content/uploads/2018/06/PRESS-CLIPPING-final.pdf) about Press Clipping',
+    ],
+  },
+  {
+    id: 'flamenco-festival', title: 'Annual flamenco festival in Brussels',
+    images: [`${WP}/2022/10/17a4ee1b-2f88-4f7e-8bbd-015cd978f56b.jpg`],
+    paragraphs: [
+      'As part of the celebrations of the European Year for Cultural Heritage, UV4Peace organized a “meet the artist” encounter on the eve of the 1st of March 2018 with the Gipsies of the Mediterranean at the prestigious Palais des Beaux Arts in Brussels.',
+      'Under the auspices of the Spanish Embassy to the Kingdom of Belgium and in the context of its annual flamenco festival, Dorantes and Taksim Trio – acting as our Peace Ambassadors- debated the value of flamenco, World Cultural Heritage, and as an instrument for intercultural dialogue and social inclusion.',
+    ],
+  },
 ];
