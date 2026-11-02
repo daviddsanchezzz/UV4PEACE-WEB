@@ -1,10 +1,9 @@
 ---
-// Partner logos in a slow loop: the recent partners from the admin (logos from Veronica's Drive)
-// first, then the logos of the old site. Eager loading avoids gaps on iOS.
-import { partnerLogos } from '../../data/classic';
+// Partner logos in a slow loop, one per partner, from the admin (Partners section). The old site's
+// hotlinked logo set was dropped because it repeated partners. Eager loading avoids gaps on iOS.
 import { getPartners } from '../../lib/content';
 const recent = (await getPartners()).filter((p) => p.active && p.logo).sort((a, b) => a.order - b.order).map((p) => ({ src: p.logo as string, alt: p.name }));
-const logos = [...recent, ...partnerLogos.map((src) => ({ src, alt: '' }))];
+const logos = [...new Map(recent.map((l) => [l.src, l])).values()];
 ---
 <div class="overflow-hidden py-4" aria-label={recent.map((r) => r.alt).join(', ') || 'Partners'}>
   <div class="marquee">

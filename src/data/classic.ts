@@ -26,24 +26,6 @@ export const homeIntro = {
   ],
 };
 
-export const partnerLogos: string[] = [
-  ...Array.from({ length: 42 }, (_, i) => `${WP}/2022/11/logo-${i + 1}${i === 0 ? '-2' : ''}.jpg`),
-  ...[
-    'UNSymphony-hires-transparent-e1715787150461.png',
-    'Monaco-e1715787432655.jpg',
-    'logo-spain-arts-culture-new-york-and-Consulate-1-e1715787183555.png',
-    'Austrian-Cultural-Forum-e1715787199626.jpeg',
-    'UN_WOMEN_Logo.svg_-e1715787211324.png',
-    'geraldinas-couture-e1715787242555.png',
-    'NYUSkirball_Logo_1_Black-e1715787227462.png',
-    'Mexican-Cultural-Institute-New-York--e1715787260640.png',
-    'Mexico-Consulado-general-en-nueva-york-500x300.png',
-    'Hormone-University--e1715787281602.png',
-    'C4UNWN-for-website-e1715787447796.png',
-    'bluestar-We-are-all-Human-e1715787294536.png',
-  ].map((f) => `${WP}/2024/04/${f}`),
-];
-
 export interface ClassicProject {
   id: string;
   title: string;
