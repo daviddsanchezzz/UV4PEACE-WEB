@@ -1,93 +1,11 @@
 ---
 import Base from '../layouts/Base.astro';
-import PageHeader from '../components/PageHeader.astro';
-import { getSettings } from '../lib/content';
-const { analyticsId } = await getSettings();
-
-const browsers = [
-  ['Mozilla Firefox', 'https://support.mozilla.org/en-US/kb/delete-cookies-remove-info-websites-stored'],
-  ['Google Chrome', 'https://support.google.com/chrome/answer/95647?hl=en'],
-  ['Microsoft Edge', 'https://support.microsoft.com/en-us/microsoft-edge/delete-cookies-in-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09'],
-  ['Safari', 'https://support.apple.com/guide/safari/manage-cookies-and-website-data-sfri11471/mac'],
-  ['Opera', 'https://www.opera.com/help/tutorials/security/privacy/'],
-];
-const cookies = [
-  ['uv4p_consent', 'This website', 'Remembers your cookie choice so we do not ask again.', '6 months'],
-  ['_ga', 'Google Analytics', 'Tells apart one visitor from another to count visits.', '2 years'],
-  [`_ga_${analyticsId.replace(/^G-/, '') || '<ID>'}`, 'Google Analytics', 'Keeps the state of your visit to measure which pages are read.', '2 years'],
-];
+import ClassicPage from '../components/classic/ClassicPage.astro';
+import LegalDoc from '../components/classic/LegalDoc.astro';
+import { cookies } from '../data/legal';
 ---
 <Base title="Cookies Policy">
-  <PageHeader eyebrow="Legal" title={['Cookies Policy']} />
-  <section class="wrap pb-[clamp(72px,10vw,128px)]">
-    <div class="max-w-[720px] [&_h2]:mt-12 [&_h3]:mt-8 [&_p]:mt-4">
-      <p class="body text-ink-muted">Cookies are small data / text files stored by your browser on your device. They do not damage your devices nor your files kept in them.</p>
-      {analyticsId
-        ? <p class="body text-ink-muted">We use cookies in order to facilitate the use of our website and, only if you accept them, to better understand how our website is used and provide an improved experience in browsing. Cookies help us, for instance, to determine if you have already visited a page of our website, or if you are a new visitor.</p>
-        : <p class="body text-ink-muted">At the moment this website does not set any cookies on your device. If we start using analytics cookies, we will ask for your consent first and update this page.</p>}
-      <p class="body text-ink-muted">We use cookies that do not store personal data or personal information that can lead to the identification of the person to which this data/information relates and which have otherwise been collected.</p>
-      <p class="body text-ink-muted">If you do not wish the collection of information through cookies, please set the Internet browser accordingly in order to delete all the current cookies from your device, block all future cookies and receive a warning before storing a cookie.</p>
-
-      <h2 class="t-h3">Types of cookies</h2>
-
-      <h3 class="text-[18px] font-medium italic text-ink">Strictly necessary</h3>
-      <p class="body text-ink-muted">These cookies are necessary for the proper functioning of the website and do not need your consent. {analyticsId ? 'We use one, which remembers your cookie choice.' : 'We do not currently use any.'}</p>
-
-      <h3 class="text-[18px] font-medium italic text-ink">Performance</h3>
-      {analyticsId
-        ? <p class="body text-ink-muted">These cookies help count the visits and the traffic of the website in order to optimise its performance. Through them, we can learn how visitors / users move through the web pages, as well as which pages are the most popular. They are set only if you accept them. If you reject them, we will not know if you have visited our website and we will not be able to monitor its performance through your visit.</p>
-        : <p class="body text-ink-muted">We do not currently use performance cookies.</p>}
-
-      <h3 class="text-[18px] font-medium italic text-ink">Functionality</h3>
-      <p class="body text-ink-muted">We do not use functionality cookies.</p>
-
-      <h3 class="text-[18px] font-medium italic text-ink">Targeting / Advertising</h3>
-      <p class="body text-ink-muted">We do not use advertising or targeting cookies, and we do not use the information collected through cookies to display advertisements.</p>
-
-      {analyticsId && <>
-        <h2 class="t-h3">Cookies used by us</h2>
-        <div class="mt-4 overflow-x-auto">
-          <table class="body w-full min-w-[560px] border-collapse text-left text-ink-muted">
-            <thead>
-              <tr>
-                <th scope="col" class="border-b border-line py-3 pr-6 font-medium text-ink">Cookie</th>
-                <th scope="col" class="border-b border-line py-3 pr-6 font-medium text-ink">Set by</th>
-                <th scope="col" class="border-b border-line py-3 pr-6 font-medium text-ink">Why</th>
-                <th scope="col" class="border-b border-line py-3 font-medium text-ink">Lasts</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cookies.map(([name, by, why, lasts]) => (
-                <tr>
-                  <th scope="row" class="border-b border-line py-3 pr-6 align-top font-normal [overflow-wrap:anywhere]">{name}</th>
-                  <td class="border-b border-line py-3 pr-6 align-top">{by}</td>
-                  <td class="border-b border-line py-3 pr-6 align-top">{why}</td>
-                  <td class="border-b border-line py-3 align-top">{lasts}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <p class="body text-ink-muted">Google helps us collect information on how users use our website in order to optimise not only its functioning and content, but also users’/visitors’ experience. For more information on the purpose and scope of the collection and the further processing and use of data by Google, as well as the rights and the available regulations on your privacy protection, you should consult the privacy policy of the third-party company.</p>
-        <p class="body text-ink-muted [overflow-wrap:anywhere]">For Google policy, please see at <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">https://policies.google.com/privacy</a></p>
-        <p class="mt-8"><button type="button" data-cookie-settings class="btn btn-tertiary btn-sm">Change your cookie settings</button></p>
-      </>}
-
-      <h2 class="t-h3">Embedded videos</h2>
-      <p class="body text-ink-muted">Some project pages include videos from YouTube or Vimeo. The player is not loaded until you press play (before that, only the video's cover picture is fetched from YouTube). When you do, those services may set their own cookies on your device, under their own policies. YouTube videos are loaded from the privacy-enhanced domain youtube-nocookie.com.</p>
-
-      <h2 class="t-h3">How to prevent the storage of cookies on your device and/or how to delete them</h2>
-      <p class="body text-ink-muted">You may select the appropriate setting in your Internet browser to prevent the storage of cookies on your device and/or as to be asked whether you want to decline or accept (enable) any specific cookie.</p>
-      <p class="body text-ink-muted">Moreover, you may at any time delete the cookies already stored by following the instructions of each browser.</p>
-      <ul class="body mt-4 space-y-3 text-ink-muted">
-        {browsers.map(([name, url]) => <li class="[overflow-wrap:anywhere]">{name}: <a href={url} target="_blank" rel="noopener">{url}</a></li>)}
-      </ul>
-      <p class="body text-ink-muted [overflow-wrap:anywhere]">Find more about cookies at <a href="https://www.aboutcookies.org" target="_blank" rel="noopener">https://www.aboutcookies.org</a></p>
-
-      <h2 class="t-h3">Note:</h2>
-      <p class="body text-ink-muted">If you do not allow the storage of cookies, this may result in functional limitations on our website.</p>
-
-      <p class="body !mt-12 text-ink-muted">Last Update on Cookies Policy: October 2026</p>
-    </div>
-  </section>
+  <ClassicPage title="Cookies Policy">
+    <LegalDoc title="Cookies Policy" blocks={cookies} />
+  </ClassicPage>
 </Base>

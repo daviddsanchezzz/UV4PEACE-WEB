@@ -1,0 +1,18 @@
+---
+import Rich from './Rich.astro';
+import type { Block } from '../../data/legal';
+interface Props { title: string; blocks: Block[] }
+const { title, blocks } = Astro.props;
+---
+<article class="max-w-[860px] text-ink [&_a]:break-words">
+  <h2 class="t-h2 text-navy">{title}</h2>
+  {blocks.map((b) =>
+    'h' in b ? <h3 class="mt-12 text-[20px] font-semibold text-navy">{b.h}</h3>
+    : 'p' in b ? <Rich text={b.p} class="body mt-4 whitespace-pre-line" />
+    : 'ul' in b ? <ul class="body mt-4 list-disc space-y-2 pl-6">{b.ul.map((li) => <li>{li}</li>)}</ul>
+    : <table class="mt-6 w-full border-collapse text-left text-base">
+        <thead><tr class="border-b border-line">{b.table.head.map((c) => <th class="py-2 pr-6 font-medium text-ink-muted">{c}</th>)}</tr></thead>
+        <tbody>{b.table.rows.map(([n, t]) => <tr class="border-b border-line align-top"><th class="py-3 pr-6 font-semibold text-navy">{n}</th><td class="py-3">{t}</td></tr>)}</tbody>
+      </table>
+  )}
+</article>
