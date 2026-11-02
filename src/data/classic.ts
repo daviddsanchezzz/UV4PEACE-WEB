@@ -7,7 +7,7 @@ export const classicNav = [
   { key: 'about', label: 'About Us', href: '/about-us/' },
   { key: 'current', label: 'Current Projects', href: '/current-projects/', children: [{ key: 'previous', label: 'Previous projects', href: '/previous-projects/' }] },
   { key: 'voice', label: 'Add your Voice', href: '/add-your-voice/' },
-  { key: 'press', label: 'Press', href: '/press/' },
+  { key: 'press', label: 'Media & Recognition', href: '/media-and-recognition/' },
   { key: 'contact', label: 'Contact', href: '/contact/' },
 ];
 

@@ -1,0 +1,27 @@
+---
+import Base from '../layouts/Base.astro';
+import ClassicPage from '../components/classic/ClassicPage.astro';
+import MediaCoverage from '../components/MediaCoverage.astro';
+import { getPress } from '../lib/content';
+const awards = (await getPress()).sort((a, b) => b.date.localeCompare(a.date));
+---
+<Base title="Media & Recognition" current="press">
+  <ClassicPage title="Media & Recognition">
+    {awards.length > 0 && (
+      <section class="mb-16">
+        <h2 class="t-h2 text-navy">Recognition</h2>
+        <ul class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {awards.map((a) => (
+            <li class="rounded-card border border-line bg-white p-6">
+              <div class="text-sm font-medium uppercase tracking-[0.1em] text-orange">{a.dateLabel}</div>
+              <div class="t-h3 mt-2 text-[19px] text-navy">{a.url ? <a href={a.url} target="_blank" rel="noopener">{a.title}</a> : a.title}</div>
+              {a.by && <div class="mt-2 text-[15px] leading-relaxed text-ink-muted">{a.by}</div>}
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+    <h2 class="t-h2 mb-6 text-navy">Media coverage</h2>
+    <MediaCoverage />
+  </ClassicPage>
+</Base>
