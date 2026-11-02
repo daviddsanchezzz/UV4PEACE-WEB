@@ -10,6 +10,9 @@ interface Props { project: ClassicProject; level?: 'h2' | 'h3'; flip?: boolean }
 const { project: p, level: H = 'h2', flip = false } = Astro.props;
 // YouTube links in the text are also shown as embedded players.
 const yt = [...new Set(p.paragraphs.join(' ').match(/(?:youtu\.be\/|youtube\.com\/(?:live\/|watch\?v=|embed\/))[\w-]{11}/g)?.map((m) => m.slice(-11)) ?? [])];
+// The embedded player replaces the "Watch …: link" lines, so those links are dropped from the text.
+const ytLink = /\s*(?:\*\*)?(?:Watch[^:*\[]*|Learn more on\s*)?(?:\*\*)?\s*:?\s*\[[^\]]*\]\(https?:\/\/(?:www\.)?(?:youtu\.be|youtube\.com)\/[^)]*\)/g;
+const text = p.paragraphs.map((t) => { const c = t.replace(ytLink, '').trim(); return c !== t.trim() && c && !/[.!?)”*]$/.test(c) ? c + '.' : c; }).filter((t) => t && t !== '.');
 const hasMedia = !!(p.photo || p.image || p.images?.length || p.video || yt.length);
 const photos = { 'gwim-2026': gwim2026, 'gwim-2025': gwim2025, 'gwim-2023': gwim2023, doc };
 const isPoster = !!p.photo;
@@ -21,14 +24,14 @@ const isPoster = !!p.photo;
         {p.photo && <Image src={photos[p.photo]} alt={isPoster ? `${p.title} poster` : ""} widths={isPoster ? [560, 768] : [640, 1100]} sizes="(min-width: 1024px) 50vw, 100vw" class:list={['w-full rounded-card', isPoster ? 'mx-auto max-w-[560px] border border-line' : 'aspect-[4/3] object-cover']} />}
         {p.image && <img src={p.image} alt="" loading="lazy" class="w-full rounded-card border border-line" />}
         {p.images?.map((src) => <img src={src} alt="" loading="lazy" class="w-full rounded-card border border-line" />)}
-        {yt.map((id) => <iframe src={`https://www.youtube-nocookie.com/embed/${id}`} title={p.title} loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen class="aspect-video w-full rounded-card bg-navy"></iframe>)}
+        {yt.map((id) => <iframe src={`https://www.youtube-nocookie.com/embed/${id}`} title={p.title} loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen class="mx-auto aspect-video w-full max-w-[560px] rounded-card bg-navy"></iframe>)}
         {p.video && <video src={p.video} controls preload="metadata" playsinline class="aspect-video w-full rounded-card bg-navy"></video>}
       </div>
     )}
     <div class:list={['min-w-0', !hasMedia && 'max-w-[980px]']}>
       <H class="t-h2 text-navy">{p.title}</H>
       <div class="body mt-5 flex flex-col gap-4 text-ink [overflow-wrap:anywhere]">
-        {p.paragraphs.map((t) => <Rich text={t} class="whitespace-pre-line" />)}
+        {text.map((t) => <Rich text={t} class="whitespace-pre-line" />)}
       </div>
     </div>
   </div>
