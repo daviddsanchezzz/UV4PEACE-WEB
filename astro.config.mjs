@@ -9,7 +9,7 @@ export default defineConfig({
   site: 'https://uv4peace.org',
   output: 'server',
   // The old Press page is now Media & Recognition: keep old links and search results working.
-  redirects: { '/press': '/media-and-recognition' },
+  redirects: { '/media-and-recognition': '/press', '/people': '/about-us', '/get-involved': '/add-your-voice' },
   adapter: vercel(),
   // Behind Vercel the server cannot tell which address it is served from unless we say which ones are ours.
   // Without this Astro assumes "localhost": form posts are rejected as cross-site (403) and any link built

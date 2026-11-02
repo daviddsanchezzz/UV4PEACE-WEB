@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+import ClassicPage from '../components/classic/ClassicPage.astro';
+import Rich from '../components/classic/Rich.astro';
+import { foreword, board, partnerNetwork, partnerNetworkClosing } from '../data/classic';
+---
+<Base title="About Us" current="about">
+  <ClassicPage title="About Us">
+    <section class="rounded-card bg-surface-soft p-[clamp(24px,4vw,48px)]">
+      <h2 class="t-h2 text-navy">Foreword from our Founder</h2>
+      <div class="lede mt-6 flex flex-col gap-4 text-ink">
+        {foreword.paragraphs.map((t) => <Rich text={t} />)}
+      </div>
+    </section>
+
+    <div class="mt-16 flex flex-col gap-14">
+      {board.map((m) => (
+        <article class="border-t border-line pt-10 first:border-t-0 first:pt-0">
+          <h2 class="t-h3 text-navy">{m.name} <span class="font-normal text-sky-text">– {m.role}</span></h2>
+          <div class="body mt-5 text-ink after:block after:clear-both after:content-['']">
+            <img src={m.photo} alt={m.name} loading="lazy" class="mb-4 aspect-[4/5] w-full max-w-[260px] rounded-card bg-placeholder object-cover sm:float-left sm:mr-8 sm:w-[38%]" />
+            <div class="flex flex-col gap-4">{m.paragraphs.map((t) => <Rich text={t} />)}</div>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <Rich text={partnerNetwork} class="body mt-16 text-ink" />
+    <p class="t-h3 mt-10 text-navy">{partnerNetworkClosing}</p>
+  </ClassicPage>
+</Base>

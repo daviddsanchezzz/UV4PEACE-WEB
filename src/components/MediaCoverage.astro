@@ -2,6 +2,8 @@
 // Full media coverage list, real outlets pulled from the live uv4peace.org Media Room.
 import { languageLabel } from '../data/press';
 import { getMedia, getPressArchive, type Language } from '../lib/content';
+interface Props { narrow?: boolean }
+const { narrow = false } = Astro.props;
 
 const { spoke: spokeAboutUs, coverage: mediaCoverage } = await getMedia();
 const pressArchive = await getPressArchive();
@@ -21,7 +23,7 @@ const groups = languages
   )}
 
   <div class:list={['eyebrow text-ink-muted', spokeAboutUs && 'mt-10']}>Media coverage</div>
-  <div class="mt-5 columns-1 gap-x-10 sm:columns-2 lg:columns-4">
+  <div class:list={['mt-5 columns-1 gap-x-10 sm:columns-2', !narrow && 'lg:columns-4']}>
     {groups.map((g) => (
       <div class="mb-8 break-inside-avoid">
         <div class="text-sm font-semibold uppercase tracking-[0.08em] text-sky-text">{languageLabel[g.lang]}</div>

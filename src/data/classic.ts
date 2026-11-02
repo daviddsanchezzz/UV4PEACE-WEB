@@ -1,0 +1,227 @@
+// "Classic" proposal: the texts of the original uv4peace.org, kept word for word,
+// shown with the Fiel design. Images and videos still live on uv4peace.org.
+const WP = 'https://uv4peace.org/wp-content/uploads';
+
+export const classicNav = [
+  { key: 'home', label: 'Home', href: '/' },
+  { key: 'about', label: 'About Us', href: '/about-us/' },
+  { key: 'current', label: 'Current Projects', href: '/current-projects/', children: [{ key: 'previous', label: 'Previous projects', href: '/previous-projects/' }] },
+  { key: 'voice', label: 'Add your Voice', href: '/add-your-voice/' },
+  { key: 'press', label: 'Press', href: '/press/' },
+  { key: 'contact', label: 'Contact', href: '/contact/' },
+];
+
+export const bannerImage = `${WP}/2017/01/cropped-benefits-of-business-collaboration.jpg`;
+
+/** Paragraphs may contain **bold** and [label](url) links. */
+export const homeIntro = {
+  heading: 'United Voices 4 Peace is a global cultural diplomacy initiative fostering a universal culture of peace through music and the arts',
+  paragraphs: [
+    'Our non-partisan platform uses the Arts to address and transform today’s global challenges.',
+    '**UV4PEACE** creates bridges between the diplomatic and cultural worlds, assisting public, and private entities to develop innovative forms of creative diplomacy.',
+    '**UV4PEACE** aims to unite different communities through the universal language of the Arts, creating inclusive spaces for the diverse voices of the world to meet, even in situations of conflict.',
+    'To carry our mission, we support underrepresented artists to promote peacebuilding and social justice through a model of empowerment & responsibility.',
+    '**UV4PEACE** pledges to advance the efforts to achieve the United Nations 17 Sustainable Development Goals, with a special focus on Goals 5 (Gender Equality), 10 (Reduced inequalities), 16 (Peace & Justice) and 17 (Partnerships), helping to accelerate progress towards the 2030 agenda.',
+    'Our organization is proud to be formally associated to the United Nations Department of Global Communications.',
+  ],
+};
+
+export const partnerLogos: string[] = [
+  ...Array.from({ length: 42 }, (_, i) => `${WP}/2022/11/logo-${i + 1}${i === 0 ? '-2' : ''}.jpg`),
+  ...[
+    'UNSymphony-hires-transparent-e1715787150461.png',
+    'Monaco-e1715787432655.jpg',
+    'logo-spain-arts-culture-new-york-and-Consulate-1-e1715787183555.png',
+    'Austrian-Cultural-Forum-e1715787199626.jpeg',
+    'UN_WOMEN_Logo.svg_-e1715787211324.png',
+    'geraldinas-couture-e1715787242555.png',
+    'NYUSkirball_Logo_1_Black-e1715787227462.png',
+    'Mexican-Cultural-Institute-New-York--e1715787260640.png',
+    'Mexico-Consulado-general-en-nueva-york-500x300.png',
+    'Hormone-University--e1715787281602.png',
+    'C4UNWN-for-website-e1715787447796.png',
+    'bluestar-We-are-all-Human-e1715787294536.png',
+  ].map((f) => `${WP}/2024/04/${f}`),
+];
+
+export interface ClassicProject {
+  id: string;
+  title: string;
+  paragraphs: string[];
+  video?: string;
+  image?: string;
+  photo?: 'gwim-2026' | 'gwim-2025' | 'doc';
+}
+
+export const currentProjects: ClassicProject[] = [
+  {
+    id: 'gwim-2026', title: 'Global Women in Music 2026', photo: 'gwim-2026',
+    paragraphs: [
+      'In celebration of International Women’s Day 2026 and on the 250th Anniversary of the USA, UV4P in partnership with the United Nations Symphony Orchestra presents our “Global Women in Music” concert featuring works by female composers from around the world, to advance gender equality.',
+      'We are thrilled to hold the 4th Edition of this groundbreaking initiative with an exceptional program as an official side event to the United Nations Commission on the Status of Women (UNCSW 70).',
+      'Join us on March 13th at 7.30PM at the Symphony Space in NY for a moment of celebration, solidarity and community !',
+      'Tickets are available on the following link: [https://www.symphonyspace.org/events/vp-global-women-in-music-2026](https://www.symphonyspace.org/events/vp-global-women-in-music-2026)',
+    ],
+  },
+  {
+    id: 'gwim-2025', title: 'Global Women in Music 2025', photo: 'gwim-2025',
+    paragraphs: [
+      'We are beyond excited to announce that the Global Women in Music 2025 Concert will be held on March 13, 2025, on the occasion of the 69th United Nations Commission on the Status of Women (#CSW69) in New York City.',
+      'The third edition of this groundbreaking initiative, organized by United Voices 4 Peace in partnership with the United Nations Symphony Orchestra, will celebrate #InternationalWomensDay 2025, the 30th Anniversary of the Beijing Declaration & Platform for Action, the 400 Anniversary of New York City and the power of women, in music and in their communities.',
+      'For this historic occasion, we are preparing an excepcional line-up of compositions by women from around the world under the baton of Maestras and twin sisters Josefa and Esperanza de Velasco from Mexico.',
+      'Join us as we amplify the voices and talents of women composers, conductors, and performers, transforming the music landscape one note at a time.',
+      'Tickets are available on the following link: [https://tickets.nyu.edu/globalwomeninmusic](https://tickets.nyu.edu/globalwomeninmusic)',
+    ],
+  },
+  {
+    id: 'gwim-documentary', title: 'Global Women in Music Documentary', photo: 'doc',
+    paragraphs: [
+      'The inspiring story of this groundbreaking musical production, featuring the United Nations Symphony Orchestra showcasing works by female composers from around the world to advance gender equality, is now available for FREE.',
+      'Direct Link: [https://www.herflix.com/global-women-in-music](https://www.herflix.com/global-women-in-music)',
+      'Follow us on Instagram to know more about our upcoming screenings.',
+      'Watch the trailer here: [http://bit.ly/4bm7IO7](http://bit.ly/4bm7IO7)',
+      'Your contributions play a crucial role in ensuring that their work continues to create opportunities for all. Thank you for consider making a donation to help us continue our labour.',
+      '[Donate and be a Voice for a brighter future](/donate/)',
+    ],
+  },
+  {
+    id: 'gwim-2023-24', title: 'Global Women in Music – 2023/24', video: `${WP}/2024/04/global-women-in-music.mp4`,
+    paragraphs: [
+      'On the occasion of International Women’s Day 2023 and in the context of the **CSW67, UV4PEACE** in partnership with the **United Nations Symphony Orchestra**, launched this groundbreaking initiative.',
+      'This concert by the UN Orchestra, featured only music by women composers from around the world, exceptionally conducted by a female composer, creating a unique platform to advance women’s representation in the music industry.',
+      'An equally successful second edition was held on March 12, 2024 at the Skirball NYU Performing Arts Center consolidating the initiative.',
+      '**Our success in numbers : 1200 attendees/90 musicians x 2/18 women composers/5 continents represented/26 media publications/in 6 languages and thousands of views on social networks.**',
+      '**In order to raise awareness on this initiative, a related documentary was produced following the 2024 concert. WATCH THE TRAILER HERE** [https://bit.ly/3YwgV0i](https://bit.ly/3YwgV0i)',
+    ],
+  },
+  {
+    id: 'create-summit', title: 'Create!Summit – 2022', video: `${WP}/2022/11/UPD-Veronica_1920x1080.mp4`,
+    paragraphs: [
+      '**UV4PEACE** is proud to have co-hosted the pilot virtual Create!Summit – 2022, held on October 22nd on an initiative of Artists&Angels.',
+      'The impactful results in numbers: **18 speakers | 8 timezones | 800 guests | 7 hours of quality content | 3 panels | 2 workshops | 1 keynote | 1111 Hz of great vibes | 1 Arts Manifesto | 1 ArtTech Council**',
+      'We discussed important topics such as the healing power of arts, enhancing mental health through arts, how arts, artists and art forms drive creative thinking, human innovation and influence social change, as well as the amalgamation of arts and the New Age tech: metaverse, NFTs, DeFi and other.',
+    ],
+  },
+  {
+    id: 'afghan-women', title: 'Afghan Women, Human Rights & the Transformative Power of the Arts',
+    paragraphs: [
+      'As the world leaders gathered again in person in NY on the occasion of the United Nations General Assembly, **UV4PEACE** partnered with the **Muslim American Leadership Alliance** (MALA) and the 49% for a special screening of the short animated film “Samira’s Camera” on September 22nd at Prime Produce, to mark the International Peace Day 2022.',
+    ],
+  },
+  {
+    id: 'death-metal-grandma', title: 'Death Metal Grandma – An Unconventional Call for Social Justice', image: `${WP}/2022/11/Screenshot-2022-11-14-at-20.25.28.png`,
+    paragraphs: [
+      '**UV4PEACE** was thrilled to launch its first virtual event and digital program. The program consists on a **series of documentary screenings and concerts.** It aims at addressing the current systemic social inequalities, with a special focus on gender, age and religion-based discrimination.',
+    ],
+  },
+  {
+    id: 'together-in-solidarity', title: 'Together in Solidarity', video: `${WP}/2022/11/2F42EC35-356B-4D71-8CAD-CCC604D6D7D7.mp4`,
+    paragraphs: [
+      'On the occasion of the World Refugee Day, June 20th, **UV4PEACE**, in collaboration with the European Parliament, organized the event ‘Together in Solidarity’. Charmed by the Syrian dancer and choreographer Ahmad Joudeh’s performance on the Esplanade Simone Veil, in front of the European Parliament, hundreds of people participated, including decisions makers and media.',
+    ],
+  },
+];
+
+export const previousProjects: ClassicProject[] = [
+  {
+    id: 'dance-for-peace', title: 'Dance for Peace',
+    paragraphs: ['Celebrated the International Peace Day in the context of the international cinema festival in Cañada Real Madrid. The act took place on the 17th of September 2017 marking the launch of the UV4Peace initiative, with the participation of Syrian Palestinian dancer Ahmad Joudeh.'],
+  },
+  {
+    id: 'dialogue-of-souls', title: 'A dialogue of Souls around the Mediterranean Sea',
+    paragraphs: [
+      'A unique musical production bringing together musicians from diverse cultures guided by Grand Maestro Jordi Savall, UNESCO Peace Ambassador. On the occasion of the Yehudi Menuhin Foundation Annual Gala Dinner on December 4th 2017 in Brussels. We celebrated the values of sharing, respect for diversity, co-creation and intercultural dialogue. Musicians from Israel, Syria, Turkey, Greece and Spain performed a musical dialogue which included songs of Christian, Sephardic, Ottoman and Arab-Andalusian origins.',
+      'Prompted by the large flows of migrants and refugees throughout Europe and the Mediterranean, this theme aimed at raising awareness of the cultural richness of the countries bordering the Mare Nostrum. The concert demonstrated how music can serve an even more prominent role in cultural diplomacy.',
+    ],
+  },
+  {
+    id: 'artistic-workshops', title: 'Artistic Workshops',
+    paragraphs: ['A unique team of artists from different disciplines (Music, Visual Arts, Body Expression, Circus Arts) join forces to offer artistic workshops in refugee camps and a liaison platform for artists interested to contribute. After years of experience, the organisation has developed a successful model for interactive sessions aiming to stimulate participants by making artistic expression available to everyone. The project includes i) establishment of direct contacts between creators of different countries; ii) logistic support for the exchange of artistic creation; and iii) collaboration with artistic teams to achieve common projects. [Contact us](/contact/) to know more.'],
+  },
+  {
+    id: 'mars', title: 'Music And Resilience Support (MARS)',
+    paragraphs: ['Welcome to MARS – an online resource centre promoting learning, research and exchange in the field of psycho-social music practice within under-resourced, deprived and marginalised communities. The MARS community is happy to offer a wide range of resources developed during the project’s pilot phase (2015-17), including a digital notice board linking potential employers to qualified and experienced PS musicians and music therapists.'],
+  },
+];
+
+export const foreword = {
+  paragraphs: [
+    'A global citizen with a passion for music, a multicultural background and life-long international experience, for whom culture has no borders. Having served for the European Union in different postings for more than 20 years, including in the EU Mission to the United Nations in New York, and having dealt with some of the most challenging world conflicts with global impact, I have witnessed the limitations of traditional diplomacy. Today’s major challenges can only be addressed through the mobilization and cooperation across diverse stakeholders toward shared goals. I am convinced that by uniting our voices by this citizen-led cultural peace initiative, we will make a significant contribution to spreading the culture of respect for diversity, mutual understanding, acceptance and dialogue through the universal language of music and the arts, making our world a better place for all of us.',
+    'Looking forward to hearing YOUR VOICES.',
+  ],
+};
+
+export interface BoardMember { name: string; role: string; photo: string; paragraphs: string[] }
+
+export const board: BoardMember[] = [
+  {
+    name: 'Veronica Sabbag', role: 'Founder', photo: `${WP}/2020/03/Veronica-scaled.jpeg`,
+    paragraphs: [
+      'Veronica Sabbag is a global citizen committed to multicultural and international best practices. She holds a Degree in Law from the University of La Sorbonne, a Masters Degree in European Studies from l’Université Libre de Bruxelles (ULB) and a Certificate on Cultural Diplomacy from the Institute for Cultural Diplomacy ICD). She served for the European Union in different positions for over 20 years, forging her experience in conflict management, defence and security. In this context, she has dealt with some of the most challenging global conflicts. Understanding the need to resolve today’s major challenges beyond traditional diplomatic tools, she decided to found the NGO “United Voices 4 Peace” fostering a Universal Culture of Peace through Music and the Arts.',
+      'With this citizen-led cultural peace initiative promoting diverse forms of inter-cultural exchanges, Veronica has facilitated the realisation of collaborative artistic projects advocating for diversity, tolerance, acceptance, inclusion and dialogue. Some of her most successful projects in this context are : the “*Global Women In Music 4 Human Rights*” empowering women in the music sector, “Together in Solidarity” and “Dance or Die : From Syria to New York” echoing the voice of syrian dancer and refugee, Ahmad Joudeh, raising awareness on the humanitarian crisis in Syria at local,regional and international level.',
+    ],
+  },
+  {
+    name: 'Tim Ries', role: 'Board Member -NY', photo: `${WP}/2020/03/TimRies_credit_IreneMeritxell.jpg`,
+    paragraphs: [
+      'Saxophonist, composer, arranger, producer, and educator Tim Ries received degrees from both The University of North Texas (BM) and The University of Michigan (MM). He has had a unique and varied career, which began in 1983 with the great Maynard Ferguson. Tim moved to New York City in 1985 and since that time his performing and recording credits include a who’s who of jazz, rock, pop and world music icons: The Rolling Stones from 1999 to the present, Stevie Wonder, Paul Simon, Donald Fagen, Michael Jackson, Blood, Sweat and Tears, Rod Stewart, Lyle Lovett, and jazz greats Red Garland, Donald Byrd, Hank Jones, Jack DeJohnette, Phil Woods, Tom Harrell, Chico Hamilton, Michael Brecker, Joe Henderson, Tony Bennett, Louie Bellson, Dave Liebman, Al Foster, John Patitucci, Danilo Perez, Bela Szakcsi Lakatos and Maria Schneider. Tim was a member of the Prism Saxophone Quartet from 1993-2003. He has released 9 CDs as a leader. His last two discs, Tim Ries Quintet and Tim Ries Quintet Vol II, are live performances at Smalls Jazz Club. In 2005 and 2008 respectively, he released The Rolling Stones Project (Concord) and Stones World (Sunnyside), both are his versions of Stones classics arranged in jazz and world music genres. Both CDs have drawn rave reviews across the globe. Some of the guest artists featured on these discs include: all four Rolling Stones, Norah Jones, Sheryl Crow, Milton Nascimento, Sara Baras, Bill Frisell, John Scofield, Jack DeJohnette, Lisa Fischer, Bernard Fowler, Larry Goldings, Franck Amsallem, Eddie Palmieri, Brian Blade and Ana Moura. His latest collaborations are performing with the great flamenco dancer Sara Baras and with The East Gipsy Band from Budapest. Tim has taught saxophone and composition at The New School, Rutgers University, The City University of New York and The University of Toronto.',
+      'Tim Ries plays Francois Louis mouthpieces, reeds and ligatures and The Virtuoso tenor and alto saxophones by RS Berkely',
+    ],
+  },
+  {
+    name: 'Obie Benz', role: 'Board Member -NY', photo: `${WP}/2020/03/obie-benz-01.jpg`,
+    paragraphs: [
+      'Obie Benz created a number of charitable organizations to support social justice causes. In 1971 he started the Vanguard Foundation, which made grants to San Francisco activist groups and helped found the Film Fund to support documentary filmmakers. In 1975 he organized Pacific Alliance, which produced benefit rock concerts for anti-nuclear power and American Indian treaty rights organizations with the help of Jackson Browne, Bonnie Raitt, and Graham Nash. In the 80’s he began making documentaries. Americas in Transition challenged US foreign policy in Latin America and was nominated for an Academy Award in 1981, as well as winning numerous prizes. He made two anti-weapons music videos which John Denver used as a backdrop in concert performances. In the late 80’s he produced and directed Heavy Petting, a comedy about teen sexuality which played theatrically in 75 cities and sold every major foreign market. In the 1995 he produced and directed In My Generation, a history about rock and roll in the 60’s, which became the best selling part of the Warner Bros / Time Life series. In the 90’s Amnesty International hired Benz to make many short films about people and organizations supporting human rights issues. He also produced a DVD for V-Day, an organization created by Eve Ensler, the writer of the Vagina Monologues, to oppose violence against women.',
+      'Mr Benz has been featured in articles and books about progressive philanthropy, as he was a key organizer in the 70’s of groups encouraging people with inherited money to make charitable contributions. He was an editor and contributor to the book Robin Hood Was Right, which suggested ways people could support community organizing and other activist projects. He is currently writing a memoir.',
+    ],
+  },
+  {
+    name: 'Priscilla Lee', role: 'Board Member -NY', photo: `${WP}/2020/03/Pricilla-scaled.jpg`,
+    paragraphs: [
+      'Priscilla Lee is a product development professional, with experience from concept to consumer in the infant industry. Priscilla was born in Sao Paulo, Brazil and from her family upbringing, has always been fascinated with how diverse the world is, and how to improve it for future generations. Priscilla now calls Brooklyn, NY home, but takes every opportunity to travel with her family abroad to expose her children to different cultures. Priscilla has a Bachelor of Arts degree in French from the University of California at Davis, and a Master of Science in Hotel and Tourism Management from New York University.',
+    ],
+  },
+  {
+    name: 'Dena O’Connor', role: 'Board Member -NY', photo: `${WP}/2020/03/Dena.jpg`,
+    paragraphs: [
+      'Dena O’Connor, International Strategies Director for Turkey’s Maya Foundation, brings to her work a passion for children’s rights and extensive international experience. She has lived and worked in seven countries; the last 13 years in Turkey. Dena witnessed first-hand the devastating effects of the loss of human rights in her research and work with the Family Members of the Disappeared in Chile, which was the beginning of her pathway to focusing on vulnerable populations as a result of conflict. In her native USA, she provided services for newly immigrated children in the Massachusetts State System.',
+      'In Istanbul, she has written curriculum, provided project-based learning, project event management and educational consulting for a variety of private clients. This work brought her in contact with some of Turkey’s most influential families. She spent two years working with refugee children from all over the world in informal education settings. She did market research for investment in the Mercosur Countries (Southern Common Market) for the New Hampshire Division of Economic Development of International Commerce and connected state businesses and cultural entities with potential international partners while also working as an official translator. She received an MA in International Relations from the University of Nottingham in England and a BA in International Relations and Latin American Studies from Wheaton College (Massachusetts, USA).',
+      'When Syrian refugees began arriving in Turkey she focused on supporting children, youth, and families fleeing war. She is honored to be part of Maya Foundation’s dynamic team and to contribute her international educational experience and project management skills to its mission of helping traumatized populations through mental health and psychosocial services, including the Trauma Informed Schools Program in Turkish public schools as well as services to promote social cohesion between host and refugee communities. Dena works on development for the organization managing relations with individual donors, partnerships with non-Turkish organizations and organizing events and finding opportunities for new collaborations. An avid art lover who has helped children learn and grow through the arts for many years, she is particularly excited that creative art therapeutic interventions are key to Maya’s work and manages artist collaboration and cultural outreach for the organization. This focus led to exhibitions of the children’s art throughout Europe, including in London and Brussels.  Drawing from her political science studies, she also implemented an international advocacy program for Maya’s work built around conferences or panels in the United States and Turkey as well as in Brussels at the European Parliament.',
+    ],
+  },
+  {
+    name: 'Carlos Navarro', role: 'Board Member -NY', photo: `${WP}/2020/03/IMG-20200329-WA00022.jpg`,
+    paragraphs: [
+      'Carlos Navarro has worked for more than 20 years for international organizations and notably, the European Union and the United Nations, as a legal contract and procurement senior officer.',
+      'In 2014, he took the courageous step to dedicate his life to egg tempera painting, writing and promoting art and culture as means to build bridges and universal growth.',
+      'He has actively contributed to convert Newburgh, in the Hudson Valley, into a cultural and artistic hub. He is presently embarked in a new venture : opening an art gallery, the AGC gallery, in Newburgh to further facilitate artistic exchanges and build peace through art.',
+    ],
+  },
+  {
+    name: 'Eric Melloul', role: 'Board Member –Brussels', photo: `${WP}/2017/01/IMG_34111.jpg`,
+    paragraphs: [
+      'Eric Melloul is a world traveller that manages investments in beverages and consumer products of the Verlinvest group, and serves as board member or observer of several portfolio companies. Eric worked for Citibank corporate finance in NY and London and spent over 5 years as an Associate Partner with McKinsey & Co leading the consumer practice and advising leading food and beverages in Europe, US and the Middle East. In 2004, he joined Inbev as VP strategy overseeing M&A and global brands before assuming responsibility for marketing and commercial operations in China in 2005. Eric holds a MBA/MPA from Harvard University and BSC from the London School of Economics.',
+    ],
+  },
+  {
+    name: 'Silvia Cambra', role: 'Board Member -Brussels', photo: `${WP}/2017/11/20171124_213927-150x150.png`,
+    paragraphs: [
+      'Silvia Cambra comes from a family of musicians from multicultural music traditions. Through music, she had the opportunity to discover the world and its different people. She has acquired a first hand understanding of the power of music as a bridge between different cultures. Silvia has worked for over 20 years in Marketing and Communication for a number of multinational companies. Currently, she is involved in the development of innovative educative programmes and mainly based in Barcelona. Silvia holds a DAA, Award of Achievement in Digital analytics, from the University of British Columbia and teaches in various international universities.',
+    ],
+  },
+];
+
+export const partnerNetwork = 'We count on the precious collaboration of a network of **Partner Organizations** in New York, Washington, Amsterdam, Bakou, Berlin, Brussels, Paris, Barcelona, Madrid, Oslo, Rome, Amman, Beirut, Istanbul, Tel Aviv, Ramallah, Moscow and Nairobi.';
+export const partnerNetworkClosing = 'We count on the precious collaboration of a network of Partner Organizations all over the world!';
+
+export const addYourVoice = {
+  heading: 'Artists have a crucial societal role, one of conciliating and building bridges between different people, regardless of their origins and beliefs.',
+  intro: 'They are a source of positive values and can be active change makers using art as a catalyst for peaceful coexistence among different communities. Artists can therefore be a force for community development and social transformation. We can all play our role in echoing their voices by supporting artistic efforts to overcome all forms of discrimination, inter-cultural and inter-religious conflicts. This process requires collaborative action and distinct responsibilities. Choose yours and add your voice to the movement.',
+  lead: '**Be a change maker**, here are the different ways you can support us.',
+  roles: [
+    { title: 'Project initiator', text: 'You have the will to act or a fascinating idea to share. Tell us about your dream project and what you will need to bring it to life.' },
+    { title: 'Implementer', text: 'Do you have the means and the skills to develop your idea and turn it into a project? Share them with us and we will help you find partners, get expertise and take it to the next level.' },
+    { title: 'Donor', text: 'Do you want to contribute in kind or financially to our cause? We thank you and we want to hear from you!' },
+    { title: 'Supporter', text: 'Follow our news, tell your friends and contacts about our projects, get in touch with us and tell us what you think. A little encouragement goes long way!' },
+  ],
+};

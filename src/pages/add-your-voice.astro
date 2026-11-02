@@ -1,0 +1,26 @@
+---
+import Base from '../layouts/Base.astro';
+import ClassicPage from '../components/classic/ClassicPage.astro';
+import Rich from '../components/classic/Rich.astro';
+import { addYourVoice as a } from '../data/classic';
+---
+<Base title="Add your Voice" current="voice">
+  <ClassicPage title="Add your Voice">
+    <h2 class="text-[clamp(22px,2.3vw,30px)] font-medium uppercase leading-[1.2] tracking-[0.03em] text-navy text-balance">{a.heading}</h2>
+    <p class="body mt-8 text-ink">{a.intro}</p>
+    <Rich text={a.lead} class="lede mt-10 text-navy" />
+    <div class="mt-8 grid gap-5 sm:grid-cols-2">
+      {a.roles.map((r, i) => (
+        <div class="rounded-card border border-line bg-white p-7">
+          <div class="text-sm font-semibold text-orange">0{i + 1}</div>
+          <h3 class="t-h3 mt-2 text-navy">{r.title}</h3>
+          <p class="mt-3 text-base leading-relaxed text-ink">{r.text}</p>
+        </div>
+      ))}
+    </div>
+    <div class="mt-12 flex flex-wrap items-center gap-4">
+      <span class="lede text-navy">Drop us a line</span>
+      <a href="/contact/" class="btn btn-primary">Contact us</a>
+    </div>
+  </ClassicPage>
+</Base>

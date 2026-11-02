@@ -1,0 +1,13 @@
+---
+// Partner logos from the old site, in a slow loop. Eager loading avoids gaps on iOS.
+import { partnerLogos } from '../../data/classic';
+---
+<div class="overflow-hidden rounded-card border border-line bg-white py-6" aria-label="Partners">
+  <div class="marquee">
+    {[...partnerLogos, ...partnerLogos].map((src, i) => (
+      <span class="inline-flex h-20 w-40 flex-none items-center justify-center px-5 lg:h-24 lg:w-48" aria-hidden={i >= partnerLogos.length ? 'true' : undefined}>
+        <img src={src} alt="" loading="eager" decoding="async" class="max-h-full max-w-full object-contain" />
+      </span>
+    ))}
+  </div>
+</div>

@@ -1,0 +1,14 @@
+---
+// Renders one paragraph of the classic copy: **bold**, *italic* and [label](url) links.
+interface Props { text: string; class?: string; tag?: 'p' | 'div' | 'span' }
+const { text, class: cls, tag: Tag = 'p' } = Astro.props;
+const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const html = esc(text)
+  .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, l, u) => {
+    const ext = /^https?:/.test(u);
+    return `<a href="${u}"${ext ? ' target="_blank" rel="noopener"' : ''}>${l}</a>`;
+  })
+  .replace(/\*\*([^*]+)\*\*/g, '<strong class="font-semibold">$1</strong>')
+  .replace(/\*([^*]+)\*/g, '<em>$1</em>');
+---
+<Tag class={cls} set:html={html} />

@@ -1,200 +1,26 @@
 ---
 import Base from '../layouts/Base.astro';
-import Hero from '../components/Hero.astro';
-import Photo from '../components/Photo.astro';
-import Button from '../components/Button.astro';
-import StatBlock from '../components/StatBlock.astro';
-import ProjectCard from '../components/ProjectCard.astro';
-import SdgBadge from '../components/SdgBadge.astro';
-import PressStrip from '../components/PressStrip.astro';
-import PartnerMarquee from '../components/PartnerMarquee.astro';
-import TestimonialCard from '../components/TestimonialCard.astro';
-import CtaCard from '../components/CtaCard.astro';
-import NewsletterForm from '../components/NewsletterForm.astro';
-import { site, sdgs } from '../data/site';
-import { getProjects, getTestimonials, getSettings } from '../lib/content';
-import { statsNote } from '../data/stats';
-const settings = await getSettings();
-const { featuredIn, founder } = settings;
-
-const projects = await getProjects();
-const testimonials = await getTestimonials();
-const gwim = projects.find((p) => p.slug === 'global-women-in-music')!;
-const homeTestimonials = testimonials.filter((t) => t.published && t.home).sort((a, b) => a.order - b.order);
-const projectTitle = (slug: string) => projects.find((p) => p.slug === slug)?.title;
-
-const involve = [
-  { title: 'Propose a project', line: 'Bring us an idea that uses music or the arts to build bridges.', cta: 'Send a proposal', href: settings.proposalMailto, photo: { src: '10-propose-partitura_IMG_5272.jpg', alt: 'Scores on a music stand: "Going Home" by Aida Saco and "Tierra Pura" by Valerie Naranjo', pos: '45% 60%' } },
-  { title: 'Donate', line: 'Every gift brings more women composers to the stage.', cta: 'Donate via PayPal', href: '/donate/', note: site.seal, photo: { src: '09-donate-abrazo_IMG_5435.jpg', alt: 'Two artists embracing on stage after the concert', pos: '50% 30%' } },
-  { title: 'Spread the word', line: 'Share our concerts and stories with your community.', cta: 'Share', href: '/get-involved/#spread', photo: { src: '11-spread-the-word_IMG_5553.jpg', alt: 'Audience and artists sharing the moment after the concert', pos: '50% 50%' } },
-];
+import ClassicPage from '../components/classic/ClassicPage.astro';
+import Rich from '../components/classic/Rich.astro';
+import LogoCarousel from '../components/classic/LogoCarousel.astro';
+import ProjectBlock from '../components/classic/ProjectBlock.astro';
+import { homeIntro, currentProjects } from '../data/classic';
 ---
-<Base>
-  <Hero
-    title="Connecting cultures. Amplifying"
-    titleAccent="voices."
-    subtitle="Fostering a universal culture of peace."
-    primaryCta={{ label: 'Partner with us', href: settings.partnerMailto }}
-    secondaryCta={{ label: 'Donate', href: '/donate/' }}
-    poster={{ src: '01-hero-saludo-final_IMG_5460.jpg', alt: 'Women composers and conductor Vesna Šouc take a bow with the orchestra at Symphony Space, Global Women in Music 2026', pos: '50% 62%' }}
-  />
-
-  <!-- Mission -->
-  <section id="mission" aria-labelledby="mission-h" class="wrap section-y grid grid-cols-[repeat(auto-fit,minmax(min(100%,460px),1fr))] items-center gap-[clamp(40px,6vw,96px)]">
-    <div data-reveal>
-      <div class="eyebrow text-sky-text">Our mission</div>
-      <h2 id="mission-h" class="mt-5 text-[clamp(30px,3.4vw,46px)] font-light leading-[1.2] [text-wrap:pretty]">Music is the oldest diplomacy we have. We use it to bring people to the same table.</h2>
-      <p class="body mt-7 max-w-[560px] text-ink-muted">United Voices 4 Peace is a non-partisan cultural diplomacy initiative that brings together artists, diplomats and communities to promote a universal culture of peace.</p>
-      <div class="mt-10 border-t border-line pt-6">
-        <div class="eyebrow mb-3.5 text-ink-muted">Aligned with the UN Sustainable Development Goals</div>
-        <ul class="flex flex-wrap gap-3.5">
-          {sdgs.map((g) => <li><SdgBadge n={g.n} label={g.label} /></li>)}
-        </ul>
-      </div>
+<Base current="home" bigHeader>
+  <ClassicPage title="Home">
+    <h2 class="text-[clamp(22px,2.3vw,30px)] font-medium uppercase leading-[1.2] tracking-[0.03em] text-navy text-balance">{homeIntro.heading}</h2>
+    <div class="body mt-8 flex flex-col gap-4">
+      {homeIntro.paragraphs.map((t) => <Rich text={t} />)}
     </div>
-    <figure data-reveal class="relative m-0 aspect-[4/5] overflow-hidden rounded-card bg-navy">
-      <Photo src="03-mision-balafon_IMG_5284.jpg" alt="Composer Valerie Naranjo playing the balafon with the orchestra" pos="40% 50%" sizes="(min-width:1024px) 600px, 100vw" />
-    </figure>
-  </section>
+    <a href="/add-your-voice/" class="btn btn-primary mt-8">Be a Change Maker and Add Your Voice!</a>
 
-  <!-- Featured: GWIM -->
-  <section aria-labelledby="gwim-h" class="bg-navy-deep">
-    <div class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,520px),1fr))]">
-      <div class="relative min-h-[clamp(420px,52vw,760px)]">
-        <Photo src="02-gwim-destacado-directora_IMG_5349.jpg" alt="Guest conductor Vesna Šouc leading the orchestra" pos="45% 40%" sizes="(min-width:1040px) 50vw, 100vw" />
-      </div>
-      <div data-reveal class="flex flex-col justify-center bg-navy px-[clamp(24px,5vw,88px)] py-[clamp(48px,7vw,104px)] text-white">
-        <div class="eyebrow text-sky">Featured project · Global Women in Music</div>
-        <h2 id="gwim-h" class="t-h1 mt-5">Four editions. One shared <span class="text-orange">mission.</span></h2>
-        <p class="body mt-6 max-w-[520px]">{gwim.intro}</p>
-        <div class="mt-9 flex flex-wrap items-baseline gap-6 border-y border-white/20 py-7">
-          <div class="text-[clamp(56px,6vw,84px)] font-medium leading-none text-sky">5%</div>
-          <div class="min-w-[220px] flex-1">
-            <div class="text-xl font-light leading-snug">Only 5% of the repertoire performed by orchestras is composed by women.</div>
-            <div class="mt-2 text-[13px] text-line">Source: <a href="https://donne-uk.org" class="text-line underline">donne-uk.org</a></div>
-          </div>
-        </div>
-        <div class="mt-8 flex flex-wrap items-center gap-3.5">
-          <span class="inline-flex items-center gap-2.5 rounded-full border border-orange px-4 py-2.5 text-[13px] font-medium uppercase tracking-[0.08em]">
-            <span class="h-2 w-2 flex-none rounded-full bg-orange"></span>
-            <span class="lg:hidden">GWIM 2027 · Coming soon</span>
-            <span class="hidden lg:inline">Coming soon · Global Women in Music 2027</span>
-          </span>
-        </div>
-        <div class="mt-7 flex flex-col gap-3.5 sm:flex-row sm:flex-wrap">
-          <Button href="#news-h" class="w-full sm:w-auto">Get notified</Button>
-          <Button href={`/projects/${gwim.slug}/`} variant="light" class="w-full sm:w-auto">Discover the project</Button>
-        </div>
-      </div>
-    </div>
-  </section>
+    <h2 class="t-h2 mt-20 text-navy">Partners</h2>
+    <div class="mt-6"><LogoCarousel /></div>
 
-  <!-- Impact -->
-  <section aria-labelledby="impact-h" class="border-t border-white/10 bg-navy text-white">
-    <div class="wrap section-y-sm">
-      <div data-reveal class="flex flex-wrap items-end justify-between gap-6">
-        <h2 id="impact-h" class="t-h2">Impact in numbers</h2>
-        <div class="eyebrow text-line">{statsNote}</div>
-      </div>
-      <div class="mt-12"><StatBlock /></div>
+    <h2 class="t-h1 mt-20 text-navy">Our Current Projects</h2>
+    <div class="mt-10 flex flex-col gap-14">
+      {currentProjects.map((p) => <ProjectBlock project={p} level="h3" />)}
     </div>
-  </section>
-
-  <PartnerMarquee />
-
-  <!-- Projects -->
-  <section id="projects" aria-labelledby="projects-h" class="wrap section-y">
-    <div data-reveal>
-      <div class="eyebrow text-sky-text">Projects</div>
-      <h2 id="projects-h" class="t-h1 mt-4">Where music meets <span class="text-sky-text">diplomacy</span></h2>
-    </div>
-    <div class="mt-12 grid grid-cols-[repeat(auto-fit,minmax(min(100%,340px),1fr))] gap-[clamp(20px,2.4vw,32px)]">
-      {projects.slice(0, 3).map((p) => <ProjectCard project={p} />)}
-    </div>
-    <div class="mt-12 flex justify-center">
-      <Button href="/projects/" variant="navy">See all {projects.length} projects</Button>
-    </div>
-  </section>
-
-  <!-- Voices from the stage -->
-  {homeTestimonials.length > 0 && (
-    <section aria-label="Voices from the stage" class="bg-surface-soft">
-      <div class="wrap section-y-sm">
-        <div class="eyebrow text-sky-text">In their words</div>
-        <h2 class="t-h1 mt-4">Voices from the stage</h2>
-        <div class="mt-10 grid grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] gap-7">
-          {homeTestimonials.map((t) => (
-            <TestimonialCard text={t.text} who={t.who} caption={t.caption} photo={t.photo} project={projectTitle(t.project)} />
-          ))}
-        </div>
-      </div>
-    </section>
-  )}
-
-  <!-- Media & Recognition -->
-  <section id="press" aria-labelledby="press-h" class="bg-surface-soft">
-    <div class="wrap grid grid-cols-[repeat(auto-fit,minmax(min(100%,380px),1fr))] gap-[clamp(40px,6vw,96px)] pt-[clamp(72px,10vw,140px)]">
-      <div data-reveal>
-        <div class="eyebrow text-sky-text">Media &amp; Recognition</div>
-        <h2 id="press-h" class="t-h1 mt-4">Recognised for uniting communities</h2>
-        <p class="body mt-4 text-ink-muted">Awards for our founder, festival honours for our documentary and recognition from the City of New York.</p>
-        <figure class="relative m-0 mt-10 aspect-[3/2] max-w-[420px] overflow-hidden rounded-card bg-placeholder">
-          <Photo src="06-prensa-entrevista_IMG_5230.jpg" alt="Interview with the press at Global Women in Music 2026" sizes="420px" />
-        </figure>
-        <Button href="/media-and-recognition/" variant="tertiary" class="mt-7">See all media &amp; recognition</Button>
-      </div>
-      <PressStrip showFeaturedIn={false} />
-    </div>
-    {featuredIn.length > 0 && (
-      <div class="wrap flex flex-col items-start gap-3 border-t border-line pb-[clamp(72px,10vw,140px)] pt-8 sm:flex-row sm:flex-wrap sm:items-baseline sm:gap-x-10">
-        <div class="eyebrow shrink-0 text-ink-muted">As featured in</div>
-        <div class="flex w-full gap-x-7 gap-y-3 overflow-x-auto text-[18px] font-semibold uppercase tracking-[0.04em] text-ink sm:w-auto sm:flex-wrap sm:gap-x-9 sm:overflow-visible sm:text-xl">{featuredIn.map((m) => <span class="shrink-0">{m}</span>)}</div>
-      </div>
-    )}
-  </section>
-
-  <!-- Founder -->
-  <section aria-labelledby="founder-h" class="bg-navy text-white">
-    <div class="mx-auto grid max-w-[1320px] grid-cols-[repeat(auto-fit,minmax(min(100%,440px),1fr))]">
-      {founder.photo && (
-        <figure class="relative m-0 min-h-[clamp(420px,46vw,680px)] overflow-hidden">
-          <Photo {...founder.photo} sizes="(min-width:1024px) 660px, 100vw" />
-        </figure>
-      )}
-      <div data-reveal class="flex flex-col justify-center px-[clamp(24px,5vw,88px)] py-[clamp(48px,7vw,104px)]">
-        <div id="founder-h" class="eyebrow text-sky">Our founder</div>
-        {founder.quote && <blockquote class="mt-6 text-[clamp(26px,2.6vw,36px)] font-light leading-[1.35]">“{founder.quote}”</blockquote>}
-        <div class="mt-8"><div class="text-[22px] font-semibold">{founder.name}</div><div class="mt-1 text-base text-line">{founder.role}</div></div>
-        <Button href="/people/" variant="light" class="mt-9 self-start">Meet our people</Button>
-      </div>
-    </div>
-  </section>
-
-  <!-- Get involved -->
-  <section id="get-involved" aria-labelledby="involve-h" class="wrap section-y">
-    <div class="flex flex-wrap items-start justify-between gap-6">
-      <div data-reveal>
-        <div class="eyebrow text-sky-text">Get involved</div>
-        <h2 id="involve-h" class="t-h1 mt-4">Add your <span class="text-sky-text">voice</span></h2>
-      </div>
-      <p data-reveal class="max-w-[320px] text-sm leading-relaxed text-ink-muted">Institutions, artists and friends of the music all have a part to play. Choose the one that fits you.</p>
-    </div>
-    <div class="mt-12 grid grid-cols-1 gap-[clamp(20px,2.4vw,28px)] sm:grid-cols-2 lg:grid-cols-3">
-      <article data-reveal class="col-span-full grid grid-cols-[repeat(auto-fit,minmax(min(100%,380px),1fr))] overflow-hidden rounded-card bg-navy text-white">
-        <div class="relative min-h-[320px]"><Photo src="08-partners-photocall_IMG_5478.jpg" alt="Guests at the Global Women in Music photocall in front of the partners' backdrop" pos="50% 35%" sizes="(min-width:1024px) 660px, 100vw" /></div>
-        <div class="flex flex-col justify-center p-[clamp(32px,4vw,56px)]">
-          <div class="eyebrow text-sky">For foundations &amp; institutions</div>
-          <h3 class="t-h2 mt-3.5">Partner <span class="text-orange">with us</span></h3>
-          <p class="body mt-3.5 max-w-[460px]">Put your institution's name behind live music that advances visibility, representation and dialogue on the global decision-makers' stage.</p>
-          <div class="mt-7 flex flex-wrap items-center gap-6">
-            <Button href={settings.partnerMailto}>Start a partnership</Button>
-            <a href="/projects/global-women-in-music/#partner" class="text-sm font-medium uppercase tracking-[0.1em] text-white underline underline-offset-4 hover:text-sky">See partner benefits</a>
-          </div>
-        </div>
-      </article>
-      {involve.map((c, i) => <CtaCard {...c} index={i + 1} />)}
-    </div>
-  </section>
-
-  <NewsletterForm />
+    <a href="/current-projects/" class="btn btn-tertiary mt-12">Find out more on Current Projects</a>
+  </ClassicPage>
 </Base>

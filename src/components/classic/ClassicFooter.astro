@@ -1,0 +1,79 @@
+---
+// Footer of the classic proposal: same blocks as the old site (US and BE entities, terms, follow us,
+// contacts with the subscribe form), in the Fiel navy.
+import { getSettings } from '../../lib/content';
+const settings = await getSettings();
+const donate = settings.paypalUrl || '/donate/';
+const follow = [
+  ...settings.social.filter((s) => s.href),
+  { label: 'Candid', href: 'https://www.guidestar.org/profile/84-3212629' },
+];
+---
+<footer class="bg-navy text-white">
+  <div class="wrap pb-[calc(2rem+env(safe-area-inset-bottom))] pt-[clamp(56px,7vw,88px)]">
+    <div class="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.1fr_1fr_1fr_1.3fr]">
+      <div>
+        <img src="/logos/uv4peace-vertical-reversed.svg" alt="United Voices 4 Peace" class="h-auto w-[150px]" loading="lazy" />
+      </div>
+      <div class="flex flex-col gap-8">
+        <div>
+          <h2 class="eyebrow text-sky">US: United Voices 4 Peace Incorporated</h2>
+          <p class="mt-3 text-[15px] leading-relaxed text-line">Non-profit 501 (c) (3)<br />EIN n. 843212629</p>
+          <a href={donate} class="btn btn-primary btn-sm mt-4">Donate $</a>
+        </div>
+        <div>
+          <h2 class="eyebrow text-sky">BE: United Voices 4 Peace (ASBL)</h2>
+          <p class="mt-3 text-[15px] leading-relaxed text-line">Registration n. 0683.725.482</p>
+          <a href={donate} class="btn btn-light btn-sm mt-4">Donate with PayPal</a>
+        </div>
+      </div>
+      <div class="flex flex-col gap-8">
+        <div>
+          <h2 class="eyebrow text-sky">Terms &amp; Conditions</h2>
+          <ul class="mt-3 border-t border-white/15 text-[15px]">
+            <li class="border-b border-white/15"><a href="/terms/" class="block py-2.5 text-white hover:text-sky">Terms of Use</a></li>
+            <li class="border-b border-white/15"><a href="/privacy/" class="block py-2.5 text-white hover:text-sky">Privacy policy</a></li>
+            <li class="border-b border-white/15"><a href="/cookies/" class="block py-2.5 text-white hover:text-sky">Cookies Policy</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2 class="eyebrow text-sky">Follow us</h2>
+          <div class="mt-3 flex flex-wrap gap-2">
+            {follow.map((s) => <a href={s.href} target="_blank" rel="noopener" class="rounded-full border border-white/40 px-4 py-1.5 text-sm text-white hover:border-sky hover:text-sky hover:no-underline">{s.label}</a>)}
+          </div>
+        </div>
+      </div>
+      <div>
+        <h2 class="eyebrow text-sky">Contacts</h2>
+        <p class="mt-3 text-[15px] text-line">Mail : <a href={`mailto:${settings.email}`} class="text-white underline hover:text-sky">{settings.email}</a></p>
+        <form data-newsletter class="mt-5 flex flex-col gap-3" novalidate>
+          <div class="absolute -left-[9999px]" aria-hidden="true"><label>Leave this empty <input type="text" name="website" tabindex="-1" autocomplete="off" /></label></div>
+                    <label class="text-sm font-medium">Name*<input name="name" type="text" required class="mt-1.5 block w-full rounded-full border border-white/30 bg-white/10 px-5 py-3 text-base text-white placeholder:text-white/50" /></label>
+          <label class="text-sm font-medium">Email*<input name="email" type="email" required class="mt-1.5 block w-full rounded-full border border-white/30 bg-white/10 px-5 py-3 text-base text-white placeholder:text-white/50" /></label>
+          <label class="flex cursor-pointer items-start gap-2 text-[13px] leading-normal text-line"><input type="checkbox" name="consent" required class="mt-0.5 h-4 w-4 accent-sky" /><span>I agree to receive emails and accept the <a href="/privacy/" class="text-white underline">Privacy policy</a>.</span></label>
+          <button type="submit" class="btn btn-secondary btn-sm mt-1 self-start">Subscribe</button>
+          <p data-newsletter-error hidden role="alert" class="text-sm text-orange">We could not subscribe you right now. Please try again in a moment.</p>
+        </form>
+        <p data-newsletter-ok hidden class="mt-5 text-[15px] text-line">Thank you. Please check your inbox to confirm your subscription.</p>
+      </div>
+    </div>
+    <div class="mt-14 border-t border-white/15 pt-6 text-[13px] text-line">Copyright © {new Date().getFullYear()} uv4peace.org. All rights reserved.</div>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('footer [data-newsletter]').forEach((form) => {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!form.reportValidity()) return;
+      const error = form.querySelector<HTMLElement>('[data-newsletter-error]');
+      const ok = form.parentElement?.querySelector<HTMLElement>('[data-newsletter-ok]');
+      if (error) error.hidden = true;
+      try {
+        const res = await fetch('/api/subscribe', { method: 'POST', body: new FormData(form) });
+        if (!res.ok) throw new Error(String(res.status));
+        form.hidden = true; if (ok) ok.hidden = false;
+      } catch { if (error) error.hidden = false; }
+    });
+  });
+</script>

@@ -1,0 +1,82 @@
+---
+// Header of the classic proposal: the old photo banner with the site title, and the old menu below it.
+import { classicNav, bannerImage } from '../../data/classic';
+interface Props { current?: string; big?: boolean }
+const { current, big = false } = Astro.props;
+const isCurrent = (n: { key: string; children?: { key: string }[] }) => current === n.key || n.children?.some((c) => c.key === current);
+import { getImage } from 'astro:assets';
+import fallback from '../../assets/fotos/08-partners-photocall_IMG_5478.jpg';
+const fb = await getImage({ src: fallback, width: 1600, format: 'webp' });
+---
+<header>
+  <div class:list={['relative overflow-hidden bg-navy', big ? 'h-[clamp(240px,34vw,420px)]' : 'h-[clamp(150px,20vw,220px)]']} style={`background:url(${fb.src}) center/cover`}>
+    <img src={bannerImage} alt="" class="absolute inset-0 h-full w-full object-cover" loading="eager" />
+    <div class="absolute inset-0 bg-gradient-to-r from-navy/85 via-navy/55 to-navy/20"></div>
+    <div class:list={['wrap relative flex h-full items-end gap-4 sm:gap-6', big ? 'pb-[clamp(28px,5vw,64px)]' : 'pb-6 sm:pb-8']}>
+      <a href="/" class="flex-none" aria-label="United Voices 4 Peace, home">
+        <img src="/logos/uv4peace-globo-white.svg" alt="" class:list={['w-auto', big ? 'h-16 sm:h-24' : 'h-12 sm:h-16']} />
+      </a>
+      <a href="/" class="text-white hover:text-white hover:no-underline">
+        <span class:list={['block font-medium uppercase leading-[1.02] tracking-[0.06em]', big ? 'text-[clamp(30px,5.4vw,68px)]' : 'text-[clamp(22px,3.4vw,40px)]']}>United Voices 4 Peace</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="sticky top-0 z-50 border-b border-line bg-white">
+    <div class="wrap flex items-center justify-between gap-4 py-2">
+      <nav aria-label="Main" class="hidden items-center gap-1 lg:flex">
+        {classicNav.map((n) => (
+          <div class="group relative">
+            <a href={n.href} aria-current={current === n.key ? 'page' : undefined}
+               class:list={['inline-flex items-center gap-1.5 rounded-full px-4 py-2.5 text-[15px] font-medium hover:no-underline', isCurrent(n) ? 'bg-surface-soft text-sky-text' : 'text-navy hover:text-sky-text']}>
+              {n.label}
+              {n.children && <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M1.5 3.5 5 7l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" /></svg>}
+            </a>
+            {n.children && (
+              <div class="invisible absolute left-0 top-full z-50 min-w-[220px] pt-2 opacity-0 transition-opacity group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
+                <div class="rounded-card border border-line bg-white p-2 shadow-[0_14px_32px_rgba(20,54,90,.12)]">
+                  {n.children.map((c) => (
+                    <a href={c.href} class:list={['block rounded-lg px-4 py-2.5 text-[15px] hover:bg-surface-soft hover:no-underline', current === c.key ? 'text-sky-text' : 'text-navy']}>{c.label}</a>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </nav>
+      <a href="/" class="lg:hidden" aria-label="United Voices 4 Peace, home">
+        <img src="/logos/uv4peace-horizontal-compact-color.svg" alt="United Voices 4 Peace" class="h-7 w-auto" width="183" height="44" />
+      </a>
+      <div class="flex items-center gap-2">
+        <a href="/donate/" class="btn btn-primary btn-sm hidden sm:inline-flex">Donate</a>
+        <button type="button" data-menu-open aria-controls="menu" class="btn btn-tertiary btn-sm min-h-9 px-3.5 text-[13px] lg:hidden">Menu</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<dialog id="menu" class="menu-dialog" aria-label="Menu">
+  <div class="flex items-center justify-between">
+    <img src="/logos/uv4peace-horizontal-reversed.svg" alt="United Voices 4 Peace" class="h-12 w-auto" />
+    <button type="button" data-menu-close class="btn btn-light btn-sm">Close</button>
+  </div>
+  <nav aria-label="Mobile" class="mt-12 flex flex-col text-[28px] font-medium">
+    {classicNav.map((n) => (
+      <>
+        <a href={n.href} class:list={['border-b border-white/15 py-2.5 hover:no-underline', current === n.key ? 'text-sky' : 'text-white hover:text-sky']}>{n.label}</a>
+        {n.children?.map((c) => (
+          <a href={c.href} class:list={['border-b border-white/15 py-2 pl-5 text-[20px] hover:no-underline', current === c.key ? 'text-sky' : 'text-white/80 hover:text-sky']}>{c.label}</a>
+        ))}
+      </>
+    ))}
+  </nav>
+  <div class="mt-auto pt-8">
+    <a href="/donate/" class="btn btn-primary w-full">Donate</a>
+  </div>
+</dialog>
+
+<script>
+  const menu = document.getElementById('menu') as HTMLDialogElement | null;
+  document.querySelectorAll('[data-menu-open]').forEach((b) => b.addEventListener('click', () => menu?.showModal()));
+  menu?.querySelectorAll('[data-menu-close], a').forEach((el) => el.addEventListener('click', () => menu.close()));
+</script>
