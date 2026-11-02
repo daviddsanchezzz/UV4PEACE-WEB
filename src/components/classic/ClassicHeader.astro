@@ -1,55 +1,24 @@
 ---
 // Header of the classic proposal: the old photo banner with the site title, and the old menu below it.
 import { classicNav, bannerImage } from '../../data/classic';
-interface Props { current?: string; big?: boolean; heroTitle?: string }
-const { current, big = false, heroTitle } = Astro.props;
+interface Props { current?: string; big?: boolean }
+const { current, big = false } = Astro.props;
 const isCurrent = (n: { key: string; children?: { key: string }[] }) => current === n.key || n.children?.some((c) => c.key === current);
 import { getImage } from 'astro:assets';
 import fallback from '../../assets/fotos/08-partners-photocall_IMG_5478.jpg';
 const fb = await getImage({ src: fallback, width: 1600, format: 'webp' });
 ---
-<header>
-  {big && heroTitle ? (
-    <div class="relative overflow-hidden bg-navy" style={`background:url(${fb.src}) center/cover`}>
-      <img src={bannerImage} alt="" class="absolute inset-0 h-full w-full object-cover" loading="eager" />
-      <div class="absolute inset-0 bg-gradient-to-r from-navy/95 via-navy/75 to-navy/30"></div>
-      <div class="wrap relative flex min-h-[clamp(520px,62vw,720px)] flex-col justify-between gap-10 py-[clamp(28px,4vw,48px)]">
-        <a href="/" class="flex items-center gap-4 text-white hover:text-white hover:no-underline" aria-label="United Voices 4 Peace, home">
-          <img src="/logos/uv4peace-globo-white.svg" alt="" class="h-12 w-auto sm:h-14" />
-          <span class="text-[clamp(18px,1.8vw,24px)] font-medium uppercase tracking-[0.12em]">United Voices 4 Peace</span>
-        </a>
-        <div class="max-w-[920px] pb-[clamp(8px,3vw,40px)]">
-          <div class="eyebrow flex items-center gap-3 text-sky"><span class="h-0.5 w-8 bg-orange"></span>Global cultural diplomacy initiative</div>
-          <p class="mt-5 text-[clamp(30px,4.6vw,62px)] font-medium uppercase leading-[1.06] tracking-[0.015em] text-white text-balance" set:html={heroTitle} />
-          <div class="mt-9 flex flex-wrap gap-3">
-            <a href="/add-your-voice/" class="btn btn-primary px-6 text-[12px] tracking-[0.08em] sm:text-sm sm:tracking-[0.14em]">Be a Change Maker and Add Your Voice!</a>
-            <a href="/donate/" class="btn btn-light">Donate</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  ) : (
-    <div class:list={['relative overflow-hidden bg-navy', big ? 'h-[clamp(240px,34vw,420px)]' : 'h-[clamp(150px,20vw,220px)]']} style={`background:url(${fb.src}) center/cover`}>
-      <img src={bannerImage} alt="" class="absolute inset-0 h-full w-full object-cover" loading="eager" />
-      <div class="absolute inset-0 bg-gradient-to-r from-navy/85 via-navy/55 to-navy/20"></div>
-      <div class="wrap relative flex h-full items-end gap-4 pb-6 sm:gap-6 sm:pb-8">
-        <a href="/" class="flex-none" aria-label="United Voices 4 Peace, home">
-          <img src="/logos/uv4peace-globo-white.svg" alt="" class="h-12 w-auto sm:h-16" />
-        </a>
-        <a href="/" class="text-white hover:text-white hover:no-underline">
-          <span class="block text-[clamp(22px,3.4vw,40px)] font-medium uppercase leading-[1.02] tracking-[0.06em]">United Voices 4 Peace</span>
-        </a>
-      </div>
-    </div>
-  )}
-
-  <div class="sticky top-0 z-50 border-b border-line bg-white">
-    <div class="wrap flex items-center justify-between gap-4 py-2">
+<header class="sticky top-0 z-50">
+  <div class="border-b border-line bg-white">
+    <div class="wrap flex items-center justify-between gap-6 py-3">
+      <a href="/" class="flex-none" aria-label="United Voices 4 Peace, home">
+        <img src="/logos/uv4peace-horizontal-compact-color.svg" alt="United Voices 4 Peace" class="h-8 w-auto lg:h-10" width="183" height="44" />
+      </a>
       <nav aria-label="Main" class="hidden items-center gap-1 lg:flex">
         {classicNav.map((n) => (
           <div class="group relative">
             <a href={n.href} aria-current={current === n.key ? 'page' : undefined}
-               class:list={['inline-flex items-center gap-1.5 rounded-full px-4 py-2.5 text-[15px] font-medium hover:no-underline', isCurrent(n) ? 'bg-surface-soft text-sky-text' : 'text-navy hover:text-sky-text']}>
+               class:list={['inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-2.5 text-[14px] font-medium hover:no-underline xl:px-4 xl:text-[15px]', isCurrent(n) ? 'bg-surface-soft text-sky-text' : 'text-navy hover:text-sky-text']}>
               {n.label}
               {n.children && <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M1.5 3.5 5 7l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" /></svg>}
             </a>
@@ -65,16 +34,17 @@ const fb = await getImage({ src: fallback, width: 1600, format: 'webp' });
           </div>
         ))}
       </nav>
-      <a href="/" class="lg:hidden" aria-label="United Voices 4 Peace, home">
-        <img src="/logos/uv4peace-horizontal-compact-color.svg" alt="United Voices 4 Peace" class="h-7 w-auto" width="183" height="44" />
-      </a>
       <div class="flex items-center gap-2">
-        <a href="/donate/" class="btn btn-primary btn-sm hidden sm:inline-flex">Donate</a>
+        <a href="/donate/" class="btn btn-primary btn-sm hidden whitespace-nowrap sm:inline-flex">Donate</a>
         <button type="button" data-menu-open aria-controls="menu" class="btn btn-tertiary btn-sm min-h-9 px-3.5 text-[13px] lg:hidden">Menu</button>
       </div>
     </div>
   </div>
 </header>
+
+<div class:list={['relative overflow-hidden bg-navy', big ? 'h-[clamp(260px,40vw,520px)]' : 'h-[clamp(140px,18vw,220px)]']} style={`background:url(${fb.src}) center/cover`} aria-hidden="true">
+  <img src={bannerImage} alt="" class="absolute inset-0 h-full w-full object-cover" loading="eager" />
+</div>
 
 <dialog id="menu" class="menu-dialog" aria-label="Menu">
   <div class="flex items-center justify-between">
