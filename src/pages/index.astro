@@ -9,10 +9,29 @@ import { homeIntro, currentProjects, successNumbers } from '../data/classic';
 <Base current="home" bigHeader>
   <ClassicPage title="Home">
     <div class="grid gap-8 lg:grid-cols-[1fr_1.15fr] lg:gap-16">
-      <h2 class="text-[clamp(24px,2.8vw,38px)] font-medium uppercase leading-[1.15] tracking-[0.02em] text-navy text-balance">{homeIntro.heading}</h2>
+      <div class="lg:sticky lg:top-28 lg:self-start">
+        <h2 class="text-[clamp(24px,2.8vw,38px)] font-medium uppercase leading-[1.15] tracking-[0.02em] text-navy text-balance">{homeIntro.heading}</h2>
+        <p class="mt-8 flex max-w-[460px] items-center gap-4 rounded-card border border-line bg-surface-soft p-4 text-[15px] leading-snug text-navy">
+          <span class="grid size-11 flex-none place-items-center rounded-full bg-navy text-[13px] font-semibold tracking-[0.04em] text-white" aria-hidden="true">UN</span>
+          <span>{homeIntro.unLine}</span>
+        </p>
+      </div>
       <div>
         <div class="body flex flex-col gap-4">
-          {homeIntro.paragraphs.map((t) => <Rich text={t} />)}
+          {homeIntro.paragraphs.map((t, i) => (
+            <>
+              <Rich text={t} class={i === 0 ? 'lede text-navy' : undefined} />
+              {t.includes('Sustainable Development Goals') && (
+                <ul class="flex flex-wrap gap-2" aria-label="Focus Sustainable Development Goals">
+                  {homeIntro.sdgs.map((g) => (
+                    <li class="inline-flex items-center gap-2 rounded-full py-1.5 pl-1.5 pr-4 text-[13px] font-medium text-white" style={`background:${g.color}`}>
+                      <span class="grid size-7 place-items-center rounded-full bg-white/20 text-sm font-semibold">{g.n}</span>{g.label}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </>
+          ))}
         </div>
         <a href="/add-your-voice/" class="btn btn-primary mt-8">Be a Change Maker and Add Your Voice!</a>
       </div>

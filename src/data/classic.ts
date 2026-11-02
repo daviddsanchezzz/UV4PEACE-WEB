@@ -22,7 +22,15 @@ export const homeIntro = {
     '**UV4PEACE** aims to unite different communities through the universal language of the Arts, creating inclusive spaces for the diverse voices of the world to meet, even in situations of conflict.',
     'To carry our mission, we support underrepresented artists to promote peacebuilding and social justice through a model of empowerment & responsibility.',
     '**UV4PEACE** pledges to advance the efforts to achieve the United Nations 17 Sustainable Development Goals, with a special focus on Goals 5 (Gender Equality), 10 (Reduced inequalities), 16 (Peace & Justice) and 17 (Partnerships), helping to accelerate progress towards the 2030 agenda.',
-    'Our organization is proud to be formally associated to the United Nations Department of Global Communications.',
+  ],
+  // Shown as a small seal under the heading.
+  unLine: 'Our organization is proud to be formally associated to the United Nations Department of Global Communications.',
+  // Official UN colours of the four focus goals named in the paragraph above.
+  sdgs: [
+    { n: 5, label: 'Gender Equality', color: '#FF3A21' },
+    { n: 10, label: 'Reduced Inequalities', color: '#DD1367' },
+    { n: 16, label: 'Peace & Justice', color: '#00689D' },
+    { n: 17, label: 'Partnerships', color: '#19486A' },
   ],
 };
 
