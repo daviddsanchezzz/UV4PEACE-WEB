@@ -33,7 +33,7 @@ Necesita Node 18.20 o superior.
 | `/people/` | Fundadora, equipo/board, embajadores y artistas |
 | `/get-involved/` | Partner, Propose, Donate, Spread the word |
 | `/donate/` | Donación vía PayPal (enlace pendiente) y entidades legales |
-| `/press/` | Reconocimientos, medios y contacto de prensa |
+| `/media-and-recognition/` | Media & Recognition (antes Press): premios, medios y contacto de prensa. `/press/` redirige aquí |
 | `/privacy/`, `/terms/`, `/cookies/` | Legales (solo datos del responsable; falta el texto legal revisado) |
 | `/404` | Página no encontrada |
 

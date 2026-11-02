@@ -19,7 +19,7 @@ export async function getSections(db?: Db): Promise<Record<string, Section>> {
   return {
   prensa: {
     slug: 'prensa', label: 'Prensa y premios', singular: 'reconocimiento', reorder: false,
-    intro: 'Premios, reconocimientos y selecciones que aparecen en la home y en la página Press.',
+    intro: 'Premios, reconocimientos y selecciones que aparecen en la home y en la página Media & Recognition.',
     fields: [
       { key: 'title', label: 'Título', type: 'text' },
       { key: 'by', label: 'Quién lo otorga o dónde', type: 'text' },
@@ -56,7 +56,7 @@ export async function getSections(db?: Db): Promise<Record<string, Section>> {
   },
   medios: {
     slug: 'medios', label: 'Medios', singular: 'medio', reorder: true,
-    intro: 'Medios que han hablado de UV4PEACE. Salen en la página Press, agrupados por idioma. Solo el marcado como «Destacado» sale arriba como «Spoke about us».',
+    intro: 'Medios que han hablado de UV4PEACE. Salen en la página Media & Recognition, agrupados por idioma. Solo el marcado como «Destacado» sale arriba como «Spoke about us».',
     fields: [
       { key: 'outlet', label: 'Nombre del medio', type: 'text', placeholder: 'Forbes' },
       { key: 'url', label: 'Enlace al artículo', type: 'text', placeholder: 'https://', hint: 'Si aún no lo tienes, déjalo vacío: la web mostrará «link coming soon».' },
@@ -67,7 +67,7 @@ export async function getSections(db?: Db): Promise<Record<string, Section>> {
   },
   archivo: {
     slug: 'archivo', label: 'Archivo de prensa', singular: 'artículo antiguo', reorder: true,
-    intro: 'Cobertura antigua que sale en «Earlier coverage» de la página Press.',
+    intro: 'Cobertura antigua que sale en «Earlier coverage» de la página Media & Recognition.',
     fields: [
       { key: 'title', label: 'Título', type: 'text', placeholder: 'La Voce di New York' },
       { key: 'dateLabel', label: 'Fecha (como se lee en la web)', type: 'text', placeholder: 'Mar 2018', hint: 'Opcional.' },

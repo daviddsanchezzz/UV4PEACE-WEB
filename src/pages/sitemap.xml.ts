@@ -2,7 +2,7 @@
 import type { APIRoute } from 'astro';
 import { getProjects } from '../lib/content';
 
-const fixed = ['', 'projects/', 'people/', 'press/', 'get-involved/', 'donate/', 'newsletter/', 'terms/', 'privacy/', 'cookies/'];
+const fixed = ['', 'projects/', 'people/', 'media-and-recognition/', 'get-involved/', 'donate/', 'newsletter/', 'terms/', 'privacy/', 'cookies/'];
 
 export const GET: APIRoute = async () => {
   const origin = 'https://uv4peace.org';
