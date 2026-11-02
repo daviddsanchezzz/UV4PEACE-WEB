@@ -1,5 +1,7 @@
 ---
 // Slow-scrolling partner strip. Partners with a logo file show it; the rest show their name as text.
+// Logos load eagerly: lazy images inside the moving strip loaded late (or never, on iOS), leaving blank
+// gaps and changing the strip's width mid-animation, which made the loop jump.
 import { getPartners } from '../lib/content';
 import { site } from '../data/site';
 const active = (await getPartners()).filter((p) => p.active).sort((a, b) => a.order - b.order);
@@ -11,7 +13,7 @@ const active = (await getPartners()).filter((p) => p.active).sort((a, b) => a.or
   <div class="marquee mt-8" aria-label={active.map((p) => p.name).join(', ')}>
     {[...active, ...active].map((p, i) => (
       <span aria-hidden={i >= active.length ? 'true' : undefined} class="inline-flex items-center whitespace-nowrap border-r border-line px-7 text-[22px] font-medium uppercase tracking-[0.04em] text-ink-muted">
-        {p.logo ? <img src={p.logo} alt={p.name} class="h-12 w-auto lg:h-16" loading="lazy" /> : p.name}
+        {p.logo ? <img src={p.logo} alt={i >= active.length ? '' : p.name} class="h-12 w-auto lg:h-16" loading="eager" decoding="async" /> : p.name}
       </span>
     ))}
   </div>
