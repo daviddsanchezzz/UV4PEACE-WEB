@@ -54,7 +54,7 @@ export const projectsPageCurrent: ClassicProject[] = [
     },
   },
   {
-    id: 'afghan-women', title: '“Afghan Women, Human Rights & the transformative power of the Arts”',
+    id: 'afghan-women', title: '“Afghan Women, Human Rights & the transformative power of the Arts”', youtube: 'YUK6YVID2mY',
     images: [`${WP}/2022/10/ae247007-611f-46e0-b439-c09d7543340f.jpg`, `${WP}/2022/10/aa6cafc0-85a0-4533-8d1b-ce3bd5ad00de.jpg`],
     paragraphs: [
       'As the world leaders gathered again in person in NY on the occasion of the United Nations General Assembly, **United Voices 4 Peace** partnered with the **Muslim American Leadership Alliance** (MALA) and the 49% for a special screening of the short animated film “Samira’s Camera” on September 22nd at Prime Produce, to mark the **International Peace Day 2022**.',

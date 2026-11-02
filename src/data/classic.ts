@@ -39,6 +39,8 @@ export interface ClassicProject {
   title: string;
   paragraphs: string[];
   video?: string;
+  /** YouTube video id, shown as an embedded player. */
+  youtube?: string;
   image?: string;
   images?: string[];
   photo?: 'gwim-2026' | 'gwim-2025' | 'gwim-2023' | 'doc';
@@ -115,7 +117,7 @@ export const currentProjects: ClassicProject[] = [
     },
   },
   {
-    id: 'afghan-women', title: 'Afghan Women, Human Rights & the Transformative Power of the Arts',
+    id: 'afghan-women', title: 'Afghan Women, Human Rights & the Transformative Power of the Arts', youtube: 'YUK6YVID2mY',
     paragraphs: [
       'As the world leaders gathered again in person in NY on the occasion of the United Nations General Assembly, **UV4PEACE** partnered with the **Muslim American Leadership Alliance** (MALA) and the 49% for a special screening of the short animated film “Samira’s Camera” on September 22nd at Prime Produce, to mark the International Peace Day 2022.',
     ],
