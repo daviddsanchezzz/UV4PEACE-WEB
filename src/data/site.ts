@@ -24,7 +24,6 @@ export const site = {
   ],
   legalEntities: [
     'United Voices 4 Peace Incorporated, 501(c)(3) nonprofit, EIN 84-3212629',
-    'United Voices 4 Peace ASBL, Belgium, 0683.725.482',
   ],
   unLine: 'Associated with the United Nations Department of Global Communications (DGC)',
   seal: 'Platinum Seal of Transparency · Candid',

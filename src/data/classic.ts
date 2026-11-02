@@ -72,12 +72,12 @@ export const currentProjects: ClassicProject[] = [
   {
     id: 'gwim-documentary', title: 'Global Women in Music Documentary', photo: 'doc',
     paragraphs: [
-      'The inspiring story of this groundbreaking musical production, featuring the United Nations Symphony Orchestra showcasing works by female composers from around the world to advance gender equality, is now available for FREE.',
-      'Direct Link: [https://www.herflix.com/global-women-in-music](https://www.herflix.com/global-women-in-music)',
-      'Follow us on Instagram to know more about our upcoming screenings.',
-      'Watch the trailer here: [http://bit.ly/4bm7IO7](http://bit.ly/4bm7IO7)',
+      'The inspiring story of this groundbreaking musical production, featuring the United Nations Symphony Orchestra showcasing works by female composers from around the world to advance gender equality.',
+      'Watch the trailer: [http://bit.ly/4bm7IO7](http://bit.ly/4bm7IO7)',
+      'The documentary has been largely recognized on the international film festival circuit, winning 2 Winner Awards, 3 Finalist Awards and 3 Official Selections.',
       'Your contributions play a crucial role in ensuring that their work continues to create opportunities for all. Thank you for consider making a donation to help us continue our labour.',
       '[Donate and be a Voice for a brighter future](/donate/)',
+      'Follow us on Instagram to know more about our upcoming screenings.',
     ],
   },
   {
@@ -225,3 +225,12 @@ export const addYourVoice = {
     { title: 'Supporter', text: 'Follow our news, tell your friends and contacts about our projects, get in touch with us and tell us what you think. A little encouragement goes long way!' },
   ],
 };
+
+export const successNumbers = [
+  { value: '5', label: 'Editions of Global Women in Music (2023-2027)' },
+  { value: '31', label: 'Women composers featured from around the world' },
+  { value: '200+', label: 'Musicians on stage' },
+  { value: '30+', label: 'Countries represented' },
+  { value: '2,000+', label: 'Live audience members' },
+  { value: '2 | 3 | 3', label: 'Winner Awards | Finalist Awards | Official Selections – for our Documentary' },
+];
