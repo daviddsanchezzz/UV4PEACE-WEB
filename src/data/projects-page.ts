@@ -10,7 +10,7 @@ export const projectsPageCurrent: ClassicProject[] = [
   byId('gwim-2025'),
   byId('gwim-documentary'),
   {
-    id: 'gwim-2024', title: 'Global Woman in Music ‘2024', video: `${WP}/2024/04/ab0091bc-8fb8-4035-b26d-8e93b664195c.mp4`,
+    id: 'gwim-2024', title: 'Global Woman in Music ‘2024', photo: 'gwim-2024',
     paragraphs: [
       'On the occasion of the sixty-eighth session of the United Nations Commission on the **Status of Women (CSW68)** and in celebration of **International Women’s Day, 2024**, United Voices 4 Peace and the United Nations Symphony Orchestra (UNSRC) presented the second edition of “Global Women in Music.”',
       'This one-of-its-kind **concert featured a full program of music** from eight **female composers** from around the world .',

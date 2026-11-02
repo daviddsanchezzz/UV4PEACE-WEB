@@ -43,7 +43,7 @@ export interface ClassicProject {
   youtube?: string;
   image?: string;
   images?: string[];
-  photo?: 'gwim-2026' | 'gwim-2025' | 'gwim-2023' | 'doc';
+  photo?: 'gwim-2026' | 'gwim-2025' | 'gwim-2024' | 'gwim-2023' | 'doc';
   /** Figures shown as a small grid, inserted after paragraph number `after` (from 0). */
   stats?: { title: string; after: number; items: { value: string; label: string }[] };
 }

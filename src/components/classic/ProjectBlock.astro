@@ -4,6 +4,7 @@ import Rich from './Rich.astro';
 import type { ClassicProject } from '../../data/classic';
 import gwim2026 from '../../assets/posters/gwim-2026.png';
 import gwim2025 from '../../assets/posters/gwim-2025.png';
+import gwim2024 from '../../assets/posters/gwim-2024.png';
 import gwim2023 from '../../assets/posters/gwim-2023.png';
 import doc from '../../assets/posters/gwim-documentary.png';
 interface Props { project: ClassicProject; level?: 'h2' | 'h3'; flip?: boolean }
@@ -14,7 +15,7 @@ const yt = [...new Set([...(p.youtube ? [p.youtube] : []), ...(p.paragraphs.join
 const ytLink = /\s*(?:\*\*)?(?:Watch[^:*\[]*|Learn more on\s*)?(?:\*\*)?\s*:?\s*\[[^\]]*\]\(https?:\/\/(?:www\.)?(?:youtu\.be|youtube\.com)\/[^)]*\)/g;
 const text = p.paragraphs.map((t) => { const c = t.replace(ytLink, '').trim(); return c !== t.trim() && c && !/[.!?)”*]$/.test(c) ? c + '.' : c; }).filter((t) => t && t !== '.');
 const hasMedia = !!(p.photo || p.image || p.images?.length || p.video || yt.length);
-const photos = { 'gwim-2026': gwim2026, 'gwim-2025': gwim2025, 'gwim-2023': gwim2023, doc };
+const photos = { 'gwim-2026': gwim2026, 'gwim-2025': gwim2025, 'gwim-2024': gwim2024, 'gwim-2023': gwim2023, doc };
 const isPoster = !!p.photo;
 // With a poster or photo beside the text, the players go under the text so both columns stay balanced.
 const ytInText = yt.length > 0 && !!(p.photo || p.image || p.images?.length || p.video);
