@@ -6,7 +6,7 @@ import LogoCarousel from '../components/classic/LogoCarousel.astro';
 import ProjectBlock from '../components/classic/ProjectBlock.astro';
 import { homeIntro, currentProjects } from '../data/classic';
 ---
-<Base current="home" bigHeader>
+<Base current="home" bigHeader heroTitle={`Fostering a universal culture of <span class="text-sky">peace</span> through music and the arts`}>
   <ClassicPage title="Home">
     <div class="grid gap-8 lg:grid-cols-[1fr_1.15fr] lg:gap-16">
       <h2 class="text-[clamp(24px,2.8vw,38px)] font-medium uppercase leading-[1.15] tracking-[0.02em] text-navy text-balance">{homeIntro.heading}</h2>
