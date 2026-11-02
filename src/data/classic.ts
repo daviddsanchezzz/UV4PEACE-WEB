@@ -126,10 +126,12 @@ export const currentProjects: ClassicProject[] = [
 export const previousProjects: ClassicProject[] = [
   {
     id: 'dance-for-peace', title: 'Dance for Peace',
+    images: ['/projects/previous/dance-for-peace.png'],
     paragraphs: ['Celebrated the International Peace Day in the context of the international cinema festival in Cañada Real Madrid. The act took place on the 17th of September 2017 marking the launch of the UV4Peace initiative, with the participation of Syrian Palestinian dancer Ahmad Joudeh.'],
   },
   {
     id: 'dialogue-of-souls', title: 'A dialogue of Souls around the Mediterranean Sea',
+    images: ['/projects/previous/dialogue-of-souls-1.png', '/projects/previous/dialogue-of-souls-2.png'],
     paragraphs: [
       'A unique musical production bringing together musicians from diverse cultures guided by Grand Maestro Jordi Savall, UNESCO Peace Ambassador. On the occasion of the Yehudi Menuhin Foundation Annual Gala Dinner on December 4th 2017 in Brussels. We celebrated the values of sharing, respect for diversity, co-creation and intercultural dialogue. Musicians from Israel, Syria, Turkey, Greece and Spain performed a musical dialogue which included songs of Christian, Sephardic, Ottoman and Arab-Andalusian origins.',
       'Prompted by the large flows of migrants and refugees throughout Europe and the Mediterranean, this theme aimed at raising awareness of the cultural richness of the countries bordering the Mare Nostrum. The concert demonstrated how music can serve an even more prominent role in cultural diplomacy.',
@@ -137,10 +139,12 @@ export const previousProjects: ClassicProject[] = [
   },
   {
     id: 'artistic-workshops', title: 'Artistic Workshops',
+    images: ['/projects/previous/artistic-workshops.png'],
     paragraphs: ['A unique team of artists from different disciplines (Music, Visual Arts, Body Expression, Circus Arts) join forces to offer artistic workshops in refugee camps and a liaison platform for artists interested to contribute. After years of experience, the organisation has developed a successful model for interactive sessions aiming to stimulate participants by making artistic expression available to everyone. The project includes i) establishment of direct contacts between creators of different countries; ii) logistic support for the exchange of artistic creation; and iii) collaboration with artistic teams to achieve common projects. [Contact us](/contact/) to know more.'],
   },
   {
     id: 'mars', title: 'Music And Resilience Support (MARS)',
+    images: ['/projects/previous/mars.png'],
     paragraphs: ['Welcome to MARS – an online resource centre promoting learning, research and exchange in the field of psycho-social music practice within under-resourced, deprived and marginalised communities. The MARS community is happy to offer a wide range of resources developed during the project’s pilot phase (2015-17), including a digital notice board linking potential employers to qualified and experienced PS musicians and music therapists.'],
   },
 ];
