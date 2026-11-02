@@ -34,6 +34,8 @@ export interface ClassicProject {
   image?: string;
   images?: string[];
   photo?: 'gwim-2026' | 'gwim-2025' | 'gwim-2023' | 'doc';
+  /** Figures shown as a small grid under the paragraphs. Inserted before the last paragraph. */
+  stats?: { title: string; items: { value: string; label: string }[] };
 }
 
 export const currentProjects: ClassicProject[] = [
@@ -68,9 +70,19 @@ export const currentProjects: ClassicProject[] = [
       'On the occasion of International Women’s Day 2023 and in the context of the **CSW67, UV4PEACE** in partnership with the **United Nations Symphony Orchestra**, launched this groundbreaking initiative.',
       'This concert by the UN Orchestra, featured only music by women composers from around the world, exceptionally conducted by a female composer, creating a unique platform to advance women’s representation in the music industry.',
       'An equally successful second edition was held on March 12, 2024 at the Skirball NYU Performing Arts Center consolidating the initiative.',
-      '**Our success in numbers : 1200 attendees/90 musicians x 2/18 women composers/5 continents represented/26 media publications/in 6 languages and thousands of views on social networks.**',
       '**In order to raise awareness on this initiative, a related documentary was produced following the 2024 concert. WATCH THE TRAILER HERE** [https://bit.ly/3YwgV0i](https://bit.ly/3YwgV0i)',
     ],
+    stats: {
+      title: 'Our success in numbers',
+      items: [
+        { value: '1200', label: 'attendees' },
+        { value: '90 × 2', label: 'musicians' },
+        { value: '18', label: 'women composers' },
+        { value: '5', label: 'continents represented' },
+        { value: '26', label: 'media publications in 6 languages' },
+        { value: '1000s', label: 'of views on social networks' },
+      ],
+    },
   },
   {
     id: 'create-summit', title: 'Create!Summit – 2022', video: `${WP}/2022/11/UPD-Veronica_1920x1080.mp4`,

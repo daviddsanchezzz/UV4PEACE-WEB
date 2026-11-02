@@ -33,7 +33,24 @@ const ytInText = yt.length > 0 && !!(p.photo || p.image || p.images?.length || p
     <div class:list={['min-w-0', !hasMedia && 'max-w-[980px]']}>
       <H class="t-h2 text-navy">{p.title}</H>
       <div class="body mt-5 flex flex-col gap-4 text-ink [overflow-wrap:anywhere]">
-        {text.map((t) => <Rich text={t} class="whitespace-pre-line" />)}
+        {text.map((t, i) => (
+          <>
+            {p.stats && i === text.length - 1 && (
+              <section class="my-2 rounded-card bg-surface-soft p-5 sm:p-6" aria-label={p.stats.title}>
+                <h4 class="text-sm font-semibold uppercase tracking-[0.08em] text-navy">{p.stats.title}</h4>
+                <dl class="mt-4 grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3">
+                  {p.stats.items.map((s) => (
+                    <div class="flex flex-col">
+                      <dt class="order-2 mt-1 text-sm leading-snug text-ink">{s.label}</dt>
+                      <dd class="order-1 text-3xl font-medium leading-none text-orange">{s.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </section>
+            )}
+            <Rich text={t} class="whitespace-pre-line" />
+          </>
+        ))}
       </div>
       {ytInText && <div class="mt-8 flex flex-col gap-6">{yt.map((id) => <iframe src={`https://www.youtube-nocookie.com/embed/${id}`} title={p.title} loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen class="aspect-video w-full max-w-[560px] rounded-card bg-navy"></iframe>)}</div>}
     </div>
