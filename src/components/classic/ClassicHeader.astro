@@ -1,8 +1,8 @@
 ---
 // Header of the classic proposal: the old photo banner with the site title, and the old menu below it.
 import { classicNav, bannerImage } from '../../data/classic';
-interface Props { current?: string; big?: boolean }
-const { current, big = false } = Astro.props;
+interface Props { current?: string; big?: boolean; banner?: boolean }
+const { current, big = false, banner = true } = Astro.props;
 const isCurrent = (n: { key: string; children?: { key: string }[] }) => current === n.key || n.children?.some((c) => c.key === current);
 import { getImage } from 'astro:assets';
 import fallback from '../../assets/fotos/08-partners-photocall_IMG_5478.jpg';
@@ -42,9 +42,9 @@ const fb = await getImage({ src: fallback, width: 1600, format: 'webp' });
   </div>
 </header>
 
-<div class:list={['relative overflow-hidden bg-navy', big ? 'h-[clamp(260px,40vw,520px)]' : 'h-[clamp(140px,18vw,220px)]']} style={`background:url(${fb.src}) center/cover`} aria-hidden="true">
+{banner && <div class:list={['relative overflow-hidden bg-navy', big ? 'h-[clamp(260px,40vw,520px)]' : 'h-[clamp(140px,18vw,220px)]']} style={`background:url(${fb.src}) center/cover`} aria-hidden="true">
   <img src={bannerImage} alt="" class="absolute inset-0 h-full w-full object-cover" loading="eager" />
-</div>
+</div>}
 
 <dialog id="menu" class="menu-dialog" aria-label="Menu">
   <div class="flex items-center justify-between">
