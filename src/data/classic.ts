@@ -50,7 +50,7 @@ export interface ClassicProject {
   paragraphs: string[];
   video?: string;
   image?: string;
-  photo?: 'gwim-2026' | 'gwim-2025' | 'doc';
+  photo?: 'gwim-2026' | 'gwim-2025' | 'gwim-2023' | 'doc';
 }
 
 export const currentProjects: ClassicProject[] = [
@@ -85,7 +85,7 @@ export const currentProjects: ClassicProject[] = [
     ],
   },
   {
-    id: 'gwim-2023-24', title: 'Global Women in Music – 2023/24', video: `${WP}/2024/04/global-women-in-music.mp4`,
+    id: 'gwim-2023-24', title: 'Global Women in Music – 2023/24', photo: 'gwim-2023', video: `${WP}/2024/04/global-women-in-music.mp4`,
     paragraphs: [
       'On the occasion of International Women’s Day 2023 and in the context of the **CSW67, UV4PEACE** in partnership with the **United Nations Symphony Orchestra**, launched this groundbreaking initiative.',
       'This concert by the UN Orchestra, featured only music by women composers from around the world, exceptionally conducted by a female composer, creating a unique platform to advance women’s representation in the music industry.',

@@ -2,19 +2,21 @@
 import { Image } from 'astro:assets';
 import Rich from './Rich.astro';
 import type { ClassicProject } from '../../data/classic';
-import gwim2026 from '../../assets/fotos/02-gwim-destacado-directora_IMG_5349.jpg';
-import gwim2025 from '../../assets/fotos/01-hero-saludo-final_IMG_5460.jpg';
+import gwim2026 from '../../assets/posters/gwim-2026.png';
+import gwim2025 from '../../assets/posters/gwim-2025.png';
+import gwim2023 from '../../assets/posters/gwim-2023.png';
 import doc from '../../assets/fotos/10-propose-partitura_IMG_5272.jpg';
 interface Props { project: ClassicProject; level?: 'h2' | 'h3'; flip?: boolean }
 const { project: p, level: H = 'h2', flip = false } = Astro.props;
 const hasMedia = !!(p.photo || p.image || p.video);
-const photos = { 'gwim-2026': gwim2026, 'gwim-2025': gwim2025, doc };
+const photos = { 'gwim-2026': gwim2026, 'gwim-2025': gwim2025, 'gwim-2023': gwim2023, doc };
+const isPoster = p.photo?.startsWith('gwim');
 ---
 <article id={p.id} class="scroll-mt-24 border-t border-line pt-12 first:border-t-0 first:pt-0">
   <div class:list={['grid gap-8', hasMedia && 'lg:grid-cols-2 lg:items-start lg:gap-14']}>
     {hasMedia && (
-      <div class:list={[flip && 'lg:order-2']}>
-        {p.photo && <Image src={photos[p.photo]} alt="" widths={[640, 1100]} sizes="(min-width: 1024px) 50vw, 100vw" class="aspect-[4/3] w-full rounded-card object-cover" />}
+      <div class:list={['flex flex-col gap-6', flip && 'lg:order-2']}>
+        {p.photo && <Image src={photos[p.photo]} alt={isPoster ? `${p.title} poster` : ""} widths={isPoster ? [560, 768] : [640, 1100]} sizes="(min-width: 1024px) 50vw, 100vw" class:list={['w-full rounded-card', isPoster ? 'mx-auto max-w-[560px] border border-line' : 'aspect-[4/3] object-cover']} />}
         {p.image && <img src={p.image} alt="" loading="lazy" class="w-full rounded-card border border-line" />}
         {p.video && <video src={p.video} controls preload="metadata" playsinline class="aspect-video w-full rounded-card bg-navy"></video>}
       </div>
