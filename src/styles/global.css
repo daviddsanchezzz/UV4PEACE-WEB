@@ -106,3 +106,6 @@
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
   .will-reveal { opacity: 1; transform: none; }
 }
+
+/* Never let a long word or link push the page sideways on phones. */
+html, body { overflow-x: clip; }

@@ -17,7 +17,7 @@ const isPoster = p.photo?.startsWith('gwim');
 <article id={p.id} class="scroll-mt-24 border-t border-line pt-12 first:border-t-0 first:pt-0">
   <div class:list={['grid gap-8', hasMedia && 'lg:grid-cols-2 lg:items-start lg:gap-14']}>
     {hasMedia && (
-      <div class:list={['flex flex-col gap-6', flip && 'lg:order-2']}>
+      <div class:list={['flex min-w-0 flex-col gap-6', flip && 'lg:order-2']}>
         {p.photo && <Image src={photos[p.photo]} alt={isPoster ? `${p.title} poster` : ""} widths={isPoster ? [560, 768] : [640, 1100]} sizes="(min-width: 1024px) 50vw, 100vw" class:list={['w-full rounded-card', isPoster ? 'mx-auto max-w-[560px] border border-line' : 'aspect-[4/3] object-cover']} />}
         {p.image && <img src={p.image} alt="" loading="lazy" class="w-full rounded-card border border-line" />}
         {p.images?.map((src) => <img src={src} alt="" loading="lazy" class="w-full rounded-card border border-line" />)}
@@ -25,9 +25,9 @@ const isPoster = p.photo?.startsWith('gwim');
         {p.video && <video src={p.video} controls preload="metadata" playsinline class="aspect-video w-full rounded-card bg-navy"></video>}
       </div>
     )}
-    <div class:list={[!hasMedia && 'max-w-[980px]']}>
+    <div class:list={['min-w-0', !hasMedia && 'max-w-[980px]']}>
       <H class="t-h2 text-navy">{p.title}</H>
-      <div class="body mt-5 flex flex-col gap-4 text-ink [&_a]:break-words">
+      <div class="body mt-5 flex flex-col gap-4 text-ink [overflow-wrap:anywhere]">
         {p.paragraphs.map((t) => <Rich text={t} class="whitespace-pre-line" />)}
       </div>
     </div>
