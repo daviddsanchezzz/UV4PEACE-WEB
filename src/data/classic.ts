@@ -59,19 +59,14 @@ export const currentProjects: ClassicProject[] = [
     id: 'gwim-2026', title: 'Global Women in Music 2026', photo: 'gwim-2026',
     paragraphs: [
       'In celebration of International Women’s Day 2026 and on the 250th Anniversary of the USA, UV4P in partnership with the United Nations Symphony Orchestra presents our “Global Women in Music” concert featuring works by female composers from around the world, to advance gender equality.',
-      'We are thrilled to hold the 4th Edition of this groundbreaking initiative with an exceptional program as an official side event to the United Nations Commission on the Status of Women (UNCSW 70).',
-      'Join us on March 13th at 7.30PM at the Symphony Space in NY for a moment of celebration, solidarity and community !',
-      'Tickets are available on the following link: [https://www.symphonyspace.org/events/vp-global-women-in-music-2026](https://www.symphonyspace.org/events/vp-global-women-in-music-2026)',
+      'The fourth edition was held as an official side event to the UN Commission on the Status of Women on March 13th at Symphony Space in New York. Watch here : [https://youtu.be/rQ9jOhX0cVw](https://youtu.be/rQ9jOhX0cVw)',
     ],
   },
   {
     id: 'gwim-2025', title: 'Global Women in Music 2025', photo: 'gwim-2025',
     paragraphs: [
-      'We are beyond excited to announce that the Global Women in Music 2025 Concert will be held on March 13, 2025, on the occasion of the 69th United Nations Commission on the Status of Women (#CSW69) in New York City.',
-      'The third edition of this groundbreaking initiative, organized by United Voices 4 Peace in partnership with the United Nations Symphony Orchestra, will celebrate #InternationalWomensDay 2025, the 30th Anniversary of the Beijing Declaration & Platform for Action, the 400 Anniversary of New York City and the power of women, in music and in their communities.',
-      'For this historic occasion, we are preparing an excepcional line-up of compositions by women from around the world under the baton of Maestras and twin sisters Josefa and Esperanza de Velasco from Mexico.',
-      'Join us as we amplify the voices and talents of women composers, conductors, and performers, transforming the music landscape one note at a time.',
-      'Tickets are available on the following link: [https://tickets.nyu.edu/globalwomeninmusic](https://tickets.nyu.edu/globalwomeninmusic)',
+      'The Global Women in Music concert was held on March 13th on the occasion of the 69th United Nations Conference on the Status of Women. The third edition of this groundbreaking initiative, organized by United Voices for Peace in partnership with the UN Symphony Orchestra, celebrated International Women’s Day, the 30th anniversary of the Beijing Declaration and Platform of Action, the 400th anniversary of New York City, and the power of women in music and in their communities, under the baton of Maestras Josefa and Esperanza de Velasco.',
+      'Watch recording : [https://youtu.be/LBymfA0uHsE](https://youtu.be/LBymfA0uHsE)',
     ],
   },
   {

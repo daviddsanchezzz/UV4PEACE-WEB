@@ -21,6 +21,11 @@ import { homeIntro, currentProjects } from '../data/classic';
     <h2 class="t-h2 mt-20 text-navy">Partners</h2>
     <div class="mt-6"><LogoCarousel /></div>
 
+    <section class="mt-20 rounded-card bg-surface-soft px-[clamp(24px,4vw,56px)] py-[clamp(32px,4vw,56px)]">
+      <h2 class="t-h2 text-navy">Global Women in Music 2027</h2>
+      <p class="lede mt-4 max-w-[820px] text-ink">We are excited to announce that the Global Women in Music 2027 concert, our fifth edition, is on the way. Stay tuned, it's coming soon!</p>
+    </section>
+
     <h2 class="t-h1 mt-24 text-navy">Our Current Projects</h2>
     <div class="mt-10 flex flex-col gap-14">
       {currentProjects.map((p, i) => <ProjectBlock project={p} level="h3" flip={i % 2 === 1} />)}
