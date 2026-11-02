@@ -2,7 +2,8 @@
 import Base from '../../layouts/Base.astro';
 import ClassicPage from '../../components/classic/ClassicPage.astro';
 import ProjectBlock from '../../components/classic/ProjectBlock.astro';
-import { currentProjects, previousProjects } from '../../data/classic';
+import { previousProjects } from '../../data/classic';
+import { projectsPageCurrent as currentProjects } from '../../data/projects-page';
 const tabs = [
   { id: 'current', label: 'Current', count: currentProjects.length, items: currentProjects },
   { id: 'previous', label: 'Previous', count: previousProjects.length, items: previousProjects },

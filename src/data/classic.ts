@@ -50,6 +50,7 @@ export interface ClassicProject {
   paragraphs: string[];
   video?: string;
   image?: string;
+  images?: string[];
   photo?: 'gwim-2026' | 'gwim-2025' | 'gwim-2023' | 'doc';
 }
 

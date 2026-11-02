@@ -8,7 +8,7 @@ import gwim2023 from '../../assets/posters/gwim-2023.png';
 import doc from '../../assets/fotos/10-propose-partitura_IMG_5272.jpg';
 interface Props { project: ClassicProject; level?: 'h2' | 'h3'; flip?: boolean }
 const { project: p, level: H = 'h2', flip = false } = Astro.props;
-const hasMedia = !!(p.photo || p.image || p.video);
+const hasMedia = !!(p.photo || p.image || p.images?.length || p.video);
 const photos = { 'gwim-2026': gwim2026, 'gwim-2025': gwim2025, 'gwim-2023': gwim2023, doc };
 const isPoster = p.photo?.startsWith('gwim');
 ---
@@ -18,13 +18,14 @@ const isPoster = p.photo?.startsWith('gwim');
       <div class:list={['flex flex-col gap-6', flip && 'lg:order-2']}>
         {p.photo && <Image src={photos[p.photo]} alt={isPoster ? `${p.title} poster` : ""} widths={isPoster ? [560, 768] : [640, 1100]} sizes="(min-width: 1024px) 50vw, 100vw" class:list={['w-full rounded-card', isPoster ? 'mx-auto max-w-[560px] border border-line' : 'aspect-[4/3] object-cover']} />}
         {p.image && <img src={p.image} alt="" loading="lazy" class="w-full rounded-card border border-line" />}
+        {p.images?.map((src) => <img src={src} alt="" loading="lazy" class="w-full rounded-card border border-line" />)}
         {p.video && <video src={p.video} controls preload="metadata" playsinline class="aspect-video w-full rounded-card bg-navy"></video>}
       </div>
     )}
     <div class:list={[!hasMedia && 'max-w-[980px]']}>
       <H class="t-h2 text-navy">{p.title}</H>
       <div class="body mt-5 flex flex-col gap-4 text-ink [&_a]:break-words">
-        {p.paragraphs.map((t) => <Rich text={t} />)}
+        {p.paragraphs.map((t) => <Rich text={t} class="whitespace-pre-line" />)}
       </div>
     </div>
   </div>
