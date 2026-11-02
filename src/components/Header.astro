@@ -10,17 +10,17 @@ const { current } = Astro.props;
     <a href="/" aria-label="United Voices 4 Peace, home" class="flex-none">
       <img src="/logos/uv4peace-horizontal-compact-color.svg" alt="United Voices 4 Peace" class="h-7 w-auto lg:h-10" width="183" height="44" />
     </a>
-    <nav aria-label="Main" class="hidden items-center gap-8 text-sm font-medium uppercase tracking-[0.14em] lg:flex">
+    <nav aria-label="Main" class="hidden items-center gap-7 whitespace-nowrap text-sm font-medium uppercase tracking-[0.14em] xl:flex">
       {nav.map((n) => (
         <a href={n.href} aria-current={current === n.key ? 'page' : undefined}
            class:list={['hover:no-underline', current === n.key ? 'border-b-2 border-orange pb-0.5 text-sky-text' : 'text-navy hover:text-sky-text']}>{n.label}</a>
       ))}
     </nav>
-    <div class="hidden items-center gap-3 lg:flex">
+    <div class="hidden items-center gap-3 whitespace-nowrap xl:flex">
       <a href="/donate/" class="btn btn-navy btn-sm">Donate</a>
       <a href={settings.partnerMailto} class="btn btn-tertiary btn-sm">Partner with us</a>
     </div>
-    <button type="button" data-menu-open aria-controls="menu" class="btn btn-tertiary btn-sm min-h-9 bg-white px-3.5 text-[13px] lg:hidden">Menu</button>
+    <button type="button" data-menu-open aria-controls="menu" class="btn btn-tertiary btn-sm min-h-9 bg-white px-3.5 text-[13px] xl:hidden">Menu</button>
   </div>
 </header>
 

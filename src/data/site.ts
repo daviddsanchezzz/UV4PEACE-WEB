@@ -35,7 +35,7 @@ export const nav = [
   { key: 'projects', label: 'Projects', href: '/projects' },
   { key: 'people', label: 'People', href: '/people' },
   { key: 'get-involved', label: 'Get Involved', href: '/get-involved' },
-  { key: 'press', label: 'Press', href: '/press' },
+  { key: 'media', label: 'Media & Recognition', href: '/media-and-recognition' },
 ];
 
 export const legalPages = [
