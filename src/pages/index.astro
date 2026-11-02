@@ -22,11 +22,9 @@ import { homeIntro, currentProjects, successNumbers } from '../data/classic';
             <>
               <Rich text={t} class={i === 0 ? 'lede text-navy' : undefined} />
               {t.includes('Sustainable Development Goals') && (
-                <ul class="flex flex-wrap gap-2" aria-label="Focus Sustainable Development Goals">
+                <ul class="grid max-w-[480px] grid-cols-4 gap-2 sm:gap-3" aria-label="Focus Sustainable Development Goals">
                   {homeIntro.sdgs.map((g) => (
-                    <li class="inline-flex items-center gap-2 rounded-full py-1.5 pl-1.5 pr-4 text-[13px] font-medium text-white" style={`background:${g.color}`}>
-                      <span class="grid size-7 place-items-center rounded-full bg-white/20 text-sm font-semibold">{g.n}</span>{g.label}
-                    </li>
+                    <li><img src={`/sdg/sdg-${g.n}.png`} alt={`Goal ${g.n}: ${g.label}`} width="160" height="160" loading="lazy" class="aspect-square w-full" /></li>
                   ))}
                 </ul>
               )}

@@ -25,12 +25,12 @@ export const homeIntro = {
   ],
   // Shown as a small seal under the heading.
   unLine: 'Our organization is proud to be formally associated to the United Nations Department of Global Communications.',
-  // Official UN colours of the four focus goals named in the paragraph above.
+  // The four focus goals named in the paragraph above, shown with the official UN icons (public/sdg).
   sdgs: [
     { n: 5, label: 'Gender Equality', color: '#FF3A21' },
     { n: 10, label: 'Reduced Inequalities', color: '#DD1367' },
-    { n: 16, label: 'Peace & Justice', color: '#00689D' },
-    { n: 17, label: 'Partnerships', color: '#19486A' },
+    { n: 16, label: 'Peace, Justice and Strong Institutions', color: '#00689D' },
+    { n: 17, label: 'Partnerships for the Goals', color: '#19486A' },
   ],
 };
 
