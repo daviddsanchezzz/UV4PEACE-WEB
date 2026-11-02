@@ -10,7 +10,7 @@ export interface Section { slug: string; label: string; singular: string; intro:
 const kind = [{ v: 'award', l: 'Premio' }, { v: 'honour', l: 'Reconocimiento' }, { v: 'selection', l: 'Selección oficial' }, { v: 'nomination', l: 'Nominación' }, { v: 'seal', l: 'Sello' }];
 const tier = [{ v: 'main', l: 'Socio principal' }, { v: 'partner', l: 'Socio' }, { v: 'supporter', l: 'Apoyo' }];
 const kindLabel = Object.fromEntries(kind.map((k) => [k.v, k.l]));
-const languages = [{ v: 'en', l: 'Inglés' }, { v: 'es', l: 'Español' }, { v: 'fr', l: 'Francés' }, { v: 'it', l: 'Italiano' }, { v: 'ar', l: 'Árabe' }];
+const languages = [{ v: 'en', l: 'Inglés' }, { v: 'es', l: 'Español' }, { v: 'fr', l: 'Francés' }, { v: 'it', l: 'Italiano' }, { v: 'ar', l: 'Árabe' }, { v: 'sr', l: 'Serbio' }];
 const langLabel = Object.fromEntries(languages.map((k) => [k.v, k.l]));
 const tierLabel = Object.fromEntries(tier.map((k) => [k.v, k.l]));
 

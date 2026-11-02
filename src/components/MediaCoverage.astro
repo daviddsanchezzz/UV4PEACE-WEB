@@ -6,7 +6,7 @@ import { getMedia, getPressArchive, type Language } from '../lib/content';
 const { spoke: spokeAboutUs, coverage: mediaCoverage } = await getMedia();
 const pressArchive = await getPressArchive();
 
-const languages: Language[] = ['en', 'es', 'fr', 'it', 'ar'];
+const languages: Language[] = ['en', 'es', 'fr', 'it', 'ar', 'sr'];
 const groups = languages
   .map((lang) => ({ lang, items: mediaCoverage.filter((m) => m.language === lang) }))
   .filter((g) => g.items.length > 0)

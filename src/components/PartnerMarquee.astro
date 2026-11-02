@@ -1,6 +1,5 @@
 ---
-// Slow-scrolling partner strip. Logo files are not yet authorised, so every entry shows as
-// text (the design's own fallback) until a logo is uploaded and approved in the admin panel.
+// Slow-scrolling partner strip. Partners with a logo file show it; the rest show their name as text.
 import { getPartners } from '../lib/content';
 import { site } from '../data/site';
 const active = (await getPartners()).filter((p) => p.active).sort((a, b) => a.order - b.order);
@@ -11,8 +10,8 @@ const active = (await getPartners()).filter((p) => p.active).sort((a, b) => a.or
   </div>
   <div class="marquee mt-8" aria-label={active.map((p) => p.name).join(', ')}>
     {[...active, ...active].map((p, i) => (
-      <span aria-hidden={i >= active.length ? 'true' : undefined} class="whitespace-nowrap border-r border-line px-7 text-[22px] font-medium uppercase tracking-[0.04em] text-ink-muted">
-        {p.logo ? <img src={p.logo} alt={p.name} class="h-8 w-auto" /> : p.name}
+      <span aria-hidden={i >= active.length ? 'true' : undefined} class="inline-flex items-center whitespace-nowrap border-r border-line px-7 text-[22px] font-medium uppercase tracking-[0.04em] text-ink-muted">
+        {p.logo ? <img src={p.logo} alt={p.name} class="h-12 w-auto lg:h-16" loading="lazy" /> : p.name}
       </span>
     ))}
   </div>
