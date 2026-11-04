@@ -5,8 +5,8 @@ import Button from '../components/Button.astro';
 import { site } from '../data/site';
 import { getStats, getSettings } from '../lib/content';
 const settings = await getSettings();
+const paypal = settings.paypalUrl || site.paypalUrl;
 const stats = await getStats();
-const zelleEmail = 'info@uv4peace.org';
 ---
 <Base title="Donate" noBanner description="Every gift brings more women composers to the stage.">
   <section class="mx-auto grid max-w-[1320px] grid-cols-[repeat(auto-fit,minmax(min(100%,440px),1fr))]">
@@ -15,15 +15,7 @@ const zelleEmail = 'info@uv4peace.org';
       <h1 class="t-display mt-5">Bring more voices <span class="text-orange">to the stage.</span></h1>
       <p class="lede mt-6 max-w-[520px] text-ink-muted">Every gift brings more women composers to the stage.</p>
       <div class="mt-9 flex flex-wrap items-center gap-4">
-        <Button href={settings.paypalUrl || settings.partnerMailto} external={!!settings.paypalUrl}>Donate via PayPal</Button>
-      </div>
-      <div class="mt-6 max-w-[520px] rounded-card border border-line bg-surface-soft p-5">
-        <div class="text-sm font-semibold uppercase tracking-[0.08em] text-navy">Or donate with Zelle</div>
-        <p class="mt-2 text-[15px] text-ink-muted">From any US bank app, send your gift to:</p>
-        <div class="mt-3 flex flex-wrap items-center gap-3">
-          <span class="text-lg font-medium text-navy">{zelleEmail}</span>
-          <button type="button" data-copy={zelleEmail} class="rounded-full border border-line bg-white px-3.5 py-1.5 text-sm font-medium text-sky-text hover:border-sky-text">Copy</button>
-        </div>
+        <Button href={paypal || settings.partnerMailto} external={!!paypal}>Donate via PayPal</Button>
       </div>
       <div class="mt-6 inline-flex items-center gap-2.5 self-start rounded-full border border-line px-4 py-2.5 text-sm font-medium text-sky-text">{site.seal}</div>
     </div>
@@ -62,8 +54,3 @@ const zelleEmail = 'info@uv4peace.org';
     </div>
   </section>
 </Base>
-<script>
-  document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((b) => b.addEventListener('click', async () => {
-    try { await navigator.clipboard.writeText(b.dataset.copy!); b.textContent = 'Copied'; setTimeout(() => (b.textContent = 'Copy'), 2000); } catch {}
-  }));
-</script>
