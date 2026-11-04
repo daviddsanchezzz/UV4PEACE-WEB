@@ -140,7 +140,7 @@ export const getSettings = async (db?: Db): Promise<SiteSettings> => {
   const email = x?.contact_email || site.email;
   return {
     email,
-    paypalUrl: x ? x.paypal_url : site.paypalUrl,
+    paypalUrl: x?.paypal_url || site.paypalUrl,
     social: x ? x.social : site.social,
     analyticsId: gaId(x ? x.analytics_id : site.analyticsId || import.meta.env.PUBLIC_GA_ID),
     partnerMailto: mailto(email, 'Partnership'),

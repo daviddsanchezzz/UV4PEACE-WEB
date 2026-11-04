@@ -1,9 +1,10 @@
 ---
 // Footer of the classic proposal: same blocks as the old site (US and BE entities, terms, follow us,
 // contacts with the subscribe form), in the Fiel navy.
+import { site } from '../../data/site';
 import { getSettings } from '../../lib/content';
 const settings = await getSettings();
-const donate = settings.paypalUrl || '/donate/';
+const donate = settings.paypalUrl || site.paypalUrl || '/donate/';
 const follow = [
   ...settings.social.filter((s) => s.href),
   { label: 'Candid', href: 'https://www.guidestar.org/profile/84-3212629' },
