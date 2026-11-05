@@ -13,13 +13,15 @@ export interface PressItem {
 }
 
 export const press: PressItem[] = [
-  { id: 'tri-state-2025', date: '2025-08', dateLabel: 'Aug 2025', kind: 'award', title: 'Award winner, Female Empowerment', by: 'NY Tri-State International Film Festival', url: '', featured: true },
-  { id: 'global-recognition-2025', date: '2025-11', dateLabel: 'Nov 2025', kind: 'honour', title: 'Global Recognition Award', by: 'To founder Verónica Sabbag', url: '', featured: true },
-  { id: 'nyc-mayor', date: '2024-01', dateLabel: 'NYC', kind: 'honour', title: '“For uniting all communities in NY”', by: 'Certificate from the New York Mayor’s Office', url: '', featured: true },
-  { id: 'doc-semifinals-2026', date: '2026-05', dateLabel: '2026', kind: 'selection', title: 'Documentary “Composers Rewriting the Score”: semifinalist', by: 'Palm Beach Shorts, Washington Film Awards and Palermo International Film Festival', url: '', featured: false },
-  { id: 'la-femme-2025', date: '2025-10', dateLabel: 'Oct 2025', kind: 'selection', title: 'Official selection and LA premiere', by: 'LA Femme International Film Festival', url: '', featured: false },
-  { id: 'bizzy-2025', date: '2025-04', dateLabel: 'Apr 2025', kind: 'nomination', title: 'Nominated for the Bizzy Award (Warner Music), Agent of Change', by: 'Music Business Association', url: '', featured: false },
-  { id: 'candid-seal', date: '2024-01', dateLabel: 'Candid', kind: 'seal', title: 'Platinum Seal of Transparency', by: 'Candid', url: '', featured: false },
+  { id: 'doc-palermo-2026', date: '2026-05', dateLabel: 'May 2026', kind: 'selection', title: 'Documentary semifinalist', by: 'Palermo International Film Festival', url: '', featured: false },
+  { id: 'doc-washington-2026', date: '2026-04', dateLabel: 'Apr 2026', kind: 'selection', title: 'Documentary semifinalist', by: 'Washington Film Awards', url: '', featured: false },
+  { id: 'doc-palm-beach-2026', date: '2026-03', dateLabel: 'Mar 2026', kind: 'selection', title: 'Documentary semifinalist', by: 'Palm Beach Shorts', url: '', featured: false },
+  { id: 'global-recognition-2025', date: '2025-11', dateLabel: 'Nov 2025', kind: 'honour', title: 'Global Recognition Award to founder Verónica Sabbag', by: '', url: '', featured: true },
+  { id: 'la-femme-2025', date: '2025-10', dateLabel: 'Oct 2025', kind: 'selection', title: 'Documentary official selection and LA premiere', by: 'LA Femme International Film Festival', url: '', featured: false },
+  { id: 'tri-state-2025', date: '2025-08', dateLabel: 'Aug 2025', kind: 'award', title: 'Documentary award winner, Female Empowerment', by: 'NY Tri-State International Film Festival', url: '', featured: true },
+  { id: 'bizzy-2025', date: '2025-04', dateLabel: 'Apr 2025', kind: 'nomination', title: 'Nominated for the Bizzy Award, Agent of Change', by: 'Music Business Association · Warner Music', url: '', featured: false },
+  { id: 'nyc-mayor', date: '2024-01', dateLabel: 'Since launch', kind: 'honour', title: 'Certificate of recognition “for uniting all communities in NY”', by: 'New York Mayor’s Office', url: '', featured: true },
+  { id: 'candid-seal', date: '2024-01', dateLabel: 'Since launch', kind: 'seal', title: 'Platinum Seal of Transparency', by: 'Candid', url: '', featured: false },
 ];
 
 export const featuredIn = ['Variety', 'Forbes', 'La Vanguardia', 'French Morning'];
