@@ -10,7 +10,7 @@ export const site = {
   partnerMailto: 'mailto:info@uv4peace.org?subject=Partnership',
   proposalMailto: 'mailto:info@uv4peace.org?subject=Project%20proposal',
   /** Set via PUBLIC_PAYPAL_URL in Phase 4. Empty until Veronica provides the link. */
-  paypalUrl: 'https://www.paypal.com/donate/?hosted_button_id=FC6SHSWCASV3W',
+  paypalUrl: 'https://www.paypal.com/donate/?hosted_button_id=FC6SHSWCASV3W&locale.x=en_US',
   /** Google Analytics 4 measurement ID (G-XXXXXXXXXX). Empty: no analytics and no cookie banner. */
   analyticsId: '',
   /** Set via the newsletter provider's env var in Phase 4. */
