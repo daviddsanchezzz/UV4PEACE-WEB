@@ -6,30 +6,9 @@ const WP = 'https://uv4peace.org/wp-content/uploads';
 const byId = (id: string) => currentProjects.find((p) => p.id === id)!;
 
 export const projectsPageCurrent: ClassicProject[] = [
-  byId('gwim-2026'),
-  byId('gwim-2025'),
+  // One block for the whole concert series (Veronica, 05/11/2026), instead of one per edition.
+  byId('gwim-series'),
   byId('gwim-documentary'),
-  {
-    id: 'gwim-2024', title: 'Global Woman in Music ‘2024', photo: 'gwim-2024',
-    paragraphs: [
-      'On the occasion of the sixty-eighth session of the United Nations Commission on the **Status of Women (CSW68)** and in celebration of **International Women’s Day, 2024**, United Voices 4 Peace and the United Nations Symphony Orchestra (UNSRC) presented the second edition of “Global Women in Music.”',
-      'This one-of-its-kind **concert featured a full program of music** from eight **female composers** from around the world .',
-      'Scheduled on March 12, 2024, at the **NYU Skirball Performing Arts Center in NY**, this second annual cultural event was held under the baton of multi-award winning conductor **Amy Andersson.**',
-      'Considering that still, only **5 % of concert music scheduled around the world is from women composers**, we mitigated once more this astounding fact by creating a unique platform to showcase the works of eight talented women composers from different countries and backgrounds.',
-      'We amplified, once more, the voices of underrepresented artists, promoting diversity and inclusion as means to justice and peace, highlighting the importance of arts in building bridges for peace .',
-      '**Watch the concert here** : [https://youtu.be/CUAHyFOuWhM](https://youtu.be/CUAHyFOuWhM)',
-    ],
-  },
-  {
-    id: 'gwim-2023', title: 'Global Women in Music ‘2023', photo: 'gwim-2023',
-    paragraphs: [
-      '“United Voices 4 Peace and the United Nations Symphony Orchestra (UNSRC) have partnered to bring to life the “**Global Women in Music**” initiative.',
-      'On the occasion of the **International Women’s Day, 2023** and in the margins to the Conference of the Status of Women (CSW 67), the “Global Women in Music” is the first, **one of a kind concert by the United Nations Orchestra** – exceptionally conducted by Maestra Anoa Green – **performing a full program featuring pieces of female composers** to advance gender equality. The concert will feature 8 pieces from contemporary composers from around the world (Argentina, Iran, Ukraine, China, to name a few), one from Louise Farrenc (France) and Florence Price (USA) to honor their legacy.',
-      'Only five percent of the concert music scheduled around the world is from women composers, an astounding statistic. Our unique program aims to bring female composers and conductors to the forefront and spotlight their music and talent to raise awareness, motivate engagement, activism and inspire change towards a more inclusive music industry and social environment.',
-      '**DATE, TIME & LOCATION**\nWednesday March 8, 2023\n7.30h PM\nBMCC – Tribeca Performing Arts Center\n199 Chambers Street, New York, NY 10007',
-      'Learn more on : [https://www.youtube.com/live/VxVGjaWucDU?feature=shared](https://www.youtube.com/live/VxVGjaWucDU?feature=shared)',
-    ],
-  },
   {
     id: 'create-summit', title: 'Create!Summit – 2022', video: `${WP}/2022/11/UPD-Veronica_1920x1080.mp4`,
     paragraphs: [

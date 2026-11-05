@@ -257,7 +257,6 @@ export const successNumbers = [
   { value: '2 | 3 | 3', label: 'Winner Awards | Finalist Awards | Official Selections – for our Documentary' },
 ];
 
-// Home: one block for the whole concert series (2023-2026) instead of one per edition. The per-edition
-// blocks stay on /projects.
+// Home and /projects: one block for the whole concert series (2023-2026) instead of one per edition.
 const notOnHome = new Set(['gwim-2026', 'gwim-2025', 'gwim-2023-24']);
 export const homeProjects = currentProjects.filter((p) => !notOnHome.has(p.id));
