@@ -41,6 +41,8 @@ export interface ClassicProject {
   video?: string;
   /** YouTube video id, shown as an embedded player. */
   youtube?: string;
+  /** false keeps YouTube links as plain links instead of embedded players. */
+  embed?: boolean;
   image?: string;
   images?: string[];
   photo?: 'gwim-2026' | 'gwim-2025' | 'gwim-2024' | 'gwim-2023' | 'doc';
@@ -49,6 +51,13 @@ export interface ClassicProject {
 }
 
 export const currentProjects: ClassicProject[] = [
+  {
+    id: 'gwim-series', title: 'Global Women in Music Concert Series', photo: 'gwim-2026', embed: false,
+    paragraphs: [
+      'Since 2023, United Voices 4 Peace has partnered with the United Nations Symphony Orchestra to bring Global Women in Music to New York in celebration of International Women’s Day. Across the 2023, 2024, 2025 and 2026 editions, the initiative has spotlighted women conductors and composers from around the world, using live orchestral music to advance visibility, representation, peace and cultural dialogue as an official side event to the UN Commission on the Status of Women, the largest International Conference on women\'s rights. We are excited to announce that preparations of the 5th Edition of our groundbreaking concert, to be held in March 2027, are well on track.',
+      '**Watch recordings:** [2023](https://www.youtube.com/live/VxVGjaWucDU) · [2024](https://youtu.be/CUAHyFOuWhM) · [2025](https://youtu.be/LBymfA0uHsE) · [2026](https://www.youtube.com/live/kMsEQOIbGoQ)',
+    ],
+  },
   {
     id: 'gwim-2026', title: 'Global Women in Music 2026', photo: 'gwim-2026',
     paragraphs: [
@@ -64,14 +73,10 @@ export const currentProjects: ClassicProject[] = [
     ],
   },
   {
-    id: 'gwim-documentary', title: 'Global Women in Music Documentary', photo: 'doc',
+    id: 'gwim-documentary', title: 'Global Women in Music: Composers Rewriting the Score – Documentary film', photo: 'doc',
     paragraphs: [
-      'The inspiring story of this groundbreaking musical production, featuring the United Nations Symphony Orchestra showcasing works by female composers from around the world to advance gender equality.',
-      'Watch the trailer: [http://bit.ly/4bm7IO7](http://bit.ly/4bm7IO7)',
-      'The documentary has been largely recognized on the international film festival circuit, winning 2 Winner Awards, 3 Finalist Awards and 3 Official Selections.',
-      'Your contributions play a crucial role in ensuring that their work continues to create opportunities for all. Thank you for consider making a donation to help us continue our labour.',
-      '[Donate and be a Voice for a brighter future](/donate/)',
-      'Follow us on Instagram to know more about our upcoming screenings.',
+      'A documentary taking the story beyond the stage produced during the 2024 edition, the film captures the artists and advocacy behind Global Women in Music. After a March 2025 premiere at Roosevelt House, it continued on the festival circuit where it has received numerous International recognitions.',
+      '**WATCH THE TRAILER** · [bit.ly/4bm7IO7](http://bit.ly/4bm7IO7)',
     ],
   },
   {
@@ -251,3 +256,8 @@ export const successNumbers = [
   { value: '2,000+', label: 'Live audience members' },
   { value: '2 | 3 | 3', label: 'Winner Awards | Finalist Awards | Official Selections – for our Documentary' },
 ];
+
+// Home: one block for the whole concert series (2023-2026) instead of one per edition. The per-edition
+// blocks stay on /projects.
+const notOnHome = new Set(['gwim-2026', 'gwim-2025', 'gwim-2023-24']);
+export const homeProjects = currentProjects.filter((p) => !notOnHome.has(p.id));

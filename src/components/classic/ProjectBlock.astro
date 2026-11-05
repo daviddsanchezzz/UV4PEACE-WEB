@@ -10,10 +10,10 @@ import doc from '../../assets/posters/gwim-documentary.png';
 interface Props { project: ClassicProject; level?: 'h2' | 'h3'; flip?: boolean }
 const { project: p, level: H = 'h2', flip = false } = Astro.props;
 // YouTube links in the text are also shown as embedded players.
-const yt = [...new Set([...(p.youtube ? [p.youtube] : []), ...(p.paragraphs.join(' ').match(/(?:youtu\.be\/|youtube\.com\/(?:live\/|watch\?v=|embed\/))[\w-]{11}/g)?.map((m) => m.slice(-11)) ?? [])])];
+const yt = p.embed === false ? [] : [...new Set([...(p.youtube ? [p.youtube] : []), ...(p.paragraphs.join(' ').match(/(?:youtu\.be\/|youtube\.com\/(?:live\/|watch\?v=|embed\/))[\w-]{11}/g)?.map((m) => m.slice(-11)) ?? [])])];
 // The embedded player replaces the "Watch …: link" lines, so those links are dropped from the text.
 const ytLink = /\s*(?:\*\*)?(?:Watch[^:*\[]*|Learn more on\s*)?(?:\*\*)?\s*:?\s*\[[^\]]*\]\(https?:\/\/(?:www\.)?(?:youtu\.be|youtube\.com)\/[^)]*\)/g;
-const text = p.paragraphs.map((t) => { const c = t.replace(ytLink, '').trim(); return c !== t.trim() && c && !/[.!?)”*]$/.test(c) ? c + '.' : c; }).filter((t) => t && t !== '.');
+const text = p.paragraphs.map((t) => { const c = p.embed === false ? t : t.replace(ytLink, '').trim(); return c !== t.trim() && c && !/[.!?)”*]$/.test(c) ? c + '.' : c; }).filter((t) => t && t !== '.');
 const hasMedia = !!(p.photo || p.image || p.images?.length || p.video || yt.length);
 const photos = { 'gwim-2026': gwim2026, 'gwim-2025': gwim2025, 'gwim-2024': gwim2024, 'gwim-2023': gwim2023, doc };
 const isPoster = !!p.photo;

@@ -4,7 +4,7 @@ import ClassicPage from '../components/classic/ClassicPage.astro';
 import Rich from '../components/classic/Rich.astro';
 import LogoCarousel from '../components/classic/LogoCarousel.astro';
 import ProjectBlock from '../components/classic/ProjectBlock.astro';
-import { homeIntro, currentProjects, successNumbers } from '../data/classic';
+import { homeIntro, homeProjects, successNumbers } from '../data/classic';
 ---
 <Base current="home" bigHeader>
   <ClassicPage title="Home">
@@ -57,7 +57,7 @@ import { homeIntro, currentProjects, successNumbers } from '../data/classic';
 
     <h2 class="t-h1 mt-24 text-navy">Our Current Projects</h2>
     <div class="mt-10 flex flex-col gap-14">
-      {currentProjects.map((p, i) => <ProjectBlock project={p} level="h3" flip={i % 2 === 1} />)}
+      {homeProjects.map((p, i) => <ProjectBlock project={p} level="h3" flip={i % 2 === 1} />)}
     </div>
     <a href="/projects/" class="btn btn-tertiary mt-12">Find out more on Current Projects</a>
   </ClassicPage>
