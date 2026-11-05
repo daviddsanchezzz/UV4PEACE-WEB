@@ -6,7 +6,8 @@ export const classicNav = [
   { key: 'home', label: 'Home', href: '/' },
   { key: 'about', label: 'About Us', href: '/about-us/' },
   { key: 'projects', label: 'Projects', href: '/projects/' },
-  { key: 'voice', label: 'Add your Voice', href: '/add-your-voice/' },
+  // Hidden from the menu for now (David, 05/11/2026); the page still exists.
+  // { key: 'voice', label: 'Add your Voice', href: '/add-your-voice/' },
   { key: 'press', label: 'Media & Recognition', href: '/media-and-recognition/' },
   { key: 'contact', label: 'Contact', href: '/contact/' },
 ];
