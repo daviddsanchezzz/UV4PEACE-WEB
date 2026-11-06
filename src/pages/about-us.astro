@@ -1,10 +1,11 @@
 ---
+import heroPhoto from '../assets/fotos/13-about-orquesta-escenario_MPC_8043.jpg';
 import Base from '../layouts/Base.astro';
 import ClassicPage from '../components/classic/ClassicPage.astro';
 import Rich from '../components/classic/Rich.astro';
 import { foreword, board, partnerNetwork, partnerNetworkClosing } from '../data/classic';
 ---
-<Base title="About Us" current="about">
+<Base title="About Us" current="about" bigHeader bannerPhoto={heroPhoto} bannerPosition="50% 52%">
   <ClassicPage title="About Us">
     <section class="rounded-card bg-surface-soft p-[clamp(24px,4vw,48px)]">
       <h2 class="t-h2 text-navy">Foreword from our Founder</h2>
