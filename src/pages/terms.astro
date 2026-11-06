@@ -4,7 +4,7 @@ import ClassicPage from '../components/classic/ClassicPage.astro';
 import LegalDoc from '../components/classic/LegalDoc.astro';
 import { terms } from '../data/legal';
 ---
-<Base title="Terms of Use">
+<Base title="Terms of Use" noBanner>
   <ClassicPage title="Terms of Use">
     <LegalDoc title="Terms of Use" blocks={terms} />
   </ClassicPage>

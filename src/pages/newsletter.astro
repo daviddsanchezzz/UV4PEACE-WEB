@@ -13,7 +13,7 @@ const messages: Record<string, { title: [string, string?]; text: string }> = {
 };
 const m = messages[status] ?? { title: ['This link', 'has expired'], text: 'The link is no longer valid. If you need help, write to us and we will sort it out.' };
 ---
-<Base title="Newsletter" description="Manage your United Voices 4 Peace newsletter subscription." noindex>
+<Base title="Newsletter" description="Manage your United Voices 4 Peace newsletter subscription." noindex noBanner>
   <PageHeader eyebrow="Newsletter" title={m.title} lede={m.text} />
   <section class="wrap pb-[clamp(72px,10vw,128px)]">
     {status === 'leave' && (

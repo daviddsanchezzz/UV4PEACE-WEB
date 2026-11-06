@@ -4,7 +4,7 @@ import ClassicPage from '../components/classic/ClassicPage.astro';
 import LegalDoc from '../components/classic/LegalDoc.astro';
 import { privacy } from '../data/legal';
 ---
-<Base title="Privacy Policy">
+<Base title="Privacy Policy" noBanner>
   <ClassicPage title="Privacy Policy">
     <LegalDoc title="Privacy Policy" blocks={privacy} />
   </ClassicPage>
