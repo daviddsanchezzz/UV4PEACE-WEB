@@ -9,7 +9,7 @@ const tabs = [
   { id: 'previous', label: 'Previous', count: previousProjects.length, items: previousProjects },
 ];
 ---
-<Base title="Projects" current="projects">
+<Base title="Projects" current="projects" noBanner>
   <ClassicPage title="Projects">
     <div role="tablist" aria-label="Projects" class="flex gap-8 border-b border-line">
       {tabs.map((t, i) => (
