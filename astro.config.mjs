@@ -9,7 +9,17 @@ export default defineConfig({
   site: 'https://uv4peace.org',
   output: 'server',
   // The old Press page is now Media & Recognition: keep old links and search results working.
-  redirects: { '/press': '/media-and-recognition', '/people': '/about-us', '/get-involved': '/add-your-voice', '/current-projects': '/projects', '/previous-projects': '/projects#previous' },
+  // Old addresses (earlier drafts and the old WordPress site at uv4peace.org) keep working after the domain moves here.
+  redirects: {
+    '/press': '/media-and-recognition', '/people': '/about-us', '/get-involved': '/add-your-voice', '/current-projects': '/projects', '/previous-projects': '/projects#previous',
+    // WordPress pages
+    '/about': '/about-us', '/team': '/about-us', '/our-team': '/about-us',
+    '/partners': '/#partners',
+    '/media-room': '/media-and-recognition', '/press-room': '/media-and-recognition', '/media': '/media-and-recognition',
+    '/donation-options': '/donate', '/donations': '/donate', '/donation': '/donate',
+    '/projects-previous': '/projects#previous', '/projects-previous-previous': '/projects#previous',
+    '/home': '/', '/privacy-policy': '/privacy', '/cookie-policy': '/cookies', '/terms-of-use': '/terms',
+  },
   adapter: vercel(),
   // Behind Vercel the server cannot tell which address it is served from unless we say which ones are ours.
   // Without this Astro assumes "localhost": form posts are rejected as cross-site (403) and any link built
