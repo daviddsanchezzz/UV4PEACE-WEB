@@ -42,21 +42,23 @@ const stats = [
 ---
 <Base title="Media & Recognition" current="press" noBanner>
   <ClassicPage title="Media & Recognition">
-    <div class="grid items-center gap-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-14">
-      <p class="lede text-navy">
-        Since our launch, United Voices 4 Peace has been recognised by public institutions, film festivals and the music industry, and our work has been covered by media around the world.
-      </p>
-      <Image src={heroPhoto} alt="Global Women in Music 2026 photocall with Verónica Sabbag, artists and guests in front of the partners backdrop" widths={[640, 960, 1400]} sizes="(min-width: 1024px) 58vw, 100vw" class="w-full rounded-card" loading="eager" />
+    <!-- Intro: text and figures on the left, the GWIM photocall on the right. -->
+    <div class="grid gap-10 lg:grid-cols-2 lg:items-stretch lg:gap-14">
+      <div class="flex flex-col justify-between gap-10">
+        <p class="lede text-navy">
+          Since our launch, United Voices 4 Peace has been recognised by public institutions, film festivals and the music industry, and our work has been covered by media around the world.
+        </p>
+        <dl class="grid grid-cols-2 gap-x-8 gap-y-6 border-t border-line pt-8">
+          {stats.map((s) => (
+            <div class="flex flex-col">
+              <dt class="order-2 mt-1 text-[15px] leading-snug text-ink-muted">{s.label}</dt>
+              <dd class="order-1 text-4xl font-medium text-orange">{s.n}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+      <Image src={heroPhoto} alt="Global Women in Music 2026 photocall with Verónica Sabbag, artists and guests in front of the partners backdrop" widths={[640, 960, 1400]} sizes="(min-width: 1024px) 50vw, 100vw" class="aspect-[3/2] w-full rounded-card object-cover lg:aspect-auto lg:h-full" loading="eager" />
     </div>
-
-    <dl class="mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-card bg-line sm:grid-cols-4">
-      {stats.map((s) => (
-        <div class="flex flex-col bg-surface-soft p-5 sm:p-6">
-          <dt class="order-2 mt-1 text-[15px] leading-snug text-ink-muted">{s.label}</dt>
-          <dd class="order-1 text-3xl font-medium text-orange sm:text-4xl">{s.n}</dd>
-        </div>
-      ))}
-    </dl>
 
     <!-- Recognition -->
     <section class="mt-[clamp(56px,7vw,96px)]" id="recognition">
