@@ -18,9 +18,9 @@ import { foreword, board, partnerNetwork, partnerNetworkClosing } from '../data/
         <article class="border-t border-line pt-10 first:border-t-0 first:pt-0">
           <div class="grid gap-6 md:grid-cols-[240px_minmax(0,1fr)] md:gap-12 lg:grid-cols-[300px_minmax(0,1fr)]">
             <img src={m.photo} alt={m.name} loading="lazy" class="aspect-[4/5] w-full max-w-[300px] rounded-card bg-placeholder object-cover" />
-            <div>
-              <h2 class="t-h3 text-navy">{m.name} <span class="font-normal text-sky-text">– {m.role}</span></h2>
-              <div class="body mt-4 flex flex-col gap-4 text-ink">{m.paragraphs.map((t) => <Rich text={t} />)}</div>
+            <div class="contents md:block">
+              <h2 class="t-h3 order-first text-navy md:order-none">{m.name} <span class="font-normal text-sky-text">– {m.role}</span></h2>
+              <div class="body -mt-2 md:mt-4 flex flex-col gap-4 text-ink">{m.paragraphs.map((t) => <Rich text={t} />)}</div>
             </div>
           </div>
         </article>

@@ -31,9 +31,10 @@ const ytInText = yt.length > 0 && !!(p.photo || p.image || p.images?.length || p
         {p.video && <video src={p.video} controls preload="metadata" playsinline class="aspect-video w-full rounded-card bg-navy"></video>}
       </div>
     )}
-    <div class:list={['min-w-0', !hasMedia && 'max-w-[980px]']}>
-      <H class="t-h2 text-navy">{p.title}</H>
-      <div class="body mt-5 flex flex-col gap-4 text-ink [overflow-wrap:anywhere]">
+    <!-- On phones the text column dissolves into the grid so the title sits above the image. -->
+    <div class:list={['min-w-0', hasMedia ? 'contents lg:block' : 'max-w-[980px]']}>
+      <H class="t-h2 order-first text-navy lg:order-none">{p.title}</H>
+      <div class:list={['body flex flex-col gap-4 text-ink [overflow-wrap:anywhere]', hasMedia ? '-mt-3 lg:mt-5' : 'mt-5']}>
         {text.map((t, i) => (
           <>
             <Rich text={t} class="whitespace-pre-line" />
@@ -53,7 +54,7 @@ const ytInText = yt.length > 0 && !!(p.photo || p.image || p.images?.length || p
           </>
         ))}
       </div>
-      {ytInText && <div class="mt-8 flex flex-col gap-6">{yt.map((id) => <iframe src={`https://www.youtube-nocookie.com/embed/${id}`} title={p.title} loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen class="aspect-video w-full max-w-[560px] rounded-card bg-navy"></iframe>)}</div>}
+      {ytInText && <div class:list={['flex flex-col gap-6', hasMedia ? 'lg:mt-8' : 'mt-8']}>{yt.map((id) => <iframe src={`https://www.youtube-nocookie.com/embed/${id}`} title={p.title} loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen class="aspect-video w-full max-w-[560px] rounded-card bg-navy"></iframe>)}</div>}
     </div>
   </div>
 </article>
