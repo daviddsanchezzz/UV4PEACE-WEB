@@ -260,4 +260,7 @@ export const successNumbers = [
 
 // /projects shows one block for the whole concert series (Veronica, 05/11/2026). The Home keeps one
 // block per edition, which she prefers there.
-export const homeProjects = currentProjects.filter((p) => p.id !== 'gwim-series');
+// The 2023/24 "Our success in numbers" box is not shown on the Home (David, 06/11/2026).
+export const homeProjects = currentProjects
+  .filter((p) => p.id !== 'gwim-series')
+  .map((p) => (p.id === 'gwim-2023-24' ? { ...p, stats: undefined } : p));
