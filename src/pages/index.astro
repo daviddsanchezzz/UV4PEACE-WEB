@@ -1,4 +1,5 @@
 ---
+import heroPhoto from '../assets/fotos/14-home-hero-saludo-final_IMG_5460.jpg';
 import Base from '../layouts/Base.astro';
 import ClassicPage from '../components/classic/ClassicPage.astro';
 import Rich from '../components/classic/Rich.astro';
@@ -6,7 +7,7 @@ import LogoCarousel from '../components/classic/LogoCarousel.astro';
 import ProjectBlock from '../components/classic/ProjectBlock.astro';
 import { homeIntro, homeProjects, successNumbers } from '../data/classic';
 ---
-<Base current="home" bigHeader>
+<Base current="home" bigHeader bannerPhoto={heroPhoto} bannerPosition="50% 62%">
   <ClassicPage title="Home">
     <div class="grid gap-8 lg:grid-cols-[1fr_1.15fr] lg:gap-16">
       <div class="lg:sticky lg:top-28 lg:self-start">
