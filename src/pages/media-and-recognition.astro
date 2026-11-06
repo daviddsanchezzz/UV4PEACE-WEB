@@ -5,6 +5,7 @@ import ClassicPage from '../components/classic/ClassicPage.astro';
 import { getPress, getTestimonials, getMedia, getPressArchive } from '../lib/content';
 import { languageLabel, type Language } from '../data/press';
 import docPoster from '../assets/posters/gwim-documentary.png';
+import heroPhoto from '../assets/fotos/media-hero-gwim-photocall.jpg';
 
 const [press, testimonials, media, archive] = await Promise.all([getPress(), getTestimonials(), getMedia(), getPressArchive()]);
 
@@ -39,7 +40,7 @@ const stats = [
   { n: '2,400', label: 'Concert attendees since 2023' },
 ];
 ---
-<Base title="Media & Recognition" current="press">
+<Base title="Media & Recognition" current="press" bannerPhoto={heroPhoto} bannerPosition="50% 30%">
   <ClassicPage title="Media & Recognition">
     <p class="lede max-w-[760px] text-navy">
       Since our launch, United Voices 4 Peace has been recognised by public institutions, film festivals and the music industry, and our work has been covered by media around the world.

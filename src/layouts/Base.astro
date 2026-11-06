@@ -4,8 +4,9 @@ import Header from '../components/classic/ClassicHeader.astro';
 import Footer from '../components/classic/ClassicFooter.astro';
 import CookieConsent from '../components/CookieConsent.astro';
 import { getSettings } from '../lib/content';
+import type { ImageMetadata } from 'astro';
 
-interface Props { title?: string; description?: string; current?: string; noindex?: boolean; bigHeader?: boolean; noBanner?: boolean }
+interface Props { title?: string; description?: string; current?: string; noindex?: boolean; bigHeader?: boolean; noBanner?: boolean; bannerPhoto?: ImageMetadata; bannerPosition?: string }
 const {
   title,
   description = 'United Voices 4 Peace builds bridges between cultures, diplomacy and communities through music and the arts.',
@@ -13,6 +14,8 @@ const {
   noindex = false,
   bigHeader = false,
   noBanner = false,
+  bannerPhoto,
+  bannerPosition,
 } = Astro.props;
 const fullTitle = title ? `${title} · United Voices 4 Peace` : 'United Voices 4 Peace';
 const { analyticsId } = await getSettings();
@@ -41,7 +44,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   </head>
   <body class="bg-surface font-sans text-ink antialiased">
     <a href="#main" class="skip-link">Skip to content</a>
-    <Header current={current} big={bigHeader} banner={!noBanner} />
+    <Header current={current} big={bigHeader} banner={!noBanner} photo={bannerPhoto} photoPosition={bannerPosition} />
     <main id="main"><slot /></main>
     <Footer />
     {analyticsId && <CookieConsent measurementId={analyticsId} />}
