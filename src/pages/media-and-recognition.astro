@@ -40,7 +40,7 @@ const stats = [
   { n: '2,400', label: 'Concert attendees since 2023' },
 ];
 ---
-<Base title="Media & Recognition" current="press" noBanner>
+<Base title="Media & Recognition" current="press" bigHeader bannerPhoto={heroPhoto} bannerPosition="50% 30%" bannerMobileOnly>
   <ClassicPage title="Media & Recognition">
     <!-- Intro: text and figures on the left, the GWIM photocall on the right. -->
     <div class="grid gap-10 lg:grid-cols-2 lg:items-stretch lg:gap-14">
@@ -57,7 +57,7 @@ const stats = [
           ))}
         </dl>
       </div>
-      <Image src={heroPhoto} alt="Global Women in Music 2026 photocall with Verónica Sabbag, artists and guests in front of the partners backdrop" widths={[640, 960, 1400]} sizes="(min-width: 1024px) 50vw, 100vw" class="aspect-[3/2] w-full rounded-card object-cover lg:aspect-auto lg:h-full" loading="eager" />
+      <Image src={heroPhoto} alt="Global Women in Music 2026 photocall with Verónica Sabbag, artists and guests in front of the partners backdrop" widths={[640, 960, 1400]} sizes="(min-width: 1024px) 50vw, 100vw" class="hidden h-full w-full rounded-card object-cover lg:block" loading="eager" />
     </div>
 
     <!-- Recognition -->

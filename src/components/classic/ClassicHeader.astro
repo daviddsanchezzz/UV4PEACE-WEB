@@ -3,8 +3,8 @@
 import { classicNav, bannerImage } from '../../data/classic';
 import type { ImageMetadata } from 'astro';
 /** photo: a page's own banner photo (local) instead of the shared one; photoPosition is its CSS object-position. */
-interface Props { current?: string; big?: boolean; banner?: boolean; photo?: ImageMetadata; photoPosition?: string }
-const { current, big = false, banner = true, photo, photoPosition = 'center' } = Astro.props;
+interface Props { current?: string; big?: boolean; banner?: boolean; photo?: ImageMetadata; photoPosition?: string; mobileOnly?: boolean }
+const { current, big = false, banner = true, photo, photoPosition = 'center', mobileOnly = false } = Astro.props;
 const isCurrent = (n: { key: string; children?: { key: string }[] }) => current === n.key || n.children?.some((c) => c.key === current);
 import { getImage } from 'astro:assets';
 import fallback from '../../assets/fotos/08-partners-photocall_IMG_5478.jpg';
@@ -45,7 +45,7 @@ const own = photo ? await getImage({ src: photo, widths: [800, 1600, 2400], form
   </div>
 </header>
 
-{banner && <div class:list={['relative overflow-hidden bg-navy', big ? 'h-[clamp(260px,40vw,520px)]' : 'h-[clamp(140px,18vw,220px)]']} style={`background:url(${fb.src}) center/cover`} aria-hidden="true">
+{banner && <div class:list={['relative overflow-hidden bg-navy', mobileOnly && 'lg:hidden', big ? 'h-[clamp(260px,40vw,520px)]' : 'h-[clamp(140px,18vw,220px)]']} style={`background:url(${fb.src}) center/cover`} aria-hidden="true">
   {own
     ? <img src={own.src} srcset={own.srcSet.attribute} sizes="100vw" alt="" class="absolute inset-0 h-full w-full object-cover" style={`object-position:${photoPosition}`} loading="eager" />
     : <img src={bannerImage} alt="" class="absolute inset-0 h-full w-full object-cover" loading="eager" />}
