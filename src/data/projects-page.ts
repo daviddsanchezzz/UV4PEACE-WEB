@@ -2,7 +2,7 @@
 // The Home page keeps its own shorter versions in classic.ts.
 import type { ClassicProject } from './classic';
 import { currentProjects } from './classic';
-const WP = 'https://uv4peace.org/wp-content/uploads';
+const WP = '/wp-content/uploads';
 const byId = (id: string) => currentProjects.find((p) => p.id === id)!;
 
 export const projectsPageCurrent: ClassicProject[] = [
@@ -112,7 +112,7 @@ export const projectsPageCurrent: ClassicProject[] = [
       'On International Women’s Day 2020, and ahead of the 64th session of the UN Commission on the Status of Women (CSW), UV4Peace in partnership with Women in Music, marked this day with a global celebration uniting efforts for humanitarian and environmental justice in front of the current climate emergency.',
       'On this occasion, the crucial role of the arts to respond to global emergencies was debated as well as the instrumental role played by artists to raise awareness and build societal resilience to overcome adversity.',
       'Following the panel discussion, this celebration shed light on the impactful stories of those affected by environmental degradation and disasters, amplifying the diverse voices of artists from Australia (Jennifer Reed), Puerto Rico (Girasoles Creative Studio & Edwin Garcia “Coqui”), Italy (Nicola Lo Calzo & Valentina Volpe Andreazza) and Japan (Yuko Kudo & Taiko Masala) through their different forms of artistic expression.',
-      'See [more HERE](https://uv4peace.org/wp-content/uploads/2020/03/20200310_154212-1.jpg)',
+      'See [more HERE](/wp-content/uploads/2020/03/20200310_154212-1.jpg)',
     ],
   },
   {
@@ -123,7 +123,7 @@ export const projectsPageCurrent: ClassicProject[] = [
       'On 25 November at Primeproduce, in New York City, Joudeh performed his choreography “Sacrifice” followed by a Q&A session.',
       'Hours later, the documentary ‘Dance or Die’ about his remarkable life, won an international Emmy at the ceremony held in the context of the 47th International Emmy Awards. Watch the Trailer here: [http://bit.ly/2WOPnDf](http://bit.ly/2WOPnDf)',
       'Ahmad, UV4P Peace Ambassador, has used the art of dance to raise awareness on the humanitarian crisis in Syria.',
-      '[read more HERE](https://uv4peace.org/wp-content/uploads/2019/11/AJPRESSRELEASE3_compressed.pdf)',
+      '[read more HERE](/wp-content/uploads/2019/11/AJPRESSRELEASE3_compressed.pdf)',
     ],
   },
   {
@@ -169,7 +169,7 @@ export const projectsPageCurrent: ClassicProject[] = [
     images: [`${WP}/2018/11/received_269959953721213.jpeg`],
     paragraphs: [
       '• UV4Peace partnered with [Fondazione Adkins Chiti: Donne in Musica](http://www.donneinmusica.org/) for the commemoration of the 70th Anniversary of the Universal Declaration of Human Rights. The project “Global Women in Music 4 Human Rights” is part of the world-wide campaign commemorating this 70th anniversary.A Gala concert featuring the 10 winning works of a global call for scores, took place in Rome on November 5th at Teatro Argentina under the auspices of the UN High Commissioner for Human Rights\n• #GWIM4HumanRights.',
-      'Here the [Program](https://uv4peace.org/wp-content/uploads/2018/10/Program.pdf)',
+      'Here the [Program](/wp-content/uploads/2018/10/Program.pdf)',
     ],
   },
   {
@@ -182,7 +182,7 @@ export const projectsPageCurrent: ClassicProject[] = [
       'From the ruins of Palmyra to the streets of Paris, Amsterdam and Madrid, Ahmad Joudeh expresses his remarkable art to spread hope and resilience for all those who had flee war and persecution.',
       'The initiative aimed to showcasing the successful integration of refugees throughout the European Union.',
       'Sponsored by the UNESCO Brussels Liaison Office, “Together in Solidarity” was also part of the celebrations of the European Year of Cultural Heritage and granted with the EYCH Label #EuropeForCulture.',
-      '– [Read More](https://uv4peace.org/wp-content/uploads/2018/06/PR-TSolidarityweb-final.pdf) about Together in Solidarity\n– [Read More](https://uv4peace.org/wp-content/uploads/2018/06/PRESS-CLIPPING-final.pdf) about Press Clipping',
+      '– [Read More](/wp-content/uploads/2018/06/PR-TSolidarityweb-final.pdf) about Together in Solidarity\n– [Read More](/wp-content/uploads/2018/06/PRESS-CLIPPING-final.pdf) about Press Clipping',
     ],
   },
   {

@@ -5,7 +5,7 @@ const { text, class: cls, tag: Tag = 'p' } = Astro.props;
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const html = esc(text)
   .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, l, u) => {
-    const ext = /^https?:/.test(u);
+    const ext = /^https?:/.test(u) || /\.(pdf|jpe?g|png)$/i.test(u); // other sites and files (PDFs, photos) open in a new tab
     return `<a href="${u}"${ext ? ' target="_blank" rel="noopener"' : ''}>${l}</a>`;
   })
   .replace(/\*\*([^*]+)\*\*/g, '<strong class="font-semibold">$1</strong>')

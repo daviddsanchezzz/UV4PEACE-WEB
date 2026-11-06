@@ -1,6 +1,6 @@
 // "Classic" proposal: the texts of the original uv4peace.org, kept word for word,
-// shown with the Fiel design. Images and videos still live on uv4peace.org.
-const WP = 'https://uv4peace.org/wp-content/uploads';
+// shown with the Fiel design. The old site's images, videos and PDFs are copied in public/wp-content/uploads (same paths as on WordPress).
+const WP = '/wp-content/uploads';
 
 export const classicNav = [
   { key: 'home', label: 'Home', href: '/' },
@@ -227,7 +227,7 @@ export const board: BoardMember[] = [
     ],
   },
   {
-    name: 'Silvia Cambra', role: 'Board Member -Brussels', photo: `${WP}/2017/11/20171124_213927-150x150.png`,
+    name: 'Silvia Cambra', role: 'Board Member -Brussels', photo: `${WP}/2017/11/20171124_213927.png`,
     paragraphs: [
       'Silvia Cambra comes from a family of musicians from multicultural music traditions. Through music, she had the opportunity to discover the world and its different people. She has acquired a first hand understanding of the power of music as a bridge between different cultures. Silvia has worked for over 20 years in Marketing and Communication for a number of multinational companies. Currently, she is involved in the development of innovative educative programmes and mainly based in Barcelona. Silvia holds a DAA, Award of Achievement in Digital analytics, from the University of British Columbia and teaches in various international universities.',
     ],

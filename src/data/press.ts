@@ -93,13 +93,13 @@ export interface PressArchiveItem {
 
 export const pressArchive: PressArchiveItem[] = [
   { id: 'rtbf-2018', title: 'Diversity Makes Music', date: 'Nov 2018', links: [{ label: 'Radio RTBF', url: '' }] },
-  { id: 'together-in-solidarity-clipping', title: 'Together in Solidarity', date: '', links: [{ label: 'Press clipping', url: 'https://uv4peace.org/wp-content/uploads/2018/06/PRESS-CLIPPING-final.pdf' }] },
+  { id: 'together-in-solidarity-clipping', title: 'Together in Solidarity', date: '', links: [{ label: 'Press clipping', url: '/wp-content/uploads/2018/06/PRESS-CLIPPING-final.pdf' }] },
   { id: 'la-voce-di-new-york-2018', title: 'La Voce di New York', date: 'Mar 2018', links: [
     { label: 'English version', url: 'https://www.lavocedinewyork.com/en/arts/2018/03/16/international-womens-day-in-music-the-right-of-all-women-to-express-themselves/' },
     { label: 'Italian version', url: 'https://www.lavocedinewyork.com/arts/musica/2018/03/07/giornata-internazionale-della-donna-con-la-musica-al-ritmo-dei-diritti/' },
   ] },
   { id: 'substances-2017', title: 'Substances', date: 'Oct 2017', links: [
     { label: 'Online', url: 'http://www.sub-stances.com/all-articles/united-voices-4-peace-creating-a-culture-of-peace-josephine-bush' },
-    { label: 'Offline (PDF)', url: 'https://uv4peace.org/wp-content/uploads/2018/03/Veronica-Sabbag.pdf' },
+    { label: 'Offline (PDF)', url: '/wp-content/uploads/2018/03/Veronica-Sabbag.pdf' },
   ] },
 ];
