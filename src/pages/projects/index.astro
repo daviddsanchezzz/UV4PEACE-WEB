@@ -1,4 +1,5 @@
 ---
+import heroPhoto from '../../assets/fotos/12-projects-hero-orquesta_IMG_5340.jpg';
 import Base from '../../layouts/Base.astro';
 import ClassicPage from '../../components/classic/ClassicPage.astro';
 import ProjectBlock from '../../components/classic/ProjectBlock.astro';
@@ -9,7 +10,7 @@ const tabs = [
   { id: 'previous', label: 'Previous', count: previousProjects.length, items: previousProjects },
 ];
 ---
-<Base title="Projects" current="projects" noBanner>
+<Base title="Projects" current="projects" bigHeader bannerPhoto={heroPhoto} bannerPosition="50% 36%">
   <ClassicPage title="Projects">
     <div role="tablist" aria-label="Projects" class="flex gap-8 border-b border-line">
       {tabs.map((t, i) => (
