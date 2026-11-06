@@ -1,9 +1,10 @@
 ---
 // Page shell: the page title on top, then the content across the full width.
-interface Props { title: string; class?: string }
-const { title, class: cls } = Astro.props;
+interface Props { title: string; class?: string; /** The page brings its own h1 (the title is then only a label). */ ownH1?: boolean }
+const { title, class: cls, ownH1 = false } = Astro.props;
+const T = ownH1 ? 'div' : 'h1';
 ---
 <div class:list={['wrap py-[clamp(40px,6vw,80px)]', cls]}>
-  <h1 class="eyebrow mb-[clamp(28px,4vw,48px)] flex items-center gap-3 font-semibold text-navy"><span class="h-0.5 w-8 bg-orange"></span>{title}</h1>
+  <T class="eyebrow mb-[clamp(28px,4vw,48px)] flex items-center gap-3 font-semibold text-navy"><span class="h-0.5 w-8 bg-orange"></span>{title}</T>
   <slot />
 </div>

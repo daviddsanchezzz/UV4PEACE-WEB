@@ -1,17 +1,25 @@
 ---
 import heroPhoto from '../assets/fotos/14-home-hero-saludo-final_IMG_5460.jpg';
+import { site } from '../data/site';
 import Base from '../layouts/Base.astro';
 import ClassicPage from '../components/classic/ClassicPage.astro';
 import Rich from '../components/classic/Rich.astro';
 import LogoCarousel from '../components/classic/LogoCarousel.astro';
 import ProjectBlock from '../components/classic/ProjectBlock.astro';
 import { homeIntro, homeProjects, successNumbers } from '../data/classic';
+// Tells search engines who the organisation is (name, logo, contact, non-profit status).
+const org = {
+  '@context': 'https://schema.org', '@type': 'NGO', name: 'United Voices 4 Peace', alternateName: 'UV4PEACE',
+  url: 'https://uv4peace.org', logo: 'https://uv4peace.org/favicon.svg', email: site.email,
+  description: 'A global cultural diplomacy initiative fostering a universal culture of peace through music and the arts.',
+  nonprofitStatus: 'Nonprofit501c3', address: { '@type': 'PostalAddress', addressLocality: 'New York', addressCountry: 'US' },
+};
 ---
-<Base current="home" bigHeader bannerPhoto={heroPhoto} bannerPosition="50% 62%">
-  <ClassicPage title="Home">
+<Base current="home" bigHeader bannerPhoto={heroPhoto} bannerPosition="50% 62%" description="United Voices 4 Peace is a non-profit cultural diplomacy initiative in New York. With the UN Symphony Orchestra it presents Global Women in Music, celebrating women composers and conductors." jsonLd={org}>
+  <ClassicPage title="Home" ownH1>
     <div class="grid gap-8 lg:grid-cols-[1fr_1.15fr] lg:gap-16">
       <div class="lg:sticky lg:top-28 lg:self-start">
-        <h2 class="text-[clamp(24px,2.8vw,38px)] font-medium uppercase leading-[1.15] tracking-[0.02em] text-navy text-balance">{homeIntro.heading}</h2>
+        <h1 class="text-[clamp(24px,2.8vw,38px)] font-medium uppercase leading-[1.15] tracking-[0.02em] text-navy text-balance">{homeIntro.heading}</h1>
         <p class="mt-8 flex max-w-[460px] items-center gap-4 rounded-card border border-line bg-surface-soft p-4 text-[15px] leading-snug text-navy">
           <img src="/un-emblem.png" alt="" width="56" height="56" class="size-14 flex-none rounded-lg" />
           <span>{homeIntro.unLine}</span>
