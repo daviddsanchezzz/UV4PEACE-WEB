@@ -40,11 +40,14 @@ const stats = [
   { n: '2,400', label: 'Concert attendees since 2023' },
 ];
 ---
-<Base title="Media & Recognition" current="press" bigHeader bannerPhoto={heroPhoto}>
+<Base title="Media & Recognition" current="press" noBanner>
   <ClassicPage title="Media & Recognition">
-    <p class="lede max-w-[760px] text-navy">
-      Since our launch, United Voices 4 Peace has been recognised by public institutions, film festivals and the music industry, and our work has been covered by media around the world.
-    </p>
+    <div class="grid items-center gap-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-14">
+      <p class="lede text-navy">
+        Since our launch, United Voices 4 Peace has been recognised by public institutions, film festivals and the music industry, and our work has been covered by media around the world.
+      </p>
+      <Image src={heroPhoto} alt="Global Women in Music 2026 photocall with Verónica Sabbag, artists and guests in front of the partners backdrop" widths={[640, 960, 1400]} sizes="(min-width: 1024px) 58vw, 100vw" class="w-full rounded-card" loading="eager" />
+    </div>
 
     <dl class="mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-card bg-line sm:grid-cols-4">
       {stats.map((s) => (
