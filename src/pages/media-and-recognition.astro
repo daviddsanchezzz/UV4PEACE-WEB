@@ -31,6 +31,21 @@ const coverage = media.coverage.map((m) => {
   const year = headlineRaw.match(/\((20\d\d)\)$/)?.[1] ?? m.url.match(/(?<!\d)(20[12]\d)(?=(?:\d{2}|\d{4})?[/.-])/)?.[1] ?? '';
   return { ...m, name: outlet.trim(), headline: headlineRaw.replace(/\s*\(20\d\d\)$/, '').trim(), year };
 }).sort((a, b) => (b.year || '0').localeCompare(a.year || '0'));
+// Within a year, keep cards from the same outlet apart (e.g. three La Voce articles in 2026), so the grid doesn't open with repeats.
+const spread = <T extends { name: string; year: string }>(list: T[]): T[] => {
+  const left = [...list];
+  const out: T[] = [];
+  while (left.length) {
+    const year = left[0].year;
+    const recent = out.slice(-2).map((x) => x.name);
+    let i = left.findIndex((x) => x.year === year && !recent.includes(x.name));
+    if (i < 0) i = left.findIndex((x) => x.year === year && x.name !== recent[recent.length - 1]);
+    if (i < 0) i = 0;
+    out.push(...left.splice(i, 1));
+  }
+  return out;
+};
+coverage.splice(0, coverage.length, ...spread(coverage));
 const langs = (['en', 'es', 'it', 'fr', 'ar', 'sr'] as Language[]).filter((l) => coverage.some((m) => m.language === l));
 const featuredIn = ['Variety', 'Forbes', 'UN News', 'La Vanguardia', 'La Voce di New York', 'Télam'];
 const stats = [
